@@ -32,7 +32,14 @@ module Dash::Models
       return true if glob == '*'
       # convert glob to a regular expression
       glob_parts = glob.split('*').collect { |s| Regexp.escape(s) }
-      glob_re = /^#{glob_parts.join('.*')}$/
+      if glob[0].chr == '*'
+        glob_re = /^.*#{glob_parts.join('.*')}$/
+      elsif glob[-1].chr == '*'
+        glob_re = /^#{glob_parts.join('.*')}.*$/
+      else
+        glob_re = /^#{glob_parts.join('.*')}$/
+      end
+      puts "trying to match #{@match_name} against #{glob_re}"
       return @match_name.match(glob_re)
     end
 
