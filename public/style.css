@@ -1,0 +1,63 @@
+h2 {
+  color: #ADFF2F;
+}
+
+.graphtitle {
+  text-shadow: 1px 1px 1px #333333;
+}
+
+.dashlinks {
+  color: green;
+  font-size: small;
+}
+
+a {
+  color: #15317E;
+}
+
+a:visited {
+  color: #15317E;
+}
+
+.graphsection {
+  border: dotted 2px #333333;
+  width: 500;
+  margin-left: 5px;
+  margin-top: 10px;
+}
+
+div#wrap {
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0px;
+}
+
+div#header {
+    padding: 15px;
+    margin: 0px;
+    margin-left: 23%;
+}
+
+div#nav {
+    width: 20%;
+    padding: 10px;
+    margin-top: 1px;
+    float: left;
+    color: green;
+}
+
+div#main {
+    margin-left: 23%;
+    margin-top: 1px;
+    padding: 10px;
+    color: #4CBB17;
+}
+
+div#footer {
+    padding: 15px;
+    margin: 0px;
+    border-top: thin solid #808080;
+}

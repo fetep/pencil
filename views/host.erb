@@ -1,0 +1,12 @@
+<%= @host.graphs.collect { |g| "<a href=\"##{g.name}\">#{g.name}</a>" }.join(" ") %>
+
+<% @host.graphs.each do |g| %>
+  <div class="graphsection">
+    <a name="<%= g.name %>"</a>
+    <span class="graphtitle"><%= g.name %></span>
+    <span class="dashlinks"><%= suggest_dashboards_links(@host, g) %></span>
+    <div class="graph">
+      <img src="<%= g.render_url([@host.name], [@host.cluster], :title => "#{g.name} / #{@host.cluster} / #{@host.name}") %>" />
+    </div>
+  </div>
+<% end %>

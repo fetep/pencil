@@ -1,0 +1,30 @@
+<html>
+<head>
+<link href="/style.css?2" rel="stylesheet" type="text/css">
+<link href="/favicon.ico" rel="icon" type="text/x-icon">
+<link href="/favicon.ico" rel="shortcut icon" type="text/x-icon">
+</head>
+<body bgcolor="black">
+
+<div id="wrap">
+    <div id="header">
+        <h2><%= @title %></h2>
+    </div>
+
+    <div id="nav">
+<% if @cluster %>
+        <ul>
+<% @dashboards.sort.each do |dash| %>
+            <li><a href="<%= dash_link(dash, @cluster) %>"><%= dash['title'] %></a></li>
+<% end %>
+        </ul>
+    </div>
+<% end %>
+
+    <div id="main">
+        <%= yield %>
+    </div>
+</div>
+</body>
+</html>
+

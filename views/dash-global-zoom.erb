@@ -1,0 +1,12 @@
+<h2>dashboard :: <%= @cluster %> :: <%= @dash['title'] %> :: <%= @zoom.name %></h2>
+
+<% hosts, clusters = @dash.get_valid_hosts(@zoom) %>
+
+<h3><%= @zoom.name %> overview</h3>
+<img src="<%= @dash.render_global_graph(@zoom) %>" />
+<img src="<%= @dash.render_global_graph(@zoom, true) %>" />
+
+<% clusters.sort.each do |cluster| %>
+    <h3><%= @zoom.name %> / <%= cluster %></h3>
+    <%= cluster_graph(@zoom, cluster) %>
+<% end %>
