@@ -3,7 +3,6 @@
 require "rubygems"
 require "namespace"
 
-#require "json"
 require "config"
 require "erb"
 require "helpers"

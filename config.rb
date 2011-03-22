@@ -1,5 +1,4 @@
 require "rubygems"
-require "json"
 require "models"
 
 module Dash
