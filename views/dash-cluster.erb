@@ -1,4 +1,4 @@
-<link href="/style.css" rel="stylesheet" type="text/css">
+<%= css_url %>
 
 <%= @dash.graphs.collect { |g| "<a href=\"##{g.name}\">#{g.name}</a>" }.join(" ") %>
 

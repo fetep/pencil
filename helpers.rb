@@ -52,4 +52,11 @@ module Dash::Helpers
   def dash_link(dash, cluster)
     return "/dash/#{cluster}/#{dash.name}"
   end
+
+  def css_url
+    mtime = File.mtime('public/style.css').to_i.to_s
+    return \
+    %Q[<link href="/style.css?#{mtime}" rel="stylesheet" type="text/css">]
+  end
+
 end
