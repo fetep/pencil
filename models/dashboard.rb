@@ -5,7 +5,9 @@ require "set"
 
 module Dash::Models
   class Dashboard < Base
+    CACHE_EXPIRE_TIME = 3600 # in seconds
     attr_accessor :graphs
+    attr_accessor :cache # {graph=> [GEN_TIME,HOSTS,CLUSTERS]}
 
     def initialize(name, params={})
       super
@@ -15,31 +17,38 @@ module Dash::Models
         g = Graph.find(name)
         @graphs << g if g
       end
+
+      @cache = {}
     end
 
+    # now with caching!
     def get_valid_hosts(graph, cluster=nil)
-      metrics = expand(graph)
+      if Time.now.to_i - (cache[graph]||[0]).first > CACHE_EXPIRE_TIME
+        puts "#{graph.name} cache #{cache[graph] ? 'stale' : 'miss'}"
+        metrics = expand(graph)
 
-      clusters = Set.new
-      if cluster
-        metrics = metrics.select { |m| m[-2] == cluster }
+        clusters = Set.new
+        if cluster
+          metrics = metrics.select { |m| m[-2] == cluster }
+        end
+
+        # field -1 is the host name, and -2 is its cluster
+        hosts = metrics.map { |x| Host.new(x[-1], {'cluster' => x[-2]}) }
+
+        # filter by what matches the graph definition
+        hosts = hosts.select { |h| h.multi_match(graph['hosts']) }
+
+        # filter if we have a dashboard-level 'hosts' filter
+        if @params['hosts']
+          hosts = hosts.select { |h| h.multi_match(@params['hosts']) }
+        end
+
+        hosts.each { |h| clusters << h.cluster }
+        hosts = hosts.collect { |h| h.name }.uniq # host name w/o cluster
+        cache[graph] = [Time.now.to_i, hosts, clusters]
       end
 
-      # field -1 is the host name, and -2 is its cluster
-      hosts = metrics.map { |x| Host.new(x[-1], {'cluster' => x[-2]}) }
-
-      # filter by what matches the graph definition
-      hosts = hosts.select { |h| h.multi_match(graph['hosts']) }
-
-      # filter if we have a dashboard-level 'hosts' filter
-      if @params['hosts']
-        hosts = hosts.select { |h| h.multi_match(@params['hosts']) }
-      end
-
-      hosts.each { |h| clusters << h.cluster }
-      hosts = hosts.collect { |h| h.name }.uniq # host name w/o cluster
-
-      return hosts, clusters
+      return cache[graph][1], cache[graph][2]
     end
 
     # return an array of all metrics matching the specifications in graph['metrics']
