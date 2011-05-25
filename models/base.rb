@@ -39,7 +39,7 @@ module Dash::Models
       else
         glob_re = /^#{glob_parts.join('.*')}$/
       end
-      puts "trying to match #{@match_name} against #{glob_re}"
+      #puts "trying to match #{@match_name} against #{glob_re}"
       return @match_name.match(glob_re)
     end
 

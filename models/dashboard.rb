@@ -18,13 +18,15 @@ module Dash::Models
     end
 
     def get_valid_hosts(graph, cluster=nil)
+      metrics = expand(graph)
+
       clusters = Set.new
       if cluster
-        hosts = Host.find_by_cluster(cluster)
-      else
-        hosts = Host.all
-        hosts.each { |h| clusters << h.cluster }
+        metrics = metrics.select { |m| m[-2] == cluster }
       end
+
+      # field -1 is the host name, and -2 is its cluster
+      hosts = metrics.map { |x| Host.new(x[-1], {'cluster' => x[-2]}) }
 
       # filter by what matches the graph definition
       hosts = hosts.select { |h| h.multi_match(graph['hosts']) }
@@ -40,12 +42,25 @@ module Dash::Models
       return hosts, clusters
     end
 
-    def render_cluster_graph(graph, clusters, opts={})
-      hosts = Set.new
-      clusters.each do |cluster|
-        new_hosts, new_clusters = get_valid_hosts(graph, cluster)
-        hosts.merge(new_hosts)
+    # return an array of all metrics matching the specifications in graph['metrics']
+    # metrics are arrays of fields (once delimited by periods)
+    def expand(graph)
+      url = "http://graphite.scl2.svc.mozilla.com/metrics/expand/?query="
+      hosts = @params['hosts'] || graph['hosts']
+      metrics = []
+
+      graph['metrics'].each do |metric|
+        query = open("#{url}#{metric.first}.*.*").read
+        metrics << JSON.parse(query)['results']
       end
+
+      return metrics.flatten.map { |x| x.split('.') }
+    end
+
+    def render_cluster_graph(graph, clusters, opts={})
+      # FIXME: edge case where the dash filter does not filter to a subset of the hosts filter
+      # for now, simply use dash filters (or inherit graph filters when no dash filters are defined)
+      hosts = (@params['hosts'] || graph['hosts']).to_set
 
       if opts[:zoom]
         graph_url = graph.render_url(hosts.to_a, clusters, opts)
@@ -57,7 +72,8 @@ module Dash::Models
     end
 
     def render_global_graph(graph, opts={})
-      hosts, clusters = get_valid_hosts(graph)
+      hosts = @params['hosts'] || graph['hosts']
+      clusters = expand(graph).map { |x| x[-2] }.uniq
 
       next_url = ""
       if opts[:zoom]

@@ -9,6 +9,8 @@ require "helpers"
 require "models"
 require "rack"
 require "sinatra/base"
+require "json"
+require "open-uri"
 
 $:.unshift(File.dirname(__FILE__))
 
@@ -77,9 +79,12 @@ module Dash
     end
 
     get '/host/:cluster/:host' do
+      @host = Host.new(params[:host], { 'cluster' => params[:cluster] })
       @cluster = params[:cluster]
-      @host = Host.find_by_name_and_cluster(params[:host], params[:cluster])
-      raise "Unknown host: #{params[:host]} in #{params[:cluster]}" unless @host
+      # FIXME without predefined hosts, it's more difficult to error out here, 
+      # because many graphs like cpu_usage use "*" as their match.
+      # (basically you would have to check the graphite results for a metric)
+      # raise "Unknown host: #{params[:host]} in #{params[:cluster]}" unless @host
 
       @title = "host :: #{@host.name}"
 

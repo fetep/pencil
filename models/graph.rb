@@ -26,8 +26,8 @@ module Dash::Models
       end
 
       url_opts = {
-        :width => 500,
-        :height => 200,
+        :width => 1000,
+        :height => 400,
         :from => "-2hours",  # TODO: better timepsec handling
         :title => opts[:title],
         :template => "noc",

@@ -11,8 +11,12 @@ h2 {
   font-size: small;
 }
 
-a, a:visited {
-  color: #5591FE;
+a {
+  color: #15317E;
+}
+
+a:visited {
+  color: #15317E;
 }
 
 .graphsection {
