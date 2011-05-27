@@ -121,7 +121,8 @@ module Dash::Models
     def self.find_by_graph(graph)
       ret = []
       Dashboard.each do |name, dash|
-        if dash['graphs'].member?(graph.name)
+
+        if dash['graphs'].map { |x| x.keys.first }.member?(graph.name)
           ret << dash
         end
       end
