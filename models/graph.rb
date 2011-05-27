@@ -83,8 +83,17 @@ module Dash::Models
             hosts.each do |host|
               label = "#{host} #{opts[:key]}"
               metric = _target("#{stat_name}.#{cluster}.#{host}")
-              target << "alias(#{metric}, \"#{host}/#{cluster} #{label}\")"
-              colors << next_color(colors, opts[:color])
+              if label =~ /\*/
+                # fixme proper labeling... maybe
+                # With wildcards let graphite contruct the legend (or not).
+                # Since we're handling wildcards we don't know how many
+                # hosts will match, so just put in the default color list.
+                target << metric
+                colors.concat(@params[:default_colors]) if colors.empty?
+              else
+                target << "alias(#{metric}, \"#{host}/#{cluster} #{label}\")"
+                colors << next_color(colors, opts[:color])
+              end
             end
           end
         end # @params["metrics"].each

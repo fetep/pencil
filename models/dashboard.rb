@@ -84,15 +84,11 @@ module Dash::Models
 
     def render_cluster_graph(graph, clusters, opts={})
       # FIXME: edge case where the dash filter does not filter to a subset of the hosts filter
-      # for now, simply use dash filters (or inherit graph filters when no dash filters are defined)
 
+      hosts = get_host_wildcards(graph)
       if opts[:zoom]
-        # expand out fully, so that if there are few enough metrics being graphed
-        # that graphite displays a legend the legend is useful
-        hosts, _ = get_valid_hosts(graph)
         graph_url = graph.render_url(hosts.to_a, clusters, opts)
       else
-        hosts = get_host_wildcards(graph)
         opts[:sum] = :cluster
         graph_url = graph.render_url(hosts.to_a, clusters, opts)
       end
