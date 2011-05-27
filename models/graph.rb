@@ -115,13 +115,13 @@ module Dash::Models
 
     private
     def next_color(colors, preferred_color=nil)
-      default_colors = @params[:default_colors]
+      default_colors = @params[:default_colors].clone
 
       if preferred_color and !colors.member?(preferred_color)
         return preferred_color
       end
 
-      if ! default_colors.member?(preferred_color)
+      if preferred_color and ! default_colors.member?(preferred_color)
         default_colors << preferred_color
       end
 
