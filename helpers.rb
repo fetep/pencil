@@ -35,7 +35,6 @@ module Dash::Helpers
     return "(" + links.join(", ") + ")"
   end
 
-  # FIXME gigantic performance hit with this, probably from expand()
   def suggest_dashboards(host, graph)
     ret = Set.new
 

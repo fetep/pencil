@@ -25,6 +25,7 @@ module Dash::Models
         raise ArgumentError, "render graph #{name}: invalid :sum - #{opts[:sum]}"
       end
 
+      # fixme make these configurable
       url_opts = {
         :width => 1000,
         :height => 400,
@@ -92,7 +93,7 @@ module Dash::Models
       url_opts[:target] = target
       url_opts[:colorList] = colors.join(",")
 
-      url = "http://graphite.scl2.svc.mozilla.com/render/?"
+      url = URI.join(@params[:graphite_url], "/render/?").to_s
       url_parts = []
       url_opts.each do |k, v|
         [v].flatten.each do |v|
@@ -114,9 +115,7 @@ module Dash::Models
 
     private
     def next_color(colors, preferred_color=nil)
-      # TODO: should be a global config
-      default_colors = ["blue", "green", "yellow", "red", "purple",
-                        "brown", "aqua", "gold"]
+      default_colors = @params[:default_colors]
 
       if preferred_color and !colors.member?(preferred_color)
         return preferred_color

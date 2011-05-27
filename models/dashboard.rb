@@ -14,7 +14,23 @@ module Dash::Models
 
       @graphs = []
       params["graphs"].each do |name|
-        g = Graph.find(name)
+        # graphs can now map to option hashes, which in the current
+        # implementation override the graph's original parameters
+        # :override is observed by dashboards when choosing the appropriate
+        # hosts to send off to graphite
+
+        # if we ever decide to fix support for arbitrary graph AND dash filters
+        # concurrently probably a new key like :expand could be used
+        if name.instance_of?(Hash)
+          g = Graph.find(name.keys.first) # should only be one key
+          if g && name.values.first
+            h = name.values.first.member?('hosts') ? {:override => true} : {}
+            g.update_params(name.values.first.merge(h))
+          end
+        else
+          g = Graph.find(name)
+        end
+
         @graphs << g if g
       end
 
@@ -54,7 +70,7 @@ module Dash::Models
     # return an array of all metrics matching the specifications in graph['metrics']
     # metrics are arrays of fields (once delimited by periods)
     def expand(graph)
-      url = "http://graphite.scl2.svc.mozilla.com/metrics/expand/?query="
+      url = URI.join(@params[:graphite_url], "/metrics/expand/?query=").to_s
       hosts = @params['hosts'] || graph['hosts']
       metrics = []
 
@@ -69,7 +85,7 @@ module Dash::Models
     def render_cluster_graph(graph, clusters, opts={})
       # FIXME: edge case where the dash filter does not filter to a subset of the hosts filter
       # for now, simply use dash filters (or inherit graph filters when no dash filters are defined)
-      hosts = (@params['hosts'] || graph['hosts']).to_set
+      hosts = get_host_wildcards(graph)
 
       if opts[:zoom]
         graph_url = graph.render_url(hosts.to_a, clusters, opts)
@@ -80,8 +96,17 @@ module Dash::Models
       return graph_url
     end
 
+    def get_host_wildcards (graph)
+      if graph[:override]
+        hosts = graph['hosts']
+      else
+        hosts = @params['hosts'] || graph['hosts']
+      end
+      return hosts
+    end
+
     def render_global_graph(graph, opts={})
-      hosts = @params['hosts'] || graph['hosts']
+      hosts = get_host_wildcards(graph)
       clusters = expand(graph).map { |x| x[-2] }.uniq
 
       next_url = ""

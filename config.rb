@@ -17,28 +17,35 @@ module Dash
       reload!
     end
 
-    def config(name, value)
-      @rawconfig[name] = value
-    end
-
     def reload!
-      configs = Dir.glob("#{@confdir}/*.rb")
-      configs.each { |c| eval(File.read(c)) }
+      configs = Dir.glob("#{@confdir}/*.yml")
+      configs.each { |c| @rawconfig.merge!(YAML.load(open(c).read)) }
 
-      [:graphs, :dashboards].each do |c|
+      [:graphs, :dashboards, :config].each do |c|
         if not @rawconfig[c]
           raise "Missing config name '#{c.to_s}'"
         end
       end
 
+      global_config = @rawconfig[:config]
+      # do some sanity checking of other configuration parameters
+      [:graphite_url].each do |c|
+        if not global_config[c]
+          raise "Missing config name '#{c.to_s}'"
+        end
+      end
+
+      global_config[:default_colors] ||=
+        ["blue", "green", "yellow", "red", "purple", "brown", "aqua", "gold"]
+
       graphs_new = []
       @rawconfig[:graphs].each do |name, config|
-        graphs_new << Graph.new(name, config)
+        graphs_new << Graph.new(name, config.merge(global_config))
       end
 
       dashboards_new = []
       @rawconfig[:dashboards].each do |name, config|
-        dashboards_new << Dashboard.new(name, config)
+        dashboards_new << Dashboard.new(name, config.merge(global_config))
       end
 
       @dashboards, @graphs= dashboards_new, graphs_new

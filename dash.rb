@@ -11,6 +11,7 @@ require "rack"
 require "sinatra/base"
 require "json"
 require "open-uri"
+require "yaml"
 
 $:.unshift(File.dirname(__FILE__))
 
@@ -33,7 +34,7 @@ module Dash
     end
 
     get '/' do
-      # redirect to /dash
+      redirect '/dash'
     end
 
     get '/dash/:cluster/:dashboard/:zoom' do
@@ -71,11 +72,12 @@ module Dash
     end
 
     get '/dash/:cluster' do
-      "List of dashboards for #{params[:cluster]}"
+      @cluster = params[:cluster]
+      erb :dash
     end
 
     get '/dash' do
-      "List of dashboards"
+      redirect '/dash/global'
     end
 
     get '/host/:cluster/:host' do

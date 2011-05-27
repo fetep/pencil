@@ -1,7 +1,6 @@
 module Dash::Models
   class Base
     @@objects = Hash.new { |h, k| h[k] = Hash.new }
-
     attr_reader :name
 
     def initialize(name, params={})
@@ -61,5 +60,10 @@ module Dash::Models
     def <=>(other)
       return to_s <=> other.to_s
     end
+
+    def update_params (hash)
+      @params.merge!(hash)
+    end
+
   end # Dash::Models::Base
 end # Dash::Models
