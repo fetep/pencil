@@ -1,7 +1,7 @@
 module Dash::Helpers
   include Dash::Models
 
-  def cluster_graph(g, cluster, title)
+  def cluster_graph(g, cluster, title="wtf")
     image_url = @dash.render_cluster_graph(g, cluster, :title => title)
     zoom_url = cluster_graph_link(@dash.name, g, cluster)
     return image_url, zoom_url
@@ -58,4 +58,10 @@ module Dash::Helpers
     %Q[<link href="/style.css?#{mtime}" rel="stylesheet" type="text/css">]
   end
 
+  def refresh
+    if settings.config.global_config[:refresh_rate]
+      rate = settings.config.global_config[:refresh_rate] || 60
+      return %Q[<meta http-equiv="refresh" content="#{rate}">]
+    end
+  end
 end

@@ -36,7 +36,7 @@ module Dash::Models
         :yMin => 0,
         :margin => 5,
         :thickness => 2,
-      }
+      }.merge(@params[:url_opts])
 
       if @params["stack"] == true
         url_opts[:areaMode] = "stacked"

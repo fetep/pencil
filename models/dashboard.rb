@@ -83,7 +83,8 @@ module Dash::Models
     end
 
     def render_cluster_graph(graph, clusters, opts={})
-      # FIXME: edge case where the dash filter does not filter to a subset of the hosts filter
+      # FIXME: edge case where the dash filter does not filter to a subset of
+      # the hosts filter
 
       hosts = get_host_wildcards(graph)
       if opts[:zoom]
