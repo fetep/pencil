@@ -134,7 +134,7 @@ STR
   end
 
   def merge_opts
-    params.delete_if { |k,v| v.empty? }.merge(session)
+    session.merge(params.delete_if { |k,v| v.empty? })
   end
 
 end
