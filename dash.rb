@@ -42,7 +42,7 @@ module Dash
     end
 
     get '/dash/:cluster/:dashboard/:zoom' do
-      session[:not]
+      session[:not] #fixme why are these neccesary?????
       @cluster = params[:cluster]
       @dash = Dashboard.find(params[:dashboard])
       raise "Unknown dashboard: #{params[:dashboard]}.inspect" unless @dash
