@@ -1,26 +1,33 @@
 module Dash::Helpers
   include Dash::Models
 
+  @@prefs = [["Start", "from"],
+             ["End", "until"],
+             ["Width", "width"],
+             ["Height", "height"]]
+
   def cluster_graph(g, cluster, title="wtf")
-    image_url = @dash.render_cluster_graph(g, cluster, :title => title)
+    image_url = \
+    @dash.render_cluster_graph(g, cluster, 
+                               :title => title,
+                               :dynamic_url_opts => merge_opts)
     zoom_url = cluster_graph_link(@dash.name, g, cluster)
     return image_url, zoom_url
   end
 
   def cluster_graph_link(name, g, cluster)
-    # TODO: preserve URL params
-    return "/dash/#{cluster}/#{name}/#{g.name}"
+    return append_query_string("/dash/#{cluster}/#{name}/#{g.name}")
   end
 
   def cluster_zoom_graph(g, cluster, host, title)
-    image_url = g.render_url([host], [cluster], :title => title)
+    image_url = g.render_url([host], [cluster], :title => title,
+                             :dynamic_url_opts => merge_opts)
     zoom_url = cluster_zoom_link(cluster, host)
     return image_url, zoom_url
   end
 
   def cluster_zoom_link(cluster, host)
-    # TODO: preserve URL params
-    return "/host/#{cluster}/#{host}"
+    return append_query_string("/host/#{cluster}/#{host}")
   end
 
   def suggest_dashboards_links(host, graph)
@@ -29,7 +36,7 @@ module Dash::Helpers
 
     links = []
     suggested.each do |d|
-      links << "<a href=\"/dash/#{host.cluster}/#{d}\">" +
+      links << "<a href=\"/dash/#{host.cluster}/#{append_query_string(d)}\">" +
                "#{d}</a>"
     end
     return "(" + links.join(", ") + ")"
@@ -48,8 +55,55 @@ module Dash::Helpers
     return ret
   end
 
+  # generate the input box fields, filled in to url parameters if specified
+  # fixme html formatting
+  # fixme fill in cookied params as well?
+  def input_boxen
+    result = '<form name="input" method="get">'
+    @@prefs.each do |label, name|
+      result << "\n"
+      result << "#{label}: <input "
+      if params[name]
+        result << "value=\"#{params[name]}\" "
+      end
+      result << "type=\"text\" name=\"#{name}\"><br>"
+    end
+
+    result << '<input type="submit" value="Submit"/>' + 
+      '</form> <form method="get"> <input type="submit" value="Clear"></form>'
+    return result
+  end
+
+  def cookies_form
+    result = '<form action="/saveprefs" name="input" method="get">'
+    @@prefs.each do |label, name|
+      if params[name]
+        result << "\n"
+        result << "<input value=\"#{params[name]}\" "
+        result << "type=\"hidden\" name=\"#{name}\"><br>"
+      end
+    end
+
+    result << <<STR
+<input type=\"submit\" value=\"save preferences in a cookie\"/>
+</form>
+
+<form action="/clear" name="clear" method="get">
+<input type="submit" value="clear cookies"/>
+</form>
+STR
+
+  end
+
+  ##########################################################!!!
+  def refresh_button
+    # <<F
+    # <form action="#{append_query_string(request.path)}" method="get"> <input type="submit" value="Refresh"></form>
+    # F
+  end
+
   def dash_link(dash, cluster)
-    return "/dash/#{cluster}/#{dash.name}"
+    return append_query_string("/dash/#{cluster}/#{dash.name}")
   end
 
   def css_url
@@ -64,4 +118,15 @@ module Dash::Helpers
       return %Q[<meta http-equiv="refresh" content="#{rate}">]
     end
   end
+
+  def append_query_string(str)
+    v = str.dup
+    (v << "?#{request.query_string}") if !request.query_string.empty?
+    return v
+  end
+
+  def merge_opts
+    params.delete_if { |k,v| v.empty? }.merge(session)
+  end
+
 end

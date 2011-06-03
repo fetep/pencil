@@ -6,7 +6,7 @@
     <span class="graphtitle"><%= g.name %></span>
     <span class="dashlinks"><%= suggest_dashboards_links(@host, g) %></span>
     <div class="graph">
-      <img src="<%= g.render_url([@host.name], [@host.cluster], :title => "#{g.name} / #{@host.cluster} / #{@host.name}") %>" />
+      <img src="<%= g.render_url([@host.name], [@host.cluster], :title => "#{g.name} / #{@host.cluster} / #{@host.name}", :dynamic_url_opts => merge_opts) %>" />
     </div>
   </div>
 <% end %>

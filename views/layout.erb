@@ -18,6 +18,10 @@
 <% @dashboards.sort.each do |dash| %>
             <li><a href="<%= dash_link(dash, @cluster) %>"><%= dash['title'] %></a></li>
 <% end %>
+
+<%= input_boxen %>
+<%= refresh_button %>
+
         </ul>
     </div>
 <% end %>
@@ -26,6 +30,8 @@
         <%= yield %>
     </div>
 </div>
+
+<%= cookies_form %>
+
 </body>
 </html>
-

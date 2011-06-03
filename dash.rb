@@ -13,6 +13,9 @@ require "json"
 require "open-uri"
 require "yaml"
 
+# fixme style.css isn't actually cached, you need to set something up with
+# rack to cache static files
+
 $:.unshift(File.dirname(__FILE__))
 
 module Dash
@@ -34,10 +37,12 @@ module Dash
     end
 
     get '/' do
+      session[:not]
       redirect '/dash'
     end
 
     get '/dash/:cluster/:dashboard/:zoom' do
+      session[:not]
       @cluster = params[:cluster]
       @dash = Dashboard.find(params[:dashboard])
       raise "Unknown dashboard: #{params[:dashboard]}.inspect" unless @dash
@@ -58,6 +63,7 @@ module Dash
     end
 
     get '/dash/:cluster/:dashboard' do
+      session[:not]
       @cluster = params[:cluster]
       @dash = Dashboard.find(params[:dashboard])
       raise "Unknown dashboard: #{params[:dashboard]}.inspect" unless @dash
@@ -72,6 +78,7 @@ module Dash
     end
 
     get '/dash/:cluster' do
+      session[:not]
       @cluster = params[:cluster]
       erb :dash
     end
@@ -81,6 +88,7 @@ module Dash
     end
 
     get '/host/:cluster/:host' do
+      session[:not]
       @host = Host.new(params[:host], { 'cluster' => params[:cluster] })
       @cluster = params[:cluster]
       # FIXME without predefined hosts, it's more difficult to error out here, 
@@ -91,6 +99,20 @@ module Dash
       @title = "host :: #{@host.name}"
 
       erb :host
+    end
+
+    get '/saveprefs' do
+      puts 'saving prefs'
+      params.each do |k,v|
+        session[k] = v if !v.empty?
+      end
+      redirect URI.parse(request.referer).path
+    end
+
+    get '/clear' do
+      puts 'clearing prefs'
+      session.clear
+      redirect URI.parse(request.referer).path
     end
   end # Dash::App
 end # Dash

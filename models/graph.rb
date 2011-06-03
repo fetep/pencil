@@ -25,7 +25,11 @@ module Dash::Models
         raise ArgumentError, "render graph #{name}: invalid :sum - #{opts[:sum]}"
       end
 
-      # fixme make these configurable
+      sym_hash = {}
+      (opts[:dynamic_url_opts]||[]).each do |k,v|
+        sym_hash[k.to_sym] = v
+      end
+
       url_opts = {
         :width => 1000,
         :height => 400,
@@ -36,7 +40,7 @@ module Dash::Models
         :yMin => 0,
         :margin => 5,
         :thickness => 2,
-      }.merge(@params[:url_opts])
+      }.merge(@params[:url_opts]).merge(sym_hash)
 
       if @params["stack"] == true
         url_opts[:areaMode] = "stacked"
