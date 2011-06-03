@@ -95,11 +95,19 @@ STR
 
   end
 
-  ##########################################################!!!
   def refresh_button
-    # <<F
-    # <form action="#{append_query_string(request.path)}" method="get"> <input type="submit" value="Refresh"></form>
-    # F
+    result = "<form action=\"#{request.path}\" name=\"input\" method=\"get\">"
+    @@prefs.each do |label, name|
+      if params[name]
+        result << "\n"
+        result << "<input value=\"#{params[name]}\" "
+        result << "type=\"hidden\" name=\"#{name}\"><br>"
+      end
+    end
+    result << <<STR
+<input type=\"submit\" value=\"Refresh\"/>
+</form>
+STR
   end
 
   def dash_link(dash, cluster)
