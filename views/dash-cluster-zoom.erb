@@ -5,7 +5,7 @@
 <div class="graphsection">
   <span class="graphtitle"><%= @zoom.name %> / <%= @cluster %> :: summary</span>
   <div class="graph">
-    <img src="<%= @dash.render_cluster_graph(@zoom, @cluster) %>" />
+    <img src="<%= @dash.render_cluster_graph(@zoom, @cluster, :dynamic_url_opts => merge_opts) %>" />
   </div>
 </div>
 
@@ -13,7 +13,7 @@
   <a name="by_host"></a>
   <span class="graphtitle"><%= @zoom.name %> / <%= @cluster %> :: by host</span>
   <div class="graph">
-    <img src="<%= @dash.render_cluster_graph(@zoom, @cluster, :zoom => true) %>" />
+    <img src="<%= @dash.render_cluster_graph(@zoom, @cluster, :zoom => true, :dynamic_url_opts => merge_opts) %>" />
   </div>
 </div>
 

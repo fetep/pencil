@@ -1,5 +1,3 @@
-<h2>dashboard :: global :: <%= @dash['title'] %></h2>
-
 <% @dash.graphs.each do |g| %>
   <h3><%= g.name %></h3>
   <img src="<%= @dash.render_global_graph(g) %>" />
