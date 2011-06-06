@@ -3,8 +3,8 @@
 <% hosts, clusters = @dash.get_valid_hosts(@zoom) %>
 
 <h3><%= @zoom.name %> overview</h3>
-<img src="<%= @dash.render_global_graph(@zoom) %>" />
-<img src="<%= @dash.render_global_graph(@zoom, true) %>" />
+<img src="<%= @dash.render_global_graph(@zoom,:dynamic_url_opts => merge_opts) %>" />
+<img src="<%= @dash.render_global_graph(@zoom, :dynamic_url_opts => merge_opts) %>" />
 
 <% clusters.sort.each do |cluster| %>
     <h3><%= @zoom.name %> / <%= cluster %></h3>

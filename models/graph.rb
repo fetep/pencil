@@ -25,9 +25,14 @@ module Dash::Models
         raise ArgumentError, "render graph #{name}: invalid :sum - #{opts[:sum]}"
       end
 
+      sym_hash = {}
+      (opts[:dynamic_url_opts]||[]).each do |k,v|
+        sym_hash[k.to_sym] = v
+      end
+
       url_opts = {
-        :width => 500,
-        :height => 200,
+        :width => 1000,
+        :height => 400,
         :from => "-2hours",  # TODO: better timepsec handling
         :title => opts[:title],
         :template => "noc",
@@ -35,7 +40,7 @@ module Dash::Models
         :yMin => 0,
         :margin => 5,
         :thickness => 2,
-      }
+      }.merge(@params[:url_opts]).merge(sym_hash)
 
       if @params["stack"] == true
         url_opts[:areaMode] = "stacked"
@@ -82,8 +87,17 @@ module Dash::Models
             hosts.each do |host|
               label = "#{host} #{opts[:key]}"
               metric = _target("#{stat_name}.#{cluster}.#{host}")
-              target << "alias(#{metric}, \"#{host}/#{cluster} #{label}\")"
-              colors << next_color(colors, opts[:color])
+              if label =~ /\*/
+                # fixme proper labeling... maybe
+                # With wildcards let graphite contruct the legend (or not).
+                # Since we're handling wildcards we don't know how many
+                # hosts will match, so just put in the default color list.
+                target << metric
+                colors.concat(@params[:default_colors]) if colors.empty?
+              else
+                target << "alias(#{metric}, \"#{host}/#{cluster} #{label}\")"
+                colors << next_color(colors, opts[:color])
+              end
             end
           end
         end # @params["metrics"].each
@@ -92,7 +106,7 @@ module Dash::Models
       url_opts[:target] = target
       url_opts[:colorList] = colors.join(",")
 
-      url = "http://graphite.scl2.svc.mozilla.com/render/?"
+      url = URI.join(@params[:graphite_url], "/render/?").to_s
       url_parts = []
       url_opts.each do |k, v|
         [v].flatten.each do |v|
@@ -114,15 +128,13 @@ module Dash::Models
 
     private
     def next_color(colors, preferred_color=nil)
-      # TODO: should be a global config
-      default_colors = ["blue", "green", "yellow", "red", "purple",
-                        "brown", "aqua", "gold"]
+      default_colors = @params[:default_colors].clone
 
       if preferred_color and !colors.member?(preferred_color)
         return preferred_color
       end
 
-      if ! default_colors.member?(preferred_color)
+      if preferred_color and ! default_colors.member?(preferred_color)
         default_colors << preferred_color
       end
 

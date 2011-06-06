@@ -1,9 +1,9 @@
 <html>
 <head>
-<link href="/style.css?2" rel="stylesheet" type="text/css">
+<%= css_url %>
 <link href="/favicon.ico" rel="icon" type="text/x-icon">
 <link href="/favicon.ico" rel="shortcut icon" type="text/x-icon">
-<meta http-equiv="refresh" content="60">
+<%= refresh %>
 </head>
 <body bgcolor="black">
 
@@ -18,6 +18,10 @@
 <% @dashboards.sort.each do |dash| %>
             <li><a href="<%= dash_link(dash, @cluster) %>"><%= dash['title'] %></a></li>
 <% end %>
+
+<%= input_boxen %>
+<%= refresh_button %>
+
         </ul>
     </div>
 <% end %>
@@ -26,6 +30,8 @@
         <%= yield %>
     </div>
 </div>
+
+<%= cookies_form %>
+
 </body>
 </html>
-

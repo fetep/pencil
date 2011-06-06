@@ -9,6 +9,12 @@ require "helpers"
 require "models"
 require "rack"
 require "sinatra/base"
+require "json"
+require "open-uri"
+require "yaml"
+
+# fixme style.css isn't actually cached, you need to set something up with
+# rack to cache static files
 
 $:.unshift(File.dirname(__FILE__))
 
@@ -31,10 +37,12 @@ module Dash
     end
 
     get '/' do
-      # redirect to /dash
+      session[:not]
+      redirect '/dash'
     end
 
     get '/dash/:cluster/:dashboard/:zoom' do
+      session[:not] #fixme why are these neccesary?????
       @cluster = params[:cluster]
       @dash = Dashboard.find(params[:dashboard])
       raise "Unknown dashboard: #{params[:dashboard]}.inspect" unless @dash
@@ -55,6 +63,7 @@ module Dash
     end
 
     get '/dash/:cluster/:dashboard' do
+      session[:not]
       @cluster = params[:cluster]
       @dash = Dashboard.find(params[:dashboard])
       raise "Unknown dashboard: #{params[:dashboard]}.inspect" unless @dash
@@ -69,21 +78,41 @@ module Dash
     end
 
     get '/dash/:cluster' do
-      "List of dashboards for #{params[:cluster]}"
+      session[:not]
+      @cluster = params[:cluster]
+      erb :dash
     end
 
     get '/dash' do
-      "List of dashboards"
+      redirect '/dash/global'
     end
 
     get '/host/:cluster/:host' do
+      session[:not]
+      @host = Host.new(params[:host], { 'cluster' => params[:cluster] })
       @cluster = params[:cluster]
-      @host = Host.find_by_name_and_cluster(params[:host], params[:cluster])
-      raise "Unknown host: #{params[:host]} in #{params[:cluster]}" unless @host
+      # FIXME without predefined hosts, it's more difficult to error out here, 
+      # because many graphs like cpu_usage use "*" as their match.
+      # (basically you would have to check the graphite results for a metric)
+      # raise "Unknown host: #{params[:host]} in #{params[:cluster]}" unless @host
 
       @title = "host :: #{@host.name}"
 
       erb :host
+    end
+
+    get '/saveprefs' do
+      puts 'saving prefs'
+      params.each do |k,v|
+        session[k] = v if !v.empty?
+      end
+      redirect URI.parse(request.referer).path
+    end
+
+    get '/clear' do
+      puts 'clearing prefs'
+      session.clear
+      redirect URI.parse(request.referer).path
     end
   end # Dash::App
 end # Dash
