@@ -30,16 +30,9 @@ module Dash::Models
         sym_hash[k.to_sym] = v
       end
 
+      #fixme key checking may be neccesary
       url_opts = {
-        :width => 1000,
-        :height => 400,
-        :from => "-2hours",  # TODO: better timepsec handling
         :title => opts[:title],
-        :template => "noc",
-        :fontSize => 12,
-        :yMin => 0,
-        :margin => 5,
-        :thickness => 2,
       }.merge(@params[:url_opts]).merge(sym_hash)
 
       if @params["stack"] == true

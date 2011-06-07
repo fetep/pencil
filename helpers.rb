@@ -6,6 +6,14 @@ module Dash::Helpers
              ["Width", "width"],
              ["Height", "height"]]
 
+  # convert keys to symbols before lookup
+  def param_lookup (name)
+    sym_hash = {}
+    session.each { |k,v| sym_hash[k.to_sym] = v }
+    params.each { |k,v| sym_hash[k.to_sym] = v }
+    settings.config.global_config[:url_opts].merge(sym_hash)[name.to_sym]
+  end
+
   def cluster_graph(g, cluster, title="wtf")
     image_url = \
     @dash.render_cluster_graph(g, cluster, 
@@ -63,9 +71,12 @@ module Dash::Helpers
     @@prefs.each do |label, name|
       result << "\n"
       result << "#{label}: <input "
-      if params[name]
-        result << "value=\"#{params[name]}\" "
+      if param_lookup(name)
+        result << "value=\"#{param_lookup(name)}\" "
+      elsif name == "until" # special case
+        result << "value=\"now\" "
       end
+    
       result << "type=\"text\" name=\"#{name}\"><br>"
     end
 

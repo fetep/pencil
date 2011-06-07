@@ -37,6 +37,8 @@ module Dash
         end
       end
 
+      # possibly check url_opts here as well
+
       @global_config[:default_colors] ||=
         ["blue", "green", "yellow", "red", "purple", "brown", "aqua", "gold"]
 

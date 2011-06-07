@@ -24,7 +24,7 @@ module Dash
     helpers Dash::Helpers
     set :config, Dash::Config.new
     set :run, true
-    set :sessions, true
+    use Rack::Session::Cookie, :expire_after => 126227700
     set :static, true
     set :public, File.join(File.dirname(__FILE__), "public")
 
