@@ -5,7 +5,7 @@
 <h2><%= @cluster %></h2>
 <% @dash.graphs.each do |g| %>
   <div class="graphsection">
-    <a name="<%= g.name %>"></a>
+    <a name="<%= g.name %>">
     <% image_url, zoom_url = cluster_graph(g, @cluster, "#{g.name} / #{@cluster}") %>
     <span class="graphtitle"><%= g.name %></span>
     <span class="dashlinks">(<a href="<%= zoom_url %>">zoom</a>)</span>

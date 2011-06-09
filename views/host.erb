@@ -2,7 +2,7 @@
 
 <% @host.graphs.each do |g| %>
   <div class="graphsection">
-    <a name="<%= g.name %>"</a>
+    <a name="<%= g.name %>">
     <span class="graphtitle"><%= g.name %></span>
     <span class="dashlinks"><%= suggest_dashboards_links(@host, g) %></span>
     <div class="graph">

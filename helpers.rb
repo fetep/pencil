@@ -76,20 +76,20 @@ module Dash::Helpers
   # fixme html formatting
   # fixme fill in cookied params as well?
   def input_boxen
-    result = '<form name="input" method="get">'
+    result = '<form name="input" method="get"><table>'
     @@prefs.each do |label, name|
       result << "\n"
-      result << "#{label}: <input "
+      result << "<tr><td>#{label}:<td><input "
       if param_lookup(name)
         result << "value=\"#{param_lookup(name)}\" "
       elsif name == "until" # special case
         result << "value=\"now\" "
       end
     
-      result << "type=\"text\" name=\"#{name}\"><br>"
+      result << "type=\"text\" name=\"#{name}\"><td>"
     end
 
-    result << '<input type="submit" value="Submit"/>' + 
+    result << '</table> <input type="submit" value="Submit">' + 
       '</form> <form method="get"> <input type="submit" value="Clear"></form>'
     return result
   end
@@ -109,7 +109,7 @@ module Dash::Helpers
 </form>
 
 <form action="/clear" name="clear" method="get">
-<input type="submit" value="clear cookies"/>
+<input type="submit" value="clear cookies">
 </form>
 STR
 
@@ -117,6 +117,7 @@ STR
 
   def refresh_button
     result = "<form action=\"#{request.path}\" name=\"input\" method=\"get\">"
+    result << "<input type=\"submit\" value=\"Refresh\">"
     @@prefs.each do |label, name|
       if params[name]
         result << "\n"
@@ -124,10 +125,7 @@ STR
         result << "type=\"hidden\" name=\"#{name}\"><br>"
       end
     end
-    result << <<STR
-<input type=\"submit\" value=\"Refresh\"/>
-</form>
-STR
+    result << "\n</form>"
   end
 
   def dash_link(dash, cluster)

@@ -1,29 +1,29 @@
 h2 {
-  color: #ADFF2F;
+    color: #ADFF2F;
 }
 
 .graphtitle {
-  text-shadow: 1px 1px 1px #333333;
+    text-shadow: 1px 1px 1px #333333;
 }
 
 .dashlinks {
-  color: green;
-  font-size: small;
+    color: green;
+    font-size: small;
 }
 
 a {
-  color: #15317E;
+    color: #15317E;
 }
 
 a:visited {
-  color: #15317E;
+    color: #15317E;
 }
 
 .graphsection {
-  border: dotted 2px #333333;
-  width: 500;
-  margin-left: 5px;
-  margin-top: 10px;
+    border: dotted 2px #333333;
+    width: 500;
+    margin-left: 5px;
+    margin-top: 10px;
 }
 
 div#wrap {
@@ -60,4 +60,16 @@ div#footer {
     padding: 15px;
     margin: 0px;
     border-top: thin solid #808080;
+}
+
+table {
+    color: green;
+    font-size: small;
+}
+
+input {
+    border: solid 1px #15317E;
+    color: green;
+    background-color: #1f1f1f;
+    font-size: small;
 }
