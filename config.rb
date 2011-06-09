@@ -21,7 +21,7 @@ module Dash
 
     def reload!
       configs = Dir.glob("#{@confdir}/*.yml")
-      configs.each { |c| @rawconfig.merge!(YAML.load(open(c).read)) }
+      configs.each { |c| @rawconfig.merge!(YAML.load(File.read(c))) }
 
       [:graphs, :dashboards, :config].each do |c|
         if not @rawconfig[c]
