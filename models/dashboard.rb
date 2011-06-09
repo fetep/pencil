@@ -7,7 +7,7 @@ module Dash::Models
   class Dashboard < Base
     CACHE_EXPIRE_TIME = 3600 # in seconds
     attr_accessor :graphs
-    attr_accessor :cache # {graph=> [GEN_TIME,HOSTS,CLUSTERS]}
+    attr_accessor :cache # {graph => [GEN_TIME,HOSTS,CLUSTERS]}
 
     def initialize(name, params={})
       super
@@ -35,6 +35,12 @@ module Dash::Models
       end
 
       @cache = {}
+    end
+
+    def clusters
+      clusters = Set.new
+      @graphs.each { |g| clusters += get_valid_hosts(g)[1] }
+      clusters.sort
     end
 
     # now with caching!
@@ -87,12 +93,8 @@ module Dash::Models
       # the hosts filter
 
       hosts = get_host_wildcards(graph)
-      if opts[:zoom]
-        graph_url = graph.render_url(hosts.to_a, clusters, opts)
-      else
-        opts[:sum] = :cluster
-        graph_url = graph.render_url(hosts.to_a, clusters, opts)
-      end
+      opts[:sum] = :cluster if !opts[:zoom]
+      graph_url = graph.render_url(hosts.to_a, clusters, opts)
       return graph_url
     end
 

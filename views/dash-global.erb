@@ -1,4 +1,17 @@
+<% clusters =  @dash.clusters() %>
+<% links = suggest_cluster_links(clusters) %>
+<%= css_url %>
+
+<%= @dash.graphs.collect { |g| "<a href=\"##{g.name}\">#{g.name}</a>" }.join(" ") %>
+
+<h2>global</h2>
 <% @dash.graphs.each do |g| %>
-  <h3><%= g.name %></h3>
-  <img src="<%= @dash.render_global_graph(g, :dynamic_url_opts => merge_opts) %>" />
+  <div class="graphsection">
+    <a name="<%= g.name %>">
+    <span class="graphtitle"><%= g.name %></span>
+    <span class="dashlinks"><%= links %></span>
+    <div class="graph">
+  <img src="<%= @dash.render_global_graph(g, :dynamic_url_opts => merge_opts) %>" />    
+    </div>
+  </div>
 <% end %>
