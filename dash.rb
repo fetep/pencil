@@ -37,12 +37,10 @@ module Dash
     end
 
     get '/' do
-      session[:not]
       redirect '/dash'
     end
 
     get '/dash/:cluster/:dashboard/:zoom' do
-      session[:not] #fixme why are these neccesary?????
       @cluster = params[:cluster]
       @dash = Dashboard.find(params[:dashboard])
       raise "Unknown dashboard: #{params[:dashboard]}.inspect" unless @dash
@@ -63,7 +61,6 @@ module Dash
     end
 
     get '/dash/:cluster/:dashboard' do
-      session[:not]
       @cluster = params[:cluster]
       @dash = Dashboard.find(params[:dashboard])
       raise "Unknown dashboard: #{params[:dashboard]}.inspect" unless @dash
@@ -78,7 +75,6 @@ module Dash
     end
 
     get '/dash/:cluster' do
-      session[:not]
       @cluster = params[:cluster]
       erb :dash
     end
@@ -88,7 +84,6 @@ module Dash
     end
 
     get '/host/:cluster/:host' do
-      session[:not]
       @host = Host.new(params[:host], { 'cluster' => params[:cluster] })
       @cluster = params[:cluster]
       # FIXME without predefined hosts, it's more difficult to error out here, 

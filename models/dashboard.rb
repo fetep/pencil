@@ -110,11 +110,9 @@ module Dash::Models
       clusters = expand(graph).map { |x| x[-2] }.uniq
 
       next_url = ""
-      if opts[:zoom]
-        graph_url = graph.render_url(hosts, clusters, :sum => :cluster)
-      else
-        graph_url = graph.render_url(hosts, clusters, :sum => :global)
-      end
+      type = opts[:zoom] ? :cluster : :global
+      options = opts.merge({:sum => type})
+      graph_url = graph.render_url(hosts, clusters, options)
       return graph_url
     end
 

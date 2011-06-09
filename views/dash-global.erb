@@ -1,4 +1,4 @@
 <% @dash.graphs.each do |g| %>
   <h3><%= g.name %></h3>
-  <img src="<%= @dash.render_global_graph(g) %>" />
+  <img src="<%= @dash.render_global_graph(g, :dynamic_url_opts => merge_opts) %>" />
 <% end %>
