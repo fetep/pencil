@@ -145,7 +145,12 @@ STR
   end
 
   def merge_opts
-    session.merge(params.delete_if { |k,v| v.empty? })
+    # fixme
+    # surely sinatra has a better way than this or parsing request.query_string
+    static_opts = ["cluster", "dashboard", "zoom", "host"]
+    opts = params.dup
+    opts.delete_if { |k,v| static_opts.member?(k) || v.empty? }
+    session.merge(opts)
   end
 
 end
