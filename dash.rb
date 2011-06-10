@@ -99,7 +99,7 @@ module Dash
     get '/saveprefs' do
       puts 'saving prefs'
       params.each do |k,v|
-        session[k] = v if !v.empty?
+        session[k] = v unless v.empty?
       end
       redirect URI.parse(request.referer).path
     end

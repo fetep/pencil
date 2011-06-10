@@ -93,7 +93,7 @@ module Dash::Models
       # the hosts filter
 
       hosts = get_host_wildcards(graph)
-      opts[:sum] = :cluster if !opts[:zoom]
+      opts[:sum] = :cluster unless opts[:zoom]
       graph_url = graph.render_url(hosts.to_a, clusters, opts)
       return graph_url
     end

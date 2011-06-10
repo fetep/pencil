@@ -139,7 +139,7 @@ STR
   end
 
   def refresh
-    if settings.config.global_config[:refresh_rate]
+    if settings.config.global_config[:refresh_rate] != false
       rate = settings.config.global_config[:refresh_rate] || 60
       return %Q[<meta http-equiv="refresh" content="#{rate}">]
     end
@@ -147,7 +147,7 @@ STR
 
   def append_query_string(str)
     v = str.dup
-    (v << "?#{request.query_string}") if !request.query_string.empty?
+    (v << "?#{request.query_string}") unless request.query_string.empty?
     return v
   end
 
