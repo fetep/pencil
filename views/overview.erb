@@ -32,5 +32,5 @@ seen_hosts = Set.new
  map.sort.each do |k, v|
 %>
 <h3><a href="/dash/<%= k %>"><%= k %></h3>
-<%= v.sort.collect { |h| "<li><a href=\"/host/#{@cluster}/#{h}\">#{h}</a></li>" } %>
+<%= v.sort.collect { |h| "<li><a href=\"/host/#{h.cluster}/#{h}\">#{h}</a></li>" } %>
 <% end %>
