@@ -72,9 +72,8 @@ module Dash::Helpers
     return ret
   end
 
-  # generate the input box fields, filled in to url parameters if specified
+  # generate the input box fields, filled in to current parameters if specified
   # fixme html formatting
-  # fixme fill in cookied params as well?
   def input_boxen
     result = '<form name="input" method="get"><table>'
     @@prefs.each do |label, name|
@@ -196,7 +195,7 @@ STR
       sub = request.path.sub(@zoom.name, c)
       "<a href=\"#{append_query_string(sub)}\">#{c}</a>"
     end.join(' ')
-    "graph: <b>#{@zoom.name}</b> #{z}</span><br><br>"
+    "graph: <b>#{@zoom.name}</b> #{z}</span><br>"
   end
 
   # fixme redundancy, <br>s should be in the templates, not here
@@ -209,21 +208,31 @@ STR
     "<br><br>cluster: <b>#{@cluster}</b> #{z}<br>"
   end
 
-  #fixme preserve query strings
   def cluster_selector
     clusters = settings.config.clusters.sort + ["global"]
     str = "<select class=\"select2\" onchange=" +
       "\"window.open(this.options[this.selectedIndex].value,'_top')\">"
-    str << "<option value=\"/dash/#{@cluster}\" "
+    str << "<option value=\"/dash/#{append_query_string(@cluster)}\" "
     str << "selected=\"selected\">#{@cluster}</option>"
     (clusters - [@cluster]).each do |c|
-      str << "<option value=\"/dash/#{c}\">#{c}</option>"
+      str << "<option value=\"/dash/#{append_query_string(c)}\">#{c}</option>"
     end
     str << '</select>'
     str
   end
 
   def host_uplink
-    "zoom out: <a href=\"/dash/#{@host.cluster}\">#{@host.cluster}</a>"
+    link = "/dash/#{append_query_string(@host.cluster)}"
+    "zoom out: <a href=\"#{link}\">#{@host.cluster}</a>"
+  end
+
+  def graph_uplink
+    link = append_query_string(request.path.split('/')[0..-2].join('/'))
+    "zoom out: <a href=\"#{link}\">#{@dash}</a>"
+  end
+
+  def dash_uplink
+    link = append_query_string(request.path.split('/')[0..-2].join('/'))
+    "zoom out: <a href=\"#{link}\">#{@params[:cluster]}</a>"
   end
 end
