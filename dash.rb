@@ -37,12 +37,8 @@ module Dash
       # fixme reload hosts after some expiry
     end
 
-    get '/' do
-      redirect '/dash'
-    end
-
-    get '/dash/global' do
-      redirect '/dash'
+    get %r[^/(dash/?)?$] do
+      redirect '/dash/global'
     end
 
     get '/dash/:cluster/:dashboard/:zoom' do
@@ -81,15 +77,13 @@ module Dash
 
     get '/dash/:cluster' do
       @cluster = params[:cluster]
-      @title = "cluster :: #{params[:cluster]}"
-      erb :dash
-    end
-
-    #fixme erb template for /dash should be... :dash?
-    get '/dash' do
-      @cluster = "global"
-      @title = "Overview"
-      erb :overview
+      if @cluster == "global"
+        @title = "Overview"
+        erb :global
+      else
+        @title = "cluster :: #{params[:cluster]}"
+        erb :cluster
+      end
     end
 
     get '/host/:cluster/:host' do
