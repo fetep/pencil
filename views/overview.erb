@@ -1,0 +1,36 @@
+<h2>List of dashboards for <%=cluster_selector %></h2>
+
+I feel like some graphs should go here
+
+<%= css_url %>
+
+<%
+hosts = Host.all
+boards = @dashboards
+seen_hosts = Set.new
+%>
+
+<% boards.each do |b| %>
+<h2><a href="/dash/<%= "#{@cluster}/#{b.name}" %>"><%= b.name %></a>
+
+<%
+  dash_hosts = b.get_all_hosts()[0]
+  seen_hosts += dash_hosts
+%>
+
+<%= hosts_selector(dash_hosts) %>
+</h2>
+<%= b.graphs.collect { |g| "<li><a href=/dash/#{@cluster}/#{b.name}/#{g}>#{g}</a><br></li>" } %>
+<br>
+
+<% end %>
+
+<h3>clusters :: hosts</h3>
+<%
+ map = Hash.new([])
+ hosts.each { |h| map[h.cluster] = map[h.cluster] + [h] }
+ map.sort.each do |k, v|
+%>
+<h3><a href="/dash/<%= k %>"><%= k %></h3>
+<%= v.sort.collect { |h| "<li><a href=\"/host/#{@cluster}/#{h}\">#{h}</a></li>" } %>
+<% end %>

@@ -34,9 +34,14 @@ module Dash
 
     before do
       @dashboards = Dashboard.all
+      # fixme reload hosts after some expiry
     end
 
     get '/' do
+      redirect '/dash'
+    end
+
+    get '/dash/global' do
       redirect '/dash'
     end
 
@@ -76,22 +81,23 @@ module Dash
 
     get '/dash/:cluster' do
       @cluster = params[:cluster]
+      @title = "cluster :: #{params[:cluster]}"
       erb :dash
     end
 
+    #fixme erb template for /dash should be... :dash?
     get '/dash' do
-      redirect '/dash/global'
+      @cluster = "global"
+      @title = "Overview"
+      erb :overview
     end
 
     get '/host/:cluster/:host' do
       @host = Host.new(params[:host], { 'cluster' => params[:cluster] })
       @cluster = params[:cluster]
-      # FIXME without predefined hosts, it's more difficult to error out here, 
-      # because many graphs like cpu_usage use "*" as their match.
-      # (basically you would have to check the graphite results for a metric)
-      # raise "Unknown host: #{params[:host]} in #{params[:cluster]}" unless @host
+      raise "Unknown host: #{params[:host]} in #{params[:cluster]}" unless @host
 
-      @title = "host :: #{@host.name}"
+      @title = "#{@host.cluster} :: host :: #{@host.name}"
 
       erb :host
     end

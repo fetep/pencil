@@ -7,15 +7,13 @@ module Dash
 
     attr_reader :dashboards
     attr_reader :graphs
+    attr_reader :hosts
+    attr_reader :clusters
     attr_reader :global_config
 
     def initialize
       @confdir = File.join(File.dirname(__FILE__), "conf")
-      @graphs = {}
-      @dashboards = {}
       @rawconfig = {}
-      @global_config = {}
-
       reload!
     end
 
@@ -52,7 +50,18 @@ module Dash
         dashboards_new << Dashboard.new(name, config.merge(@global_config))
       end
 
-      @dashboards, @graphs= dashboards_new, graphs_new
+      hosts_new = Set.new
+      clusters_new = Set.new
+
+      # generate host and cluster information at init time
+      graphs_new.each do |g|
+        hosts, clusters = g.hosts_clusters
+        hosts.each { |h| hosts_new << h }
+        clusters.each { |h| clusters_new << h }
+      end
+
+      @dashboards, @graphs = dashboards_new, graphs_new
+      @hosts, @clusters = hosts_new, clusters_new
     end
   end # Dash::Config
 end # Dash

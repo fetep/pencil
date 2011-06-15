@@ -16,7 +16,7 @@ module Dash::Helpers
 
   def cluster_graph(g, cluster, title="wtf")
     image_url = \
-    @dash.render_cluster_graph(g, cluster, 
+    @dash.render_cluster_graph(g, cluster,
                                :title => title,
                                :dynamic_url_opts => merge_opts)
     zoom_url = cluster_graph_link(@dash.name, g, cluster)
@@ -65,7 +65,7 @@ module Dash::Helpers
     host.graphs.each do |g|
       Dashboard.find_by_graph(g).each do |d|
         valid, _ = d.get_valid_hosts(g, host['cluster'])
-        ret << d.name if valid.member?(host.name)
+        ret << d.name if valid.member?(host)
       end
     end
 
@@ -85,27 +85,29 @@ module Dash::Helpers
       elsif name == "until" # special case
         result << "value=\"now\" "
       end
-    
+
       result << "type=\"text\" name=\"#{name}\"><td>"
     end
 
-    result << '</table> <input type="submit" value="Submit">' + 
+    result << '</table> <input type="submit" value="Submit">' +
       '</form> <form method="get"> <input type="submit" value="Clear"></form>'
     return result
   end
 
   def cookies_form
     result = '<form action="/saveprefs" name="input" method="get">'
+    result << '<div class="invisible">'
     @@prefs.each do |label, name|
       if params[name]
         result << "\n"
         result << "<input value=\"#{params[name]}\" "
-        result << "type=\"hidden\" name=\"#{name}\"><br>"
+        result << "name=\"#{name}\"><br>"
       end
     end
+    result << "</div>\n"
 
     result << <<STR
-<input type=\"submit\" value=\"save preferences in a cookie\"/>
+<input type=\"submit\" value=\"save preferences in a cookie\">
 </form>
 
 <form action="/clear" name="clear" method="get">
@@ -118,18 +120,24 @@ STR
   def refresh_button
     result = "<form action=\"#{request.path}\" name=\"input\" method=\"get\">"
     result << "<input type=\"submit\" value=\"Refresh\">"
+    result << "<div class=\"invisible\">"
     @@prefs.each do |label, name|
       if params[name]
         result << "\n"
         result << "<input value=\"#{params[name]}\" "
-        result << "type=\"hidden\" name=\"#{name}\"><br>"
+        result << "name=\"#{name}\"><br>"
       end
     end
+    result << "</div>\n"
     result << "\n</form>"
   end
 
   def dash_link(dash, cluster)
     return append_query_string("/dash/#{cluster}/#{dash.name}")
+  end
+
+  def cluster_link(cluster)
+    return append_query_string("/dash/#{cluster}")
   end
 
   def css_url
@@ -143,6 +151,18 @@ STR
       rate = settings.config.global_config[:refresh_rate] || 60
       return %Q[<meta http-equiv="refresh" content="#{rate}">]
     end
+  end
+
+  def hosts_selector (hosts)
+    res = "<select onchange=" +
+      "\"window.open(this.options[this.selectedIndex].value,'_top')\">"
+    hosts.sort.each do |h|
+      res << "<option value=\"/host/#{h.cluster}/#{h}\""
+      res << " selected=\"selected\"" if @host == h
+      res << ">#{h}</option>\n"
+    end
+    res << "</select>"
+    res
   end
 
   def append_query_string(str)
@@ -160,4 +180,41 @@ STR
     session.merge(opts)
   end
 
+  def graph_switcher
+    graphs = @dash.graphs.map { |g| g.name }
+    z = '<span class="graphtitle">'
+    z << (graphs - [@zoom.name]).collect do |c|
+      sub = request.path.sub(@zoom.name, c)
+      "<a href=\"#{append_query_string(sub)}\">#{c}</a>"
+    end.join(' ')
+    "graph: <b>#{@zoom.name}</b> #{z}</span><br><br>"
+  end
+
+  # fixme redundancy, <br>s should be in the templates, not here
+  def cluster_switcher
+    clusters = settings.config.clusters + ["global"]
+    z = (clusters - [@cluster]).collect do |c|
+      sub = request.path.sub(@cluster, c)
+      "<a href=\"#{append_query_string(sub)}\">#{c}</a>"
+    end.join(' ')
+    "<br><br>cluster: <b>#{@cluster}</b> #{z}<br>"
+  end
+
+  #fixme preserve query strings
+  def cluster_selector
+    clusters = settings.config.clusters.sort + ["global"]
+    str = "<select class=\"select2\" onchange=" +
+      "\"window.open(this.options[this.selectedIndex].value,'_top')\">"
+    str << "<option value=\"/dash/#{@cluster}\" "
+    str << "selected=\"selected\">#{@cluster}</option>"
+    (clusters - [@cluster]).each do |c|
+      str << "<option value=\"/dash/#{c}\">#{c}</option>"
+    end
+    str << '</select>'
+    str
+  end
+
+  def host_uplink
+    "zoom out: <a href=\"/dash/#{@host.cluster}\">#{@host.cluster}</a>"
+  end
 end

@@ -73,3 +73,18 @@ input {
     background-color: #1f1f1f;
     font-size: small;
 }
+
+.invisible {
+    display: none;
+}
+
+select {
+    border: solid 1px #15317E;
+    color: green;
+    background-color: #1f1f1f;
+}
+
+.select2 {
+    color: #4CBB17;
+    font-size: large;
+}

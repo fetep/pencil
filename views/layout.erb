@@ -14,13 +14,26 @@
 
     <div id="nav">
 <% if @cluster %>
-        <ul>
+<ul>
+Global Views:
+<li><a href="/dash">overview</a></li><br>
+
+Cluster Views:<br>
+<% clusters = Set.new ; @dashboards.each { |d| clusters.merge(d.clusters) } %>
+<% clusters.sort.each do |cluster| %>
+            <li><a href="<%= cluster_link(cluster) %>"><%= cluster %></a></li>
+<% end %><br>
+Dashboards: (<%= @cluster %>)<br>
 <% @dashboards.sort.each do |dash| %>
             <li><a href="<%= dash_link(dash, @cluster) %>"><%= dash['title'] %></a></li>
-<% end %>
-
+<% end %><br>
+Jump to Host:<br>
+<%= hosts_selector(Host.all) %>
+<br><br>
 <%= input_boxen %>
 <%= refresh_button %>
+<div id="footer">
+<%= cookies_form %></div>
 
         </ul>
     </div>
@@ -31,7 +44,6 @@
     </div>
 </div>
 
-<%= cookies_form %>
 
 </body>
 </html>

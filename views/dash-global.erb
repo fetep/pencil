@@ -4,14 +4,15 @@
 
 <%= @dash.graphs.collect { |g| "<a href=\"##{g.name}\">#{g.name}</a>" }.join(" ") %>
 
-<h2>global</h2>
+<%= cluster_switcher %>
+
 <% @dash.graphs.each do |g| %>
   <div class="graphsection">
     <a name="<%= g.name %>">
     <span class="graphtitle"><%= g.name %></span>
     <span class="dashlinks"><%= links %></span>
     <div class="graph">
-  <img src="<%= @dash.render_global_graph(g, :dynamic_url_opts => merge_opts) %>" />    
+  <img src="<%= @dash.render_global_graph(g, :dynamic_url_opts => merge_opts) %>" >
     </div>
   </div>
 <% end %>
