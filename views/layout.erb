@@ -19,7 +19,7 @@ Global Views:
 <li><a href="/dash">overview</a></li><br>
 
 Cluster Views:<br>
-<% clusters = Set.new ; @dashboards.each { |d| clusters.merge(d.clusters) } %>
+<% clusters = settings.config.clusters %>
 <% clusters.sort.each do |cluster| %>
             <li><a href="<%= cluster_link(cluster) %>"><%= cluster %></a></li>
 <% end %><br>

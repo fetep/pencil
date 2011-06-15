@@ -2,6 +2,7 @@
 <%= @dash.graphs.collect { |g| "<a href=\"##{g.name}\">#{g.name}</a>" }.join(" ") %>
 
 <%= cluster_switcher %>
+<%= dash_switcher %>
 
 <% @dash.graphs.each do |g| %>
   <div class="graphsection">

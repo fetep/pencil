@@ -180,6 +180,15 @@ STR
     session.merge(opts)
   end
 
+  def dash_switcher
+    dashes = @dashboards.sort
+    z = (dashes - [@dash]).collect do |d|
+      sub = request.path.sub(@dash.name, d.name)
+      "<a href=\"#{append_query_string(sub)}\">#{d['title']}</a>"
+    end.join(' ')
+    "dash: <b>#{@dash.name}</b> #{z}<br>"
+  end
+
   def graph_switcher
     graphs = @dash.graphs.map { |g| g.name }
     z = '<span class="graphtitle">'
