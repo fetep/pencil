@@ -24,7 +24,7 @@ module Dash
     helpers Dash::Helpers
     set :config, Dash::Config.new
     set :run, true
-    use Rack::Session::Cookie, :expire_after => 126227700
+    use Rack::Session::Cookie, :expire_after => 126227700 # 4 years
     set :static, true
     set :public, File.join(File.dirname(__FILE__), "public")
 
@@ -41,7 +41,7 @@ module Dash
       redirect '/dash/global'
     end
 
-    get '/dash/:cluster/:dashboard/:zoom' do
+    get '/dash/:cluster/:dashboard/:zoom/?' do
       @cluster = params[:cluster]
       @dash = Dashboard.find(params[:dashboard])
       raise "Unknown dashboard: #{params[:dashboard]}.inspect" unless @dash
@@ -61,7 +61,7 @@ module Dash
       end
     end
 
-    get '/dash/:cluster/:dashboard' do
+    get '/dash/:cluster/:dashboard/?' do
       @cluster = params[:cluster]
       @dash = Dashboard.find(params[:dashboard])
       raise "Unknown dashboard: #{params[:dashboard]}.inspect" unless @dash
@@ -75,7 +75,7 @@ module Dash
       end
     end
 
-    get '/dash/:cluster' do
+    get '/dash/:cluster/?' do
       @cluster = params[:cluster]
       if @cluster == "global"
         @title = "Overview"
@@ -86,7 +86,7 @@ module Dash
       end
     end
 
-    get '/host/:cluster/:host' do
+    get '/host/:cluster/:host/?' do
       @host = Host.new(params[:host], { 'cluster' => params[:cluster] })
       @cluster = params[:cluster]
       raise "Unknown host: #{params[:host]} in #{params[:cluster]}" unless @host
@@ -101,13 +101,13 @@ module Dash
       params.each do |k,v|
         session[k] = v unless v.empty?
       end
-      redirect URI.parse(request.referer).path
+      redirect URI.parse(request.referrer).path
     end
 
     get '/clear' do
       puts 'clearing prefs'
       session.clear
-      redirect URI.parse(request.referer).path
+      redirect URI.parse(request.referrer).path
     end
   end # Dash::App
 end # Dash
