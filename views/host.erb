@@ -1,7 +1,6 @@
-
-<%= @host.graphs.collect { |g| "<a href=\"##{g.name}\">#{g.name}</a>" }.join(" ") %>
-<br><br>
 <%= host_uplink %>
+<br><br>
+<%= @host.graphs.collect { |g| "<a href=\"##{g.name}\">#{g.name}</a>" }.join(" ") %>
 
 <% @host.graphs.each do |g| %>
   <div class="graphsection" style="width:<%= g.width(merge_opts) %>;">

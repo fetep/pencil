@@ -1,9 +1,12 @@
 <% hosts, clusters = @dash.get_valid_hosts(@zoom) %>
-<%= clusters.sort.collect { |h| "<a href=\"##{h}\">#{h}</a>" }.join(" ") %>
 
 <%= cluster_switcher %>
 <%= graph_switcher %>
 <%= graph_uplink %>
+<br>
+<br>
+<%= clusters.sort.collect { |h| "<a href=\"##{h}\">#{h}</a>" }.join(" ") %>
+<br>
 
 <div class="graphsection" style="width:<%= @zoom.width(merge_opts) %>;">
   <% graph_name = "#{@zoom.name} overview" %>

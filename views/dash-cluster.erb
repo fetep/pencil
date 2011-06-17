@@ -1,8 +1,9 @@
-<%= @dash.graphs.collect { |g| "<a href=\"##{g.name}\">#{g.name}</a>" }.join(" ") %>
-
 <%= cluster_switcher %>
 <%= dash_switcher %>
 <%= dash_uplink %>
+<br>
+<br>
+<%= @dash.graphs.collect { |g| "<a href=\"##{g.name}\">#{g.name}</a>" }.join(" ") %>
 
 <% @dash.graphs.each do |g| %>
 <div class="graphsection" style="width:<%= g.width(merge_opts) %>;">
