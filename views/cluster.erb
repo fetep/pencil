@@ -5,13 +5,19 @@
    seen_hosts = Set.new %>
 
 <% boards.each do |b| %>
-<h2><a href="/dash/<%= "#{@cluster}/#{b.name}" %>"><%= b.name %></a>
+<h2><a href="/dash/<%= "#{@cluster}/#{append_query_string(b.name)}" %>"><%= b.name %></a>
   <% dash_hosts = b.get_all_hosts(@cluster)[0]
      seen_hosts += dash_hosts %>
   <%= hosts_selector(dash_hosts) %>
 </h2>
-<%= b.graphs.collect { |g| "<li><a href=/dash/#{@cluster}/#{b.name}/#{g}>#{g}</a><br></li>" } %>
+<%= b.graphs.collect do |g|
+    href = append_query_string("/dash/#{@cluster}/#{b.name}/#{g}")
+    "<li><a href=\"#{href}\">#{g}</a><br></li>"
+    end %>
 <br>
 <% end %>
 <h3>Other Hosts (not associated with a dashboard)</h3>
-<%= (hosts.to_set - seen_hosts).sort.collect { |h| "<li><a href=\"/host/#{@cluster}/#{h}\">#{h}</a></li>" } %>
+<%= (hosts.to_set - seen_hosts).sort.collect do |h|
+    href = append_query_string("/host/#{@cluster}/#{h}")
+    "<li><a href=\"#{href}\">#{h}</a></li>"
+    end %>
