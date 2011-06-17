@@ -158,7 +158,8 @@ STR
     res = "<select onchange=" +
       "\"window.open(this.options[this.selectedIndex].value,'_top')\">"
     hosts.sort.each do |h|
-      res << "<option value=\"/host/#{h.cluster}/#{h}\""
+      value = append_query_string("/host/#{h.cluster}/#{h}")
+      res << "<option value=\"#{value}\""
       res << " selected=\"selected\"" if @host == h
       res << ">#{h}</option>\n"
     end
