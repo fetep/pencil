@@ -1,15 +1,8 @@
-<table cellspacing="8">
-  <span class="graphtitle">
-    <tr>
-      <td>dashboards:</td>
-      <% @dashboards.sort.each do |d| %>
-      <td>
-        <%=
-           sub = append_query_string(request.path.sub(@dash.name, d.name))
-           @dash == d ? "#{d}" : "<a href=\"#{sub}\">#{d}</a>"
-           %>
-      </td>
-      <% end %>
-    </tr>
-  </span>
-</table>
+<span class="graphtitle">
+  dashboards:
+  <%= @dashboards.sort.collect do |d|
+      sub = append_query_string(request.path.sub(@dash.name, d.name))
+      @dash == d ? "#{d}" : "<a href=\"#{sub}\">#{d}</a>"
+      end.join(' ') %>
+</span>
+<br>

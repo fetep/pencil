@@ -1,15 +1,8 @@
-<table cellspacing="8">
-  <span class="graphtitle">
-    <tr>
-      <td>graphs:</td>
-      <% @dash.graphs.map { |g| g.name }.each do |g| %>
-      <td>
-        <%=
-           sub = append_query_string(request.path.sub(@zoom.name, g))
-           @zoom.name == g ? "#{g}" : "<a href=\"#{sub}\">#{g}</a>"
-           %>
-      </td>
-      <% end %>
-    </tr>
-  </span>
-</table>
+<span class="graphtitle">
+  graphs:
+  <%= @dash.graphs.map { |g| g.name }.collect do |g|
+     sub = append_query_string(request.path.sub(@zoom.name, g))
+     @zoom.name == g ? "#{g}" : "<a href=\"#{sub}\">#{g}</a>"
+     end.join(' ') %>
+</span>
+<br>
