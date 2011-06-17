@@ -4,7 +4,7 @@
 <%= host_uplink %>
 
 <% @host.graphs.each do |g| %>
-  <div class="graphsection">
+  <div class="graphsection" style="width:<%= g.width(merge_opts) %>;">
     <a name="<%= g.name %>">
     <span class="graphtitle"><%= g.name %></span>
     <span class="dashlinks"><%= suggest_dashboards_links(@host, g) %></span>

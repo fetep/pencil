@@ -6,7 +6,7 @@
 <%= dash_uplink %>
 
 <% @dash.graphs.each do |g| %>
-  <div class="graphsection">
+  <div class="graphsection" style="width:<%= g.width(merge_opts) %>;">
     <a name="<%= g.name %>">
     <% image_url, zoom_url = cluster_graph(g, @cluster, "#{g.name} / #{@cluster}") %>
     <span class="graphtitle"><%= g.name %></span>

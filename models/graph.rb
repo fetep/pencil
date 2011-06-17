@@ -14,6 +14,11 @@ module Dash::Models
       end
     end
 
+    # fixme parameters in general
+    def width (opts={})
+      opts["width"] || @params[:url_opts][:width]
+    end
+
     def render_url(hosts, clusters, opts={})
       opts = {
         :sum => nil,
@@ -30,7 +35,7 @@ module Dash::Models
         sym_hash[k.to_sym] = v
       end
 
-      #fixme key checking may be neccesary
+      #fixme key checking may be necessary
       url_opts = {
         :title => opts[:title],
       }.merge(@params[:url_opts]).merge(sym_hash)

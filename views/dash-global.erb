@@ -1,4 +1,4 @@
-<% clusters =  @dash.clusters() %>
+<% clusters =  @dash.clusters %>
 <% links = suggest_cluster_links(clusters) %>
 <%= css_url %>
 
@@ -9,7 +9,7 @@
 <%= dash_uplink %>
 
 <% @dash.graphs.each do |g| %>
-  <div class="graphsection">
+  <div class="graphsection" style="width:<%= g.width(merge_opts) %>;">
     <a name="<%= g.name %>">
     <span class="graphtitle"><%= g.name %></span>
     <span class="dashlinks"><%= links %></span>

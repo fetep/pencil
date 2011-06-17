@@ -59,6 +59,8 @@ module Dash::Helpers
     return "(" + links.join(", ") + ")"
   end
 
+  # it's mildly annoying that when this set is empty there're no uplinks
+  # consider adding a link up to the cluster (which is best we can do)
   def suggest_dashboards(host, graph)
     ret = Set.new
 
@@ -75,7 +77,7 @@ module Dash::Helpers
   # generate the input box fields, filled in to current parameters if specified
   # fixme html formatting
   def input_boxen
-    result = '<form name="input" method="get"><table>'
+    result = '<form name="input" method="get"><table style="font-size:small;">'
     @@prefs.each do |label, name|
       result << "\n"
       result << "<tr><td>#{label}:<td><input "
@@ -85,7 +87,7 @@ module Dash::Helpers
         result << "value=\"now\" "
       end
 
-      result << "type=\"text\" name=\"#{name}\"><td>"
+      result << "size=\"5\" type=\"text\" name=\"#{name}\"><td>"
     end
 
     result << '</table> <input type="submit" value="Submit">' +
@@ -179,33 +181,16 @@ STR
     session.merge(opts)
   end
 
+  def cluster_switcher
+    erb :'partials/cluster_switcher', :layout => false
+  end
+
   def dash_switcher
-    dashes = @dashboards.sort
-    z = (dashes - [@dash]).collect do |d|
-      sub = request.path.sub(@dash.name, d.name)
-      "<a href=\"#{append_query_string(sub)}\">#{d['title']}</a>"
-    end.join(' ')
-    "dash: <b>#{@dash.name}</b> #{z}<br>"
+    erb :'partials/dash_switcher', :layout => false
   end
 
   def graph_switcher
-    graphs = @dash.graphs.map { |g| g.name }
-    z = '<span class="graphtitle">'
-    z << (graphs - [@zoom.name]).collect do |c|
-      sub = request.path.sub(@zoom.name, c)
-      "<a href=\"#{append_query_string(sub)}\">#{c}</a>"
-    end.join(' ')
-    "graph: <b>#{@zoom.name}</b> #{z}</span><br>"
-  end
-
-  # fixme redundancy, <br>s should be in the templates, not here
-  def cluster_switcher
-    clusters = settings.config.clusters + ["global"]
-    z = (clusters - [@cluster]).collect do |c|
-      sub = request.path.sub(@cluster, c)
-      "<a href=\"#{append_query_string(sub)}\">#{c}</a>"
-    end.join(' ')
-    "<br><br>cluster: <b>#{@cluster}</b> #{z}<br>"
+    erb :'partials/graph_switcher', :layout => false
   end
 
   def cluster_selector

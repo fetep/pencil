@@ -6,14 +6,14 @@
 <%= graph_switcher %>
 <%= graph_uplink %>
 
-<div class="graphsection">
+<div class="graphsection" style="width:<%= @zoom.width(merge_opts) %>;">
   <span class="graphtitle"><%= @zoom.name %> / <%= @cluster %> :: summary</span>
   <div class="graph">
     <img src="<%= @dash.render_cluster_graph(@zoom, @cluster, :dynamic_url_opts => merge_opts) %>">
   </div>
 </div>
 
-<div class="graphsection">
+<div class="graphsection" style="width:<%= @zoom.width(merge_opts) %>;">
   <a name="by_host">
   <span class="graphtitle"><%= @zoom.name %> / <%= @cluster %> :: by host</span>
   <div class="graph">
@@ -22,7 +22,7 @@
 </div>
 
 <% hosts.each do |host| %>
-  <div class="graphsection">
+  <div class="graphsection" style="width:<%= @zoom.width(merge_opts) %>;">
     <a name="<%= host %>">
     <% image_url, zoom_url = cluster_zoom_graph(@zoom, @cluster, host, "#{@zoom.name} / #{@cluster} / #{host}") %>
     <span class="graphtitle"><%= @zoom.name %> / <%= @cluster %> / <%= host %></span>

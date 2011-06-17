@@ -28,12 +28,12 @@ module Dash::Models
     end
 
     def eql?(other)
-      @name == other.name
+      "#{@cluster}#{@name.hash}" == "#{other.cluster}#{other.name}"
     end
 
     def <=>(other)
       unless @params[:host_sort] == "numeric"
-        return @name <=> other.name
+        return "#{@cluster}#{@name.hash}" <=> "#{other.cluster}#{other.name}"
       end
 
       regex = /\d+/
@@ -47,11 +47,11 @@ module Dash::Models
     end
 
     def == (other)
-      @name == other.name
+      "#{@cluster}#{@name.hash}" == "#{other.cluster}#{other.name}"
     end
 
     def hash
-      @name.hash
+      "#{@cluster}#{@name}".hash
     end
 
     def self.find_by_name_and_cluster(name, cluster)
