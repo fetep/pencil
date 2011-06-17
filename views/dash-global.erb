@@ -1,6 +1,5 @@
-<% clusters =  @dash.clusters %>
-<% links = suggest_cluster_links(clusters) %>
-<%= css_url %>
+<% clusters =  @dash.clusters
+   links = suggest_cluster_links(clusters) %>
 
 <%= @dash.graphs.collect { |g| "<a href=\"##{g.name}\">#{g.name}</a>" }.join(" ") %>
 
@@ -9,12 +8,12 @@
 <%= dash_uplink %>
 
 <% @dash.graphs.each do |g| %>
-  <div class="graphsection" style="width:<%= g.width(merge_opts) %>;">
-    <a name="<%= g.name %>">
+<div class="graphsection" style="width:<%= g.width(merge_opts) %>;">
+  <a name="<%= g.name %>">
     <span class="graphtitle"><%= g.name %></span>
     <span class="dashlinks"><%= links %></span>
     <div class="graph">
-  <img src="<%= @dash.render_global_graph(g, :dynamic_url_opts => merge_opts) %>" >
+      <img src="<%= @dash.render_global_graph(g, :dynamic_url_opts => merge_opts) %>" >
     </div>
-  </div>
+</div>
 <% end %>

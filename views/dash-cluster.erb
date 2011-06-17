@@ -1,4 +1,3 @@
-<%= css_url %>
 <%= @dash.graphs.collect { |g| "<a href=\"##{g.name}\">#{g.name}</a>" }.join(" ") %>
 
 <%= cluster_switcher %>
@@ -6,13 +5,13 @@
 <%= dash_uplink %>
 
 <% @dash.graphs.each do |g| %>
-  <div class="graphsection" style="width:<%= g.width(merge_opts) %>;">
-    <a name="<%= g.name %>">
+<div class="graphsection" style="width:<%= g.width(merge_opts) %>;">
+  <a name="<%= g.name %>">
     <% image_url, zoom_url = cluster_graph(g, @cluster, "#{g.name} / #{@cluster}") %>
     <span class="graphtitle"><%= g.name %></span>
     <span class="dashlinks">(<a href="<%= zoom_url %>">zoom</a>)</span>
     <div class="graph">
       <a href="<%= zoom_url %>"><img src="<%= image_url %>"></a>
     </div>
-  </div>
+</div>
 <% end %>

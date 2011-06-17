@@ -1,49 +1,52 @@
 <html>
-<head>
-<%= css_url %>
-<link href="/favicon.ico" rel="icon" type="text/x-icon">
-<link href="/favicon.ico" rel="shortcut icon" type="text/x-icon">
-<%= refresh %>
-</head>
-<body bgcolor="black">
+  <head>
+    <%= css_url %>
+    <link href="/favicon.ico" rel="icon" type="text/x-icon">
+    <link href="/favicon.ico" rel="shortcut icon" type="text/x-icon">
+    <%= refresh %>
+  </head>
+  <body bgcolor="black">
 
-<div id="wrap">
-    <div id="header">
+    <div id="wrap">
+      <div id="header">
         <h2><%= @title %></h2>
-    </div>
+      </div>
 
-    <div id="nav">
-<% if @cluster %>
-<ul>
-Global Views:
-<li><a href="/dash">overview</a></li><br>
-
-Cluster Views:<br>
-<% clusters = settings.config.clusters %>
-<% clusters.sort.each do |cluster| %>
-            <li><a href="<%= cluster_link(cluster) %>"><%= cluster %></a></li>
-<% end %><br>
-Dashboards: (<%= @cluster %>)<br>
-<% @dashboards.sort.each do |dash| %>
-            <li><a href="<%= dash_link(dash, @cluster) %>"><%= dash['title'] %></a></li>
-<% end %><br>
-Jump to Host:<br>
-<%= hosts_selector(Host.all) %>
-<br><br>
-<%= input_boxen %>
-<%= refresh_button %>
-<div id="footer">
-<%= cookies_form %></div>
-
+      <div id="nav">
+        <% if @cluster %>
+        <ul>
+          Global Views:
+          <li><a href="/dash">overview</a></li>
+          <br>
+          Cluster Views:
+          <br>
+          <% clusters = settings.config.clusters %>
+          <% clusters.sort.each do |cluster| %>
+          <li><a href="<%= cluster_link(cluster) %>"><%= cluster %></a></li>
+          <% end %>
+          <br>
+          Dashboards: (<%= @cluster %>)
+          <br>
+          <% @dashboards.sort.each do |dash| %>
+          <li><a href="<%= dash_link(dash, @cluster) %>"><%= dash['title'] %></a></li>
+          <% end %>
+          <br>
+          Jump to Host:
+          <br>
+          <%= hosts_selector(Host.all) %>
+          <br>
+          <br>
+          <%= input_boxen %>
+          <%= refresh_button %>
+          <div id="footer"> <%= cookies_form %></div>
         </ul>
-    </div>
-<% end %>
+      </div>
+      <% end %>
 
-    <div id="main">
+      <div id="main">
         <%= yield %>
+      </div>
     </div>
-</div>
 
-
-</body>
+  </body>
 </html>

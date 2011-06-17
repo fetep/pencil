@@ -1,6 +1,6 @@
 <a href="#by_host">by_host</a>
 <% hosts = @dash.get_valid_hosts(@zoom, @cluster)[0].sort %>
-<%= hosts.collect { |h| "<a href=\"##{h}\">#{h}</a>" }.join(" ") %>
+<%= hosts.collect { |h| "<a href=\"##{h}\">#{h}</a>" }.join(' ') %>
 
 <%= cluster_switcher %>
 <%= graph_switcher %>
@@ -15,20 +15,20 @@
 
 <div class="graphsection" style="width:<%= @zoom.width(merge_opts) %>;">
   <a name="by_host">
-  <span class="graphtitle"><%= @zoom.name %> / <%= @cluster %> :: by host</span>
-  <div class="graph">
-    <img src="<%= @dash.render_cluster_graph(@zoom, @cluster, :zoom => true, :dynamic_url_opts => merge_opts) %>">
-  </div>
+    <span class="graphtitle"><%= @zoom.name %> / <%= @cluster %> :: by host</span>
+    <div class="graph">
+      <img src="<%= @dash.render_cluster_graph(@zoom, @cluster, :zoom => true, :dynamic_url_opts => merge_opts) %>">
+    </div>
 </div>
 
 <% hosts.each do |host| %>
-  <div class="graphsection" style="width:<%= @zoom.width(merge_opts) %>;">
-    <a name="<%= host %>">
+<div class="graphsection" style="width:<%= @zoom.width(merge_opts) %>;">
+  <a name="<%= host %>">
     <% image_url, zoom_url = cluster_zoom_graph(@zoom, @cluster, host, "#{@zoom.name} / #{@cluster} / #{host}") %>
     <span class="graphtitle"><%= @zoom.name %> / <%= @cluster %> / <%= host %></span>
     <span class="dashlinks">(<a href="<%= zoom_url %>">host</a>)</span>
     <div class="graph">
       <a href="<%= zoom_url %>"><img src="<%= image_url %>"></a>
     </div>
-  </div>
+</div>
 <% end %>
