@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+require "rubygems"
+%x[rackup lib/config.ru] #fail
