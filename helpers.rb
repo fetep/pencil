@@ -81,7 +81,8 @@ module Dash::Helpers
     @@prefs.each do |label, name|
       result << "\n"
       result << "<tr><td>#{label}:<td><input "
-      result << "value=\"#{param_lookup(val)}\" " if val = param_lookup(name)
+      val =  param_lookup(name)
+      result << "value=\"#{param_lookup(val)}\" " if val
 
       result << "size=\"5\" type=\"text\" name=\"#{name}\">" +
         (if name == "start"

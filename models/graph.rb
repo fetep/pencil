@@ -43,15 +43,13 @@ module Dash::Models
       if start = Chronic.parse(url_opts.delete(:start))
         url_opts[:from] = start.strftime("%s")
       else
-        #we don't really care what get's output; it's wrong
+        #we don't really care what gets output; it's wrong
         url_opts[:from] = ""
       end
 
       duration = url_opts.delete(:duration)
       if duration && seconds = ChronicDuration.parse(duration)
         url_opts[:until] = url_opts[:from].to_i + seconds.to_i
-      else
-        url_opts[:from] = ""
       end
 
       if @params["stack"] == true
