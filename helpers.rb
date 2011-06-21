@@ -82,7 +82,7 @@ module Dash::Helpers
       result << "\n"
       result << "<tr><td>#{label}:<td><input "
       val =  param_lookup(name)
-      result << "value=\"#{param_lookup(val)}\" " if val
+      result << "value=\"#{val}\" " if val
 
       result << "size=\"5\" type=\"text\" name=\"#{name}\">" +
         (if name == "start"
