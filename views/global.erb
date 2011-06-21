@@ -1,0 +1,31 @@
+<h2>List of dashboards for <%= cluster_selector %></h2>
+
+I feel like some graphs should go here
+
+<% hosts = Host.all
+   boards = @dashboards
+   seen_hosts = Set.new %>
+
+<% boards.each do |b| %>
+<h2><a href="/dash/<%= "#{@cluster}/#{append_query_string(b.name)}" %>"><%= b.name %></a>
+  <% dash_hosts = b.get_all_hosts()[0]
+     seen_hosts += dash_hosts %>
+  <%= hosts_selector(dash_hosts) %>
+</h2>
+<%= b.graphs.collect do |g|
+    href = append_query_string("/dash/#{@cluster}/#{b.name}/#{g}")
+    "<li><a href=\"#{href}\">#{g}</a><br></li>"
+    end %>
+<br>
+<% end %>
+
+<h3>clusters :: hosts</h3>
+<% map = Hash.new([])
+   hosts.each { |h| map[h.cluster] = map[h.cluster] + [h] }
+   map.sort.each do |k, v| %>
+<h3><a href="/dash/<%= append_query_string(k) %>"><%= k %></h3>
+<%= v.sort.collect do |h|
+    href = append_query_string("/host/#{h.cluster}/#{h}")
+    "<li><a href=\"\">#{h}</a></li>"
+    end %>
+<% end %>

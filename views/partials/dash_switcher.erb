@@ -1,0 +1,8 @@
+<span class="graphtitle">
+  dashboards:
+  <%= @dashboards.sort.collect do |d|
+      sub = append_query_string(request.path.sub(@dash.name, d.name))
+      @dash == d ? "#{d}" : "<a href=\"#{sub}\">#{d}</a>"
+      end.join(' ') %>
+</span>
+<br>

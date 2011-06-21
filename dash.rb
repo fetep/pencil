@@ -12,6 +12,8 @@ require "sinatra/base"
 require "json"
 require "open-uri"
 require "yaml"
+require "chronic"
+require "chronic_duration"
 
 # fixme style.css isn't actually cached, you need to set something up with
 # rack to cache static files
@@ -24,7 +26,7 @@ module Dash
     helpers Dash::Helpers
     set :config, Dash::Config.new
     set :run, true
-    set :sessions, true
+    use Rack::Session::Cookie, :expire_after => 126227700 # 4 years
     set :static, true
     set :public, File.join(File.dirname(__FILE__), "public")
 
@@ -34,18 +36,17 @@ module Dash
 
     before do
       @dashboards = Dashboard.all
+      # fixme reload hosts after some expiry
     end
 
-    get '/' do
-      session[:not]
-      redirect '/dash'
+    get %r[^/(dash/?)?$] do
+      redirect '/dash/global'
     end
 
-    get '/dash/:cluster/:dashboard/:zoom' do
-      session[:not] #fixme why are these neccesary?????
+    get '/dash/:cluster/:dashboard/:zoom/?' do
       @cluster = params[:cluster]
       @dash = Dashboard.find(params[:dashboard])
-      raise "Unknown dashboard: #{params[:dashboard]}.inspect" unless @dash
+      raise "Unknown dashboard: #{params[:dashboard].inspect}" unless @dash
 
       @zoom = nil
       @dash.graphs.each do |graph|
@@ -62,8 +63,7 @@ module Dash
       end
     end
 
-    get '/dash/:cluster/:dashboard' do
-      session[:not]
+    get '/dash/:cluster/:dashboard/?' do
       @cluster = params[:cluster]
       @dash = Dashboard.find(params[:dashboard])
       raise "Unknown dashboard: #{params[:dashboard]}.inspect" unless @dash
@@ -77,42 +77,40 @@ module Dash
       end
     end
 
-    get '/dash/:cluster' do
-      session[:not]
+    get '/dash/:cluster/?' do
       @cluster = params[:cluster]
-      erb :dash
+      if @cluster == "global"
+        @title = "Overview"
+        erb :global
+      else
+        @title = "cluster :: #{params[:cluster]}"
+        erb :cluster
+      end
     end
 
-    get '/dash' do
-      redirect '/dash/global'
-    end
-
-    get '/host/:cluster/:host' do
-      session[:not]
+    get '/host/:cluster/:host/?' do
       @host = Host.new(params[:host], { 'cluster' => params[:cluster] })
       @cluster = params[:cluster]
-      # FIXME without predefined hosts, it's more difficult to error out here, 
-      # because many graphs like cpu_usage use "*" as their match.
-      # (basically you would have to check the graphite results for a metric)
-      # raise "Unknown host: #{params[:host]} in #{params[:cluster]}" unless @host
+      raise "Unknown host: #{params[:host]} in #{params[:cluster]}" unless @host
 
-      @title = "host :: #{@host.name}"
+      @title = "#{@host.cluster} :: host :: #{@host.name}"
 
       erb :host
     end
 
+    # fixme make sure not to save shitty values for :start, :duration
     get '/saveprefs' do
       puts 'saving prefs'
       params.each do |k,v|
-        session[k] = v if !v.empty?
+        session[k] = v unless v.empty?
       end
-      redirect URI.parse(request.referer).path
+      redirect URI.parse(request.referrer).path
     end
 
     get '/clear' do
       puts 'clearing prefs'
       session.clear
-      redirect URI.parse(request.referer).path
+      redirect URI.parse(request.referrer).path
     end
   end # Dash::App
 end # Dash
