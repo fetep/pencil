@@ -14,6 +14,11 @@ module Dash::Models
       end
     end
 
+    # fixme parameters in general
+    def width (opts={})
+      opts["width"] || @params[:url_opts][:width]
+    end
+
     def render_url(hosts, clusters, opts={})
       opts = {
         :sum => nil,
@@ -30,17 +35,24 @@ module Dash::Models
         sym_hash[k.to_sym] = v
       end
 
+      #fixme key checking may be necessary
       url_opts = {
-        :width => 1000,
-        :height => 400,
-        :from => "-2hours",  # TODO: better timepsec handling
         :title => opts[:title],
-        :template => "noc",
-        :fontSize => 12,
-        :yMin => 0,
-        :margin => 5,
-        :thickness => 2,
       }.merge(@params[:url_opts]).merge(sym_hash)
+
+      if start = Chronic.parse(url_opts.delete(:start))
+        url_opts[:from] = start.strftime("%s")
+      else
+        #we don't really care what get's output; it's wrong
+        url_opts[:from] = ""
+      end
+
+      duration = url_opts.delete(:duration)
+      if duration && seconds = ChronicDuration.parse(duration)
+        url_opts[:until] = url_opts[:from].to_i + seconds.to_i
+      else
+        url_opts[:from] = ""
+      end
 
       if @params["stack"] == true
         url_opts[:areaMode] = "stacked"
@@ -48,23 +60,16 @@ module Dash::Models
 
       target = []
       colors = []
-      if opts[:sum] == :global # one line per metric
+      if opts[:sum] == :global
         @params["metrics"].each do |stat_name, opts|
           opts['key'] ||= stat_name
-          metrics = []
-          clusters.each do |cluster|
-            hosts.each do |host|
-              metrics << "#{stat_name}.#{cluster}.#{host}"
-            end
-          end
+          metric = "#{stat_name}.{#{clusters.to_a.join(',')}}" +
+            ".{#{hosts.to_a.join(',')}}"
 
-          if metrics.length > 0
-            label = "global #{opts[:key]}"
-            target << "alias(" +
-                     _target("sumSeries(" + metrics.join(",") + ")") +
-                     ", #{label.inspect})"
-            colors << next_color(colors, opts[:color])
-          end
+          label = "global #{opts[:key]}"
+          target << "alias(" +
+            _target("sumSeries(#{metric})") + ", #{label.inspect})"
+          colors << next_color(colors, opts[:color])
         end # @params["metrics"].each
       elsif opts[:sum] == :cluster # one line per cluster/metric
         clusters.each do |cluster|
@@ -115,6 +120,37 @@ module Dash::Models
       end
       url += url_parts.join("&")
       return url
+    end
+
+    # return an array of all metrics matching the specifications in
+    # @params['metrics']
+    # metrics are arrays of fields (once delimited by periods)
+    def expand
+      url = URI.join(@params[:graphite_url], "/metrics/expand/?query=").to_s
+      metrics = []
+
+      @params['metrics'].each do |metric|
+        query = open("#{url}#{metric.first}.*.*").read
+        metrics << JSON.parse(query)['results']
+      end
+
+      return metrics.flatten.map { |x| x.split('.') }
+    end
+
+    def hosts_clusters
+      metrics = expand
+      clusters = Set.new
+
+      # field -1 is the host name, and -2 is its cluster
+      hosts = metrics.map do |x|
+        Host.new(x[-1], @params.merge({ 'cluster' => x[-2] }))
+      end.uniq
+
+      # filter by what matches the graph definition
+      hosts = hosts.select { |h| h.multi_match(@params['hosts']) }
+      hosts.each { |h| clusters << h.cluster }
+
+      return hosts, clusters
     end
 
     private

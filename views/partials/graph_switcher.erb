@@ -1,0 +1,8 @@
+<span class="graphtitle">
+  graphs:
+  <%= @dash.graphs.map { |g| g.name }.collect do |g|
+     sub = append_query_string(request.path.sub(@zoom.name, g))
+     @zoom.name == g ? "#{g}" : "<a href=\"#{sub}\">#{g}</a>"
+     end.join(' ') %>
+</span>
+<br>

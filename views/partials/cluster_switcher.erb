@@ -1,0 +1,12 @@
+clusters:
+<%= settings.config.clusters.sort.collect do |c|
+    sub = append_query_string(request.path.sub(@cluster, c))
+    @cluster == c ? "#{c}" : "<a href=\"#{sub}\">#{c}</a>"
+    end.join(" ") %>
+
+<%= if @cluster == "global"
+    " (global)"
+    else
+    " <a href=\"#{append_query_string(request.path.sub(@cluster, 'global'))}\">(global)</a>"
+    end %>
+<br>
