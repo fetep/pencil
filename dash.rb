@@ -12,6 +12,8 @@ require "sinatra/base"
 require "json"
 require "open-uri"
 require "yaml"
+require "chronic"
+require "chronic_duration"
 
 # fixme style.css isn't actually cached, you need to set something up with
 # rack to cache static files
@@ -44,7 +46,7 @@ module Dash
     get '/dash/:cluster/:dashboard/:zoom/?' do
       @cluster = params[:cluster]
       @dash = Dashboard.find(params[:dashboard])
-      raise "Unknown dashboard: #{params[:dashboard]}.inspect" unless @dash
+      raise "Unknown dashboard: #{params[:dashboard].inspect}" unless @dash
 
       @zoom = nil
       @dash.graphs.each do |graph|
@@ -96,6 +98,7 @@ module Dash
       erb :host
     end
 
+    # fixme make sure not to save shitty values for :start, :duration
     get '/saveprefs' do
       puts 'saving prefs'
       params.each do |k,v|

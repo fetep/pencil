@@ -29,13 +29,20 @@ module Dash
 
       @global_config = @rawconfig[:config]
       # do some sanity checking of other configuration parameters
-      [:graphite_url].each do |c|
+      [:graphite_url, :url_opts].each do |c|
         if not @global_config[c]
           raise "Missing config name '#{c.to_s}'"
         end
       end
 
-      # possibly check url_opts here as well
+      # possibly check more url_opts here as well
+      if @global_config[:url_opts][:start]
+        if @global_config[:url_opts][:start]
+          if !ChronicDuration.parse(@global_config[:url_opts][:start])
+            raise "bad default timespec in :url_opts"
+          end
+        end
+      end
 
       @global_config[:default_colors] ||=
         ["blue", "green", "yellow", "red", "purple", "brown", "aqua", "gold"]

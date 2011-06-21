@@ -87,3 +87,7 @@ select {
     color: #4CBB17;
     font-size: large;
 }
+
+.error {
+    color: red;
+}

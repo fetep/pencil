@@ -1,16 +1,16 @@
 module Dash::Helpers
   include Dash::Models
 
-  @@prefs = [["Start", "from"],
-             ["End", "until"],
+  @@prefs = [["Start", "start"],
+             ["Duration", "duration"],
              ["Width", "width"],
              ["Height", "height"]]
 
   # convert keys to symbols before lookup
   def param_lookup (name)
     sym_hash = {}
-    session.each { |k,v| sym_hash[k.to_sym] = v }
-    params.each { |k,v| sym_hash[k.to_sym] = v }
+    session.each { |k,v| sym_hash[k.to_sym] = v unless v.empty? }
+    params.each { |k,v| sym_hash[k.to_sym] = v unless v.empty? }
     settings.config.global_config[:url_opts].merge(sym_hash)[name.to_sym]
   end
 
@@ -81,13 +81,16 @@ module Dash::Helpers
     @@prefs.each do |label, name|
       result << "\n"
       result << "<tr><td>#{label}:<td><input "
-      if param_lookup(name)
-        result << "value=\"#{param_lookup(name)}\" "
-      elsif name == "until" # special case
-        result << "value=\"now\" "
-      end
+      result << "value=\"#{param_lookup(val)}\" " if val = param_lookup(name)
 
-      result << "size=\"5\" type=\"text\" name=\"#{name}\"><td>"
+      result << "size=\"5\" type=\"text\" name=\"#{name}\">" +
+        (if name == "start"
+           "<div class=\"error\">Bad Time!</a>" unless \
+           Chronic.parse(param_lookup(name))
+         elsif name == "duration" && param_lookup(name)
+           "<div class=\"error\">Bad Interval!</a>" unless \
+           ChronicDuration.parse(param_lookup(name))
+         end||"") + "<td>"
     end
 
     result << '</table> <input type="submit" value="Submit">' +
@@ -220,5 +223,10 @@ STR
   def dash_uplink
     link = append_query_string(request.path.split('/')[0..-2].join('/'))
     "zoom out: <a href=\"#{link}\">#{@params[:cluster]}</a>"
+  end
+
+  def check_times
+    (!@params[:start] || Chronic.parse(@params[:start])) &&
+      (!@params[:duration] || ChronicDuration.parse(@params[:duration]))
   end
 end
