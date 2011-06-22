@@ -1,0 +1,8 @@
+<form action="<%= request.path %>" name="input" method="get">
+  <input type="submit" value="Refresh">
+  <div class="invisible">
+    <% @prefs.each do |label, name| %>
+    <%= "<input value=\"#{params[name]}\" name=\"#{name}\"><br>" if params[name] %>
+    <% end %>
+  </div>
+</form>

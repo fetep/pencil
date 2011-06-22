@@ -54,7 +54,7 @@ module Dash::Helpers
     links = []
     suggested.each do |d|
       links << "<a href=\"/dash/#{host.cluster}/#{append_query_string(d)}\">" +
-               "#{d}</a>"
+        "#{d}</a>"
     end
     return "(" + links.join(", ") + ")"
   end
@@ -75,66 +75,19 @@ module Dash::Helpers
   end
 
   # generate the input box fields, filled in to current parameters if specified
-  # fixme html formatting
-  def input_boxen
-    result = '<form name="input" method="get"><table style="font-size:small;">'
-    @@prefs.each do |label, name|
-      result << "\n"
-      result << "<tr><td>#{label}:<td><input "
-      val =  param_lookup(name)
-      result << "value=\"#{val}\" " if val
-
-      result << "size=\"5\" type=\"text\" name=\"#{name}\">" +
-        (if name == "start"
-           "<div class=\"error\">Bad Time!</a>" unless \
-           Chronic.parse(param_lookup(name))
-         elsif name == "duration" && param_lookup(name)
-           "<div class=\"error\">Bad Interval!</a>" unless \
-           ChronicDuration.parse(param_lookup(name))
-         end||"") + "<td>"
-    end
-
-    result << '</table> <input type="submit" value="Submit">' +
-      '</form> <form method="get"> <input type="submit" value="Clear"></form>'
-    return result
+  def input_boxes
+    @prefs = @@prefs
+    erb :'partials/input_boxes', :layout => false
   end
 
   def cookies_form
-    result = '<form action="/saveprefs" name="input" method="get">'
-    result << '<div class="invisible">'
-    @@prefs.each do |label, name|
-      if params[name]
-        result << "\n"
-        result << "<input value=\"#{params[name]}\" "
-        result << "name=\"#{name}\"><br>"
-      end
-    end
-    result << "</div>\n"
-
-    result << <<STR
-<input type=\"submit\" value=\"save preferences in a cookie\">
-</form>
-
-<form action="/clear" name="clear" method="get">
-<input type="submit" value="clear cookies">
-</form>
-STR
-
+    @prefs = @@prefs
+    erb :'partials/cookies_form', :layout => false
   end
 
   def refresh_button
-    result = "<form action=\"#{request.path}\" name=\"input\" method=\"get\">"
-    result << "<input type=\"submit\" value=\"Refresh\">"
-    result << "<div class=\"invisible\">"
-    @@prefs.each do |label, name|
-      if params[name]
-        result << "\n"
-        result << "<input value=\"#{params[name]}\" "
-        result << "name=\"#{name}\"><br>"
-      end
-    end
-    result << "</div>\n"
-    result << "\n</form>"
+    @prefs = @@prefs
+    erb :'partials/refresh_button', :layout => false
   end
 
   def dash_link(dash, cluster)
@@ -160,16 +113,8 @@ STR
   end
 
   def hosts_selector (hosts)
-    res = "<select onchange=" +
-      "\"window.open(this.options[this.selectedIndex].value,'_top')\">"
-    hosts.sort.each do |h|
-      value = append_query_string("/host/#{h.cluster}/#{h}")
-      res << "<option value=\"#{value}\""
-      res << " selected=\"selected\"" if @host == h
-      res << ">#{h}</option>\n"
-    end
-    res << "</select>"
-    res
+    @hosts = hosts
+    erb :'partials/hosts_selector', :layout => false
   end
 
   def append_query_string(str)
@@ -201,16 +146,8 @@ STR
   end
 
   def cluster_selector
-    clusters = settings.config.clusters.sort + ["global"]
-    str = "<select class=\"select2\" onchange=" +
-      "\"window.open(this.options[this.selectedIndex].value,'_top')\">"
-    str << "<option value=\"/dash/#{append_query_string(@cluster)}\" "
-    str << "selected=\"selected\">#{@cluster}</option>"
-    (clusters - [@cluster]).each do |c|
-      str << "<option value=\"/dash/#{append_query_string(c)}\">#{c}</option>"
-    end
-    str << '</select>'
-    str
+    @clusters = settings.config.clusters.sort + ["global"]
+    erb :'partials/cluster_selector', :layout => false
   end
 
   def host_uplink

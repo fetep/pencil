@@ -1,0 +1,12 @@
+<form action="/saveprefs" name="input" method="get">
+  <div class="invisible">
+    <% @prefs.each do |label, name| %>
+    <%= "<input value=\"#{params[name]}\" name=\"#{name}\"><br>" if params[name] %>
+    <% end %>
+  </div>
+  <input type="submit" value="save preferences in a cookie">
+</form>
+
+<form action="/clear" name="clear" method="get">
+  <input type="submit" value="clear cookies">
+</form>
