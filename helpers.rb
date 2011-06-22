@@ -230,4 +230,54 @@ STR
     (!@params[:start] || Chronic.parse(@params[:start])) &&
       (!@params[:duration] || ChronicDuration.parse(@params[:duration]))
   end
+
+  def range_string
+    format = settings.config.global_config[:date_format] || "%X %x"
+    start = params["start"] ||
+      session["start"] ||
+      settings.config.global_config[:url_opts][:start]
+    duration = params["duration"] ||
+      session["duration"] ||
+      settings.config.global_config[:url_opts][:duration]
+    stime = Chronic.parse(start)
+    t1 = stime ? stime.strftime(format) : ""
+    etime = stime + (ChronicDuration.parse(duration)||0) if duration && stime
+    t2 = (etime || Time.now).strftime(format)
+    return t1 && t2 ? "timeslice: #{t1} - #{t2}" : "invalid time range"
+  end
+
+  # only relevant on graphs with images
+  def permalink
+    url = request.path + '?'
+    @@prefs.each do |label, name|
+      next if name == "start" || name == "duration" # done specially
+      val = params[name] ||
+        session[name] ||
+        settings.config.global_config[:url_opts][name.to_sym]
+      url << "&#{name}=#{val}"
+    end
+    # fixme some code duplication
+    format = "%x %X" # chronic understands this
+    start = params["start"] ||
+      session["start"] ||
+      settings.config.global_config[:url_opts][:start]
+    duration = params["duration"] ||
+      session["duration"] ||
+      settings.config.global_config[:url_opts][:duration]
+    stime = Chronic.parse(start)
+    return "" unless stime
+    t1 = stime.strftime(format)
+    seconds = stime.strftime("%s").to_i
+    if duration
+      etime = ChronicDuration.parse(duration)
+      return "" unless etime
+      t2 = ChronicDuration.output(etime)
+    else
+      t2 = ChronicDuration.output(Time.now.strftime("%s").to_i - seconds)
+    end
+
+    url << "&start=#{t1}"
+    url << "&duration=#{t2}"
+    "<a href=\"#{url}\">permalink</a>"
+  end
 end

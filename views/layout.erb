@@ -4,12 +4,14 @@
     <link href="/favicon.ico" rel="icon" type="text/x-icon">
     <link href="/favicon.ico" rel="shortcut icon" type="text/x-icon">
     <%= refresh %>
+    <%= permalink %>
   </head>
   <body bgcolor="black">
 
     <div id="wrap">
       <div id="header">
         <h2><%= @title %></h2>
+        <h3><%= range_string %></h3> <!-- only when actually displaying graphs? -->
       </div>
 
       <div id="nav">

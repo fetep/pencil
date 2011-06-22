@@ -48,7 +48,10 @@ module Dash::Models
       end
 
       duration = url_opts.delete(:duration)
-      if duration && seconds = ChronicDuration.parse(duration)
+      if duration
+        seconds = ChronicDuration.parse(duration)
+        # don't display graphs for broken # input
+        url_opts[:from] = "" unless seconds
         url_opts[:until] = url_opts[:from].to_i + seconds.to_i
       end
 
