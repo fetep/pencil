@@ -40,6 +40,21 @@ module Dash::Models
         :title => opts[:title],
       }.merge(@params[:url_opts]).merge(sym_hash)
 
+      if start = Chronic.parse(url_opts.delete(:start))
+        url_opts[:from] = start.strftime("%s")
+      else
+        #we don't really care what gets output; it's wrong
+        url_opts[:from] = ""
+      end
+
+      duration = url_opts.delete(:duration)
+      if duration
+        seconds = ChronicDuration.parse(duration)
+        # don't display graphs for broken # input
+        url_opts[:from] = "" unless seconds
+        url_opts[:until] = url_opts[:from].to_i + seconds.to_i
+      end
+
       if @params["stack"] == true
         url_opts[:areaMode] = "stacked"
       end

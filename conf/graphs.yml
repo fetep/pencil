@@ -1,0 +1,120 @@
+---
+:graphs:
+  syncstorage_qps:
+    title: "syncstorage qps"
+    metrics:
+      syncstorage.request_rate.200:
+        :key: 200
+        :color: green
+      syncstorage.request_rate.302:
+        :key: 302
+        :color: blue
+      syncstorage.request_rate.401:
+        :key: 401
+        :color: brown
+      syncstorage.request_rate.404:
+        :key: 404
+        :color: purple
+      syncstorage.request_rate.500:
+        :key: 500
+        :color: yellow
+      syncstorage.request_rate.502:
+        :key: 502
+        :color: "#cc0000"
+      syncstorage.request_rate.503:
+        :key: 503
+        :color: red
+    stack: true
+    hosts: ["sync*_web", "test*_web", "wp-web*"]
+
+  syncstorage_401:
+    title: "syncstorage 401s"
+    metrics:
+      syncstorage.request_rate.401:
+        :key: 200
+        :color: brown
+    hosts: ["sync*_web", "test*_web", "wp-web*"]
+
+  syncstorage_exceptions:
+    title: "syncstorage exceptions"
+    metrics:
+      syncstorage.log.exception:
+        :key: exceptions/s
+        :color: red
+    hosts: ["sync*_web", "test*_web", "wp-web*"]
+
+  cpu_usage:
+    title: "cpu usage"
+    metrics:
+      system.cpu.system:
+        :key: CPU/system
+        :color: yellow
+      system.cpu.wio:
+        :key: CPU/wio
+        :color: red
+      system.cpu.nice:
+        :key: CPU/nice
+        :color: green
+      system.cpu.user:
+        :key: CPU/user
+        :color: blue
+    stack: true
+    hosts: ["*"]
+
+  load_average:
+    title: "1 minute load average"
+    metrics:
+      system.load.1:
+        :key: load
+    hosts: ["*"]
+
+  network_traffic:
+    title: "network traffic"
+    metrics:
+      system.network.in:
+        :key: bits in
+        :color: green
+      system.network.out:
+        :key: bits out
+        :color: blue
+
+    hosts: ["*"]
+    scale: 8  # bytes -> bits
+
+  ldap_ops:
+    title: "ldap operations"
+    metrics:
+      slapd.ops.add:
+        :key: add
+        :color: red
+      slapd.ops.bind:
+        :key: bind
+        :color: brown
+      slapd.ops.modify:
+        :key: modify
+        :color: purple
+      slapd.ops.search:
+        :key: search
+        :color: green
+
+    stack: true
+    hosts: ["slave*ldap", "master*ldap", "wp-master*"]
+
+  mysql_ops:
+    title: "mysql operations"
+    metrics:
+      mysql.ops.delete:
+        :key: delete
+        :color: red
+      mysql.ops.insert:
+        :key: insert
+        :color: brown
+      mysql.ops.update:
+        :key: update
+        :color: purple
+      mysql.ops.select:
+        :key: select
+        :color: green
+
+    stack: true
+    hosts: ["sync*_db", "wp-db*"]

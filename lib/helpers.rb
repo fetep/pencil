@@ -1,16 +1,16 @@
 module Dash::Helpers
   include Dash::Models
 
-  @@prefs = [["Start", "from"],
-             ["End", "until"],
+  @@prefs = [["Start", "start"],
+             ["Duration", "duration"],
              ["Width", "width"],
              ["Height", "height"]]
 
   # convert keys to symbols before lookup
   def param_lookup (name)
     sym_hash = {}
-    session.each { |k,v| sym_hash[k.to_sym] = v }
-    params.each { |k,v| sym_hash[k.to_sym] = v }
+    session.each { |k,v| sym_hash[k.to_sym] = v unless v.empty? }
+    params.each { |k,v| sym_hash[k.to_sym] = v unless v.empty? }
     settings.config.global_config[:url_opts].merge(sym_hash)[name.to_sym]
   end
 
@@ -81,13 +81,17 @@ module Dash::Helpers
     @@prefs.each do |label, name|
       result << "\n"
       result << "<tr><td>#{label}:<td><input "
-      if param_lookup(name)
-        result << "value=\"#{param_lookup(name)}\" "
-      elsif name == "until" # special case
-        result << "value=\"now\" "
-      end
+      val =  param_lookup(name)
+      result << "value=\"#{val}\" " if val
 
-      result << "size=\"5\" type=\"text\" name=\"#{name}\"><td>"
+      result << "size=\"5\" type=\"text\" name=\"#{name}\">" +
+        (if name == "start"
+           "<div class=\"error\">Bad Time!</a>" unless \
+           Chronic.parse(param_lookup(name))
+         elsif name == "duration" && param_lookup(name)
+           "<div class=\"error\">Bad Interval!</a>" unless \
+           ChronicDuration.parse(param_lookup(name))
+         end||"") + "<td>"
     end
 
     result << '</table> <input type="submit" value="Submit">' +
@@ -148,6 +152,7 @@ STR
   end
 
   def refresh
+    return "" if params["permalink"]
     if settings.config.global_config[:refresh_rate] != false
       rate = settings.config.global_config[:refresh_rate] || 60
       return %Q[<meta http-equiv="refresh" content="#{rate}">]
@@ -169,7 +174,8 @@ STR
 
   def append_query_string(str)
     v = str.dup
-    (v << "?#{request.query_string}") unless request.query_string.empty?
+    query = request.query_string.chomp("&permalink=1")
+    (v << "?#{query}") unless request.query_string.empty?
     return v
   end
 
@@ -220,5 +226,49 @@ STR
   def dash_uplink
     link = append_query_string(request.path.split('/')[0..-2].join('/'))
     "zoom out: <a href=\"#{link}\">#{@params[:cluster]}</a>"
+  end
+
+  def check_times
+    (!@params[:start] || Chronic.parse(@params[:start])) &&
+      (!@params[:duration] || ChronicDuration.parse(@params[:duration]))
+  end
+
+  def range_string
+    format = settings.config.global_config[:date_format] || "%X %x"
+    start = param_lookup("start")
+    duration = param_lookup("duration")
+    stime = Chronic.parse(start)
+    t1 = stime ? stime.strftime(format) : ""
+    etime = stime + (ChronicDuration.parse(duration)||0) if duration && stime
+    t2 = (etime || Time.now).strftime(format)
+    return t1 && t2 ? "timeslice: #{t1} - #{t2}" : "invalid time range"
+  end
+
+  def permalink
+    url = request.path + '?'
+    @@prefs.each do |label, name|
+      next if name == "start" || name == "duration" # done specially
+      url << "&#{name}=#{param_lookup(name)}"
+    end
+    # fixme some code duplication
+    format = "%x %X" # chronic understands this
+    start = param_lookup("start")
+    duration = param_lookup("duration")
+    stime = Chronic.parse(start)
+    return "" unless stime
+    t1 = stime.strftime(format)
+    seconds = stime.strftime("%s").to_i
+    if duration
+      etime = ChronicDuration.parse(duration)
+      return "" unless etime
+      t2 = ChronicDuration.output(etime)
+    else
+      t2 = ChronicDuration.output(Time.now.strftime("%s").to_i - seconds)
+    end
+
+    url << "&start=#{t1}"
+    url << "&duration=#{t2}"
+    url << "&permalink=1"
+    "<a href=\"#{url}\">permalink</a>"
   end
 end
