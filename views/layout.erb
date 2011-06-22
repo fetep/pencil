@@ -10,7 +10,8 @@
     <div id="wrap">
       <div id="header">
         <h2><%= @title %></h2>
-        <h3><%= range_string %></h3> <!-- only when actually displaying graphs? -->
+        <h3><%= range_string %></h3>
+        <%# "<h3>#{range_string}</h3>" unless @no_graphs %>
       </div>
 
       <div id="nav">
@@ -50,4 +51,5 @@
     </div>
 
   </body>
+  <%= "<div id=\"footer\">#{permalink}</div>" unless @no_graphs %>
 </html>

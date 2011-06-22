@@ -36,10 +36,12 @@ module Dash
 
     before do
       @dashboards = Dashboard.all
+      @no_graphs = false
       # fixme reload hosts after some expiry
     end
 
     get %r[^/(dash/?)?$] do
+      @no_graphs = true
       redirect '/dash/global'
     end
 
@@ -66,7 +68,7 @@ module Dash
     get '/dash/:cluster/:dashboard/?' do
       @cluster = params[:cluster]
       @dash = Dashboard.find(params[:dashboard])
-      raise "Unknown dashboard: #{params[:dashboard]}.inspect" unless @dash
+      raise "Unknown dashboard: #{params[:dashboard].inspect}" unless @dash
 
       @title = "dashboard :: #{@cluster} :: #{@dash['title']}"
 
@@ -78,6 +80,7 @@ module Dash
     end
 
     get '/dash/:cluster/?' do
+      @no_graphs = true
       @cluster = params[:cluster]
       if @cluster == "global"
         @title = "Overview"
