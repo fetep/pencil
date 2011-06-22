@@ -152,6 +152,7 @@ STR
   end
 
   def refresh
+    return "" if params["permalink"]
     if settings.config.global_config[:refresh_rate] != false
       rate = settings.config.global_config[:refresh_rate] || 60
       return %Q[<meta http-equiv="refresh" content="#{rate}">]
@@ -173,7 +174,8 @@ STR
 
   def append_query_string(str)
     v = str.dup
-    (v << "?#{request.query_string}") unless request.query_string.empty?
+    query = request.query_string.chomp("&permalink=1")
+    (v << "?#{query}") unless request.query_string.empty?
     return v
   end
 
@@ -233,12 +235,8 @@ STR
 
   def range_string
     format = settings.config.global_config[:date_format] || "%X %x"
-    start = params["start"] ||
-      session["start"] ||
-      settings.config.global_config[:url_opts][:start]
-    duration = params["duration"] ||
-      session["duration"] ||
-      settings.config.global_config[:url_opts][:duration]
+    start = param_lookup("start")
+    duration = param_lookup("duration")
     stime = Chronic.parse(start)
     t1 = stime ? stime.strftime(format) : ""
     etime = stime + (ChronicDuration.parse(duration)||0) if duration && stime
@@ -246,24 +244,16 @@ STR
     return t1 && t2 ? "timeslice: #{t1} - #{t2}" : "invalid time range"
   end
 
-  # only relevant on graphs with images
   def permalink
     url = request.path + '?'
     @@prefs.each do |label, name|
       next if name == "start" || name == "duration" # done specially
-      val = params[name] ||
-        session[name] ||
-        settings.config.global_config[:url_opts][name.to_sym]
-      url << "&#{name}=#{val}"
+      url << "&#{name}=#{param_lookup(name)}"
     end
     # fixme some code duplication
     format = "%x %X" # chronic understands this
-    start = params["start"] ||
-      session["start"] ||
-      settings.config.global_config[:url_opts][:start]
-    duration = params["duration"] ||
-      session["duration"] ||
-      settings.config.global_config[:url_opts][:duration]
+    start = param_lookup("start")
+    duration = param_lookup("duration")
     stime = Chronic.parse(start)
     return "" unless stime
     t1 = stime.strftime(format)
@@ -278,6 +268,7 @@ STR
 
     url << "&start=#{t1}"
     url << "&duration=#{t2}"
+    url << "&permalink=1"
     "<a href=\"#{url}\">permalink</a>"
   end
 end
