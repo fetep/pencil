@@ -105,8 +105,7 @@ module Dash::Helpers
   end
 
   def refresh
-    return "" if params["permalink"]
-    if settings.config.global_config[:refresh_rate] != false
+    if nowish && settings.config.global_config[:refresh_rate] != false
       rate = settings.config.global_config[:refresh_rate] || 60
       return %Q[<meta http-equiv="refresh" content="#{rate}">]
     end
@@ -165,47 +164,31 @@ module Dash::Helpers
     "zoom out: <a href=\"#{link}\">#{@params[:cluster]}</a>"
   end
 
-  def check_times
-    (!@params[:start] || Chronic.parse(@params[:start])) &&
-      (!@params[:duration] || ChronicDuration.parse(@params[:duration]))
+  # fixme make 60 * 5 configurable
+  def nowish
+    @request_time.to_i - @etime.to_i < 60*5 # within a minute of now
   end
 
   def range_string
     format = settings.config.global_config[:date_format] || "%X %x"
-    start = param_lookup("start")
-    duration = param_lookup("duration")
-    stime = Chronic.parse(start)
-    t1 = stime ? stime.strftime(format) : ""
-    etime = stime + (ChronicDuration.parse(duration)||0) if duration && stime
-    t2 = (etime || Time.now).strftime(format)
-    return t1 && t2 ? "timeslice: #{t1} - #{t2}" : "invalid time range"
+    if @stime && @etime
+      if nowish
+        "timeslice: from #{@stime.strftime(format)}"
+      else
+        "timeslice: #{@stime.strftime(format)} - #{@etime.strftime(format)}"
+      end
+    else
+      "invalid time range"
+    end
+
   end
 
   def permalink
-    url = request.path + '?'
-    @@prefs.each do |label, name|
-      next if name == "start" || name == "duration" # done specially
-      url << "&#{name}=#{param_lookup(name)}"
-    end
-    # fixme some code duplication
+    return "" unless @stime && @duration
     format = "%x %X" # chronic understands this
-    start = param_lookup("start")
-    duration = param_lookup("duration")
-    stime = Chronic.parse(start)
-    return "" unless stime
-    t1 = stime.strftime(format)
-    seconds = stime.strftime("%s").to_i
-    if duration
-      etime = ChronicDuration.parse(duration)
-      return "" unless etime
-      t2 = ChronicDuration.output(etime)
-    else
-      t2 = ChronicDuration.output(Time.now.strftime("%s").to_i - seconds)
-    end
-
-    url << "&start=#{t1}"
-    url << "&duration=#{t2}"
-    url << "&permalink=1"
+    url = request.path + '?'
+    url << "&start=#{@stime.strftime(format)}"
+    url << "&duration=#{ChronicDuration.output(@duration)}"
     "<a href=\"#{url}\">permalink</a>"
   end
 end
