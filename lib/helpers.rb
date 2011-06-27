@@ -146,7 +146,8 @@ STR
   end
 
   def css_url
-    mtime = File.mtime('public/style.css').to_i.to_s
+    style = File.join(settings.root, 'public/style.css')
+    mtime = File.mtime(style).to_i.to_s
     return \
     %Q[<link href="/style.css?#{mtime}" rel="stylesheet" type="text/css">]
   end

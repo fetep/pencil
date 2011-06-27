@@ -14,6 +14,7 @@ require "open-uri"
 require "yaml"
 require "chronic"
 require "chronic_duration"
+require "optparse"
 
 # fixme style.css isn't actually cached, you need to set something up with
 # rack to cache static files
@@ -27,8 +28,9 @@ module Dash
     set :config, Dash::Config.new
     set :run, true
     use Rack::Session::Cookie, :expire_after => 126227700 # 4 years
+    set :root, File.dirname(__FILE__)
     set :static, true
-    set :public, File.join(File.dirname(__FILE__), "public")
+    set :port,settings.config.global_config[:port]
 
     def initialize(settings={})
       super

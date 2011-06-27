@@ -12,14 +12,37 @@ module Dash
     attr_reader :global_config
 
     def initialize
-      @confdir = File.join(File.dirname(__FILE__), "conf")
+      port = 4567
       @rawconfig = {}
+      optparse = OptionParser.new do |o|
+        o.on('-f', '--config-file FILE',
+          'location of the config file (default ./pencil.yml)') do |arg|
+          @rawconfig[:conf_file] = arg || 'pencil.yml'
+        end
+
+        o.on('-p', '--port PORT', 'port to bind to (default 9999)') do |arg|
+          port = arg.to_i
+        end
+      end
+
+      optparse.parse!
+      @rawconfig[:conf_file] ||= 'pencil.yml'
+
       reload!
+      @global_config[:port] = port
     end
 
     def reload!
-      configs = Dir.glob("#{@confdir}/*.yml")
-      configs.each { |c| @rawconfig.merge!(YAML.load(File.read(c))) }
+      @rawconfig.merge!(YAML.load(File.read(@rawconfig[:conf_file])))
+      confdir = @rawconfig[:config][:conf_dir]
+
+      if confdir
+        configs = Dir.glob(File.join(confdir, "*.yml")) # idempotent
+        configs.each do |c|
+          f = File.join(confdir, c)
+          @rawconfig.merge!(YAML.load(File.read(f)))
+        end
+      end
 
       [:graphs, :dashboards, :config].each do |c|
         if not @rawconfig[c]

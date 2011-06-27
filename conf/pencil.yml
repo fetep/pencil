@@ -1,5 +1,6 @@
 ---
 :config:
+  :conf_dir: "." # currently relative to $PWD, not File.dirname(__FILE__)
   :graphite_url: http://graphite-global.phx.weave.mozilla.com
   :default_colors:
     ["blue", "green", "yellow", "red", "purple", "brown", "aqua", "gold"]
@@ -13,6 +14,7 @@
     :margin: 5
     :thickness: 2
 
-  :refresh_rate: 60 # fixme make this a chronic interval
+  :refresh_rate: false
   :host_sort: "numeric"
+  :quantum: 30 # map requests to 30 second intervals
   #:date_format: "%s" # easiest format for humans to read
