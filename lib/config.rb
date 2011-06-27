@@ -60,15 +60,21 @@ module Dash
 
       # possibly check more url_opts here as well
       if @global_config[:url_opts][:start]
-        if @global_config[:url_opts][:start]
-          if !ChronicDuration.parse(@global_config[:url_opts][:start])
-            raise "bad default timespec in :url_opts"
-          end
+        if !ChronicDuration.parse(@global_config[:url_opts][:start])
+          raise "bad default timespec in :url_opts"
         end
       end
 
       @global_config[:default_colors] ||=
         ["blue", "green", "yellow", "red", "purple", "brown", "aqua", "gold"]
+
+      if @global_config[:refresh_rate]
+        duration = ChronicDuration.parse(@global_config[:refresh_rate].to_s)
+        if !duration
+          raise "couldn't parse key :refresh_rate"
+        end
+        @global_config[:refresh_rate] = duration
+      end
 
       graphs_new = []
       @rawconfig[:graphs].each do |name, config|

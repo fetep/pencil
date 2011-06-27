@@ -37,11 +37,36 @@ module Dash
     end
 
     before do
+      @request_time = Time.now
       @dashboards = Dashboard.all
+      @no_graphs = false
+      # time stuff
+      start = param_lookup("start")
+      duration = param_lookup("duration")
+      @stime = Chronic.parse(start)
+      if @stime
+        @stime -= @stime.sec unless @params["noq"]
+      end
+      if duration
+        @duration = ChronicDuration.parse(duration)
+      else
+        @duration = @request_time.to_i - @stime.to_i
+      end
+
+      unless @params["noq"]
+        @duration -= (@duration % settings.config.global_config[:quantum]||1)
+      end
+
+      @etime = Time.at(@stime + @duration) if @stime
+      @etime = @request_time if @etime > @request_time
+
+      params[:stime] = @stime.to_i.to_s
+      params[:etime] = @etime.to_i.to_s
       # fixme reload hosts after some expiry
     end
 
     get %r[^/(dash/?)?$] do
+      @no_graphs = true
       redirect '/dash/global'
     end
 
@@ -68,7 +93,7 @@ module Dash
     get '/dash/:cluster/:dashboard/?' do
       @cluster = params[:cluster]
       @dash = Dashboard.find(params[:dashboard])
-      raise "Unknown dashboard: #{params[:dashboard]}.inspect" unless @dash
+      raise "Unknown dashboard: #{params[:dashboard].inspect}" unless @dash
 
       @title = "dashboard :: #{@cluster} :: #{@dash['title']}"
 
@@ -80,6 +105,7 @@ module Dash
     end
 
     get '/dash/:cluster/?' do
+      @no_graphs = true
       @cluster = params[:cluster]
       if @cluster == "global"
         @title = "Overview"

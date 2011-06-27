@@ -26,6 +26,6 @@ I feel like some graphs should go here
 <h3><a href="/dash/<%= append_query_string(k) %>"><%= k %></h3>
 <%= v.sort.collect do |h|
     href = append_query_string("/host/#{h.cluster}/#{h}")
-    "<li><a href=\"\">#{h}</a></li>"
+    "<li><a href=\"#{href}\">#{h}</a></li>"
     end %>
 <% end %>
