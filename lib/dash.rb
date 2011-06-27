@@ -37,6 +37,7 @@ module Dash
     end
 
     before do
+      session[:not] #fixme kludge is back
       @request_time = Time.now
       @dashboards = Dashboard.all
       @no_graphs = false
@@ -127,6 +128,7 @@ module Dash
     end
 
     # fixme make sure not to save shitty values for :start, :duration
+    # remove stime, etime
     get '/saveprefs' do
       puts 'saving prefs'
       params.each do |k,v|
