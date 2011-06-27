@@ -37,6 +37,9 @@ module Dash
       confdir = @rawconfig[:config][:conf_dir]
 
       if confdir
+        if confdir[0..0] != '/'
+          confdir = File.join(File.dirname(@rawconfig[:conf_file]), confdir)
+        end
         configs = Dir.glob(File.join(confdir, "*.yml")) # idempotent
         configs.each { |c| @rawconfig.merge!(YAML.load(File.read(c))) }
       end
