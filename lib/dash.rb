@@ -30,7 +30,7 @@ module Dash
     use Rack::Session::Cookie, :expire_after => 126227700 # 4 years
     set :root, File.dirname(__FILE__)
     set :static, true
-    set :port,settings.config.global_config[:port]
+    set :port, settings.config.global_config[:port]
 
     def initialize(settings={})
       super

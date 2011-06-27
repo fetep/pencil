@@ -38,10 +38,7 @@ module Dash
 
       if confdir
         configs = Dir.glob(File.join(confdir, "*.yml")) # idempotent
-        configs.each do |c|
-          f = File.join(confdir, c)
-          @rawconfig.merge!(YAML.load(File.read(f)))
-        end
+        configs.each { |c| @rawconfig.merge!(YAML.load(File.read(c))) }
       end
 
       [:graphs, :dashboards, :config].each do |c|
