@@ -1,7 +1,7 @@
 # -*- ruby -*-
 Gem::Specification.new do |spec|
   files = []
-  dirs = %w(lib)
+  dirs = %w(lib, docs, examples)
   dirs.each do |dir|
     files += Dir["#{dir}/**/*"]
   end
@@ -22,6 +22,8 @@ Gem::Specification.new do |spec|
   spec.require_paths << "lib"
   spec.bindir = "bin"
   spec.executables << "pencil"
+
+  spec.extra_rdoc_files = ["README.rdoc"]
 
   spec.authors = ["Pete Fritchman", "Wesley Dawson"]
   spec.email = ["petef@databits.net", "wdawson@mozilla.com"]

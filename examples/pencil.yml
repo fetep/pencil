@@ -14,7 +14,7 @@
     :margin: 5
     :thickness: 2
 
-  :refresh_rate: false
+  :refresh_rate: 60
   :host_sort: "numeric"
   :quantum: 30 # map requests to 30 second intervals
-  #:date_format: "%s" # easiest format for humans to read
+  :date_format: "%X %x" # strftime
