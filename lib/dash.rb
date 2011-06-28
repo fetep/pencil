@@ -129,6 +129,8 @@ module Dash
 
     # fixme make sure not to save shitty values for :start, :duration
     # remove stime, etime
+    # there is definitely something wrong here
+    # disallow saving from, until
     get '/saveprefs' do
       puts 'saving prefs'
       params.each do |k,v|
