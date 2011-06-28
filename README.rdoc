@@ -129,9 +129,3 @@ With no options, pencil looks for ./pencil.yml as the default config file.
 You can bind to a specific port with -p PORT and load a specific config file
 with -f FILE. Other rack-related options will be added at some point in the
 future.
-
---
-Local Variables: ***
-mode: rdoc ***
-End: ***
-++
