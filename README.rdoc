@@ -47,7 +47,7 @@ Dependencies are:
 You should have a working graphite installation, and your metrics currently
 need to be of this form for for pencil to understand them:
 
-_METRIC_._HOST_._CLUSTER_
+_METRIC_._CLUSTER_._HOST_
 
 where _METRIC_ =~ /([^\.]+\.)+/
 
