@@ -33,7 +33,8 @@ module Dash::Models
       y = "#{str}, #{arg}"
       x = lambda { z.call(y) }
 
-      res = case func.to_s
+      return \
+      case func.to_s
         # comb
       when "sumSeries", "averageSeries", "minSeries", "maxSeries", "group"
         z.call
@@ -75,29 +76,23 @@ module Dash::Models
         x.call
       when "color"
         str #color is handled elsewhere
-      when /.*/
-        raise "BAD FUNC#{func}" unless pass
+      else
+        raise "BAD FUNC #{func}" unless pass
         str
       end
-      puts "res => #{res}"
-      return res
     end
 
-    def handle_complex_metric (metrics, opts)
-    end
-
-    def handle_metric (name, opts)
-      #puts 'call handle_metric'
-      #puts name
-      #puts opts.size
-      #puts opts.class
-      #opts.each {|x| puts x}
+    # inner means we're dealing with a complex key; @params will be applied
+    # later on
+    def handle_metric (name, opts, inner=false)
       ret = name.dup
-      @params.each do |k, v|
-        ret = translate(k, ret, v, true)
+      unless inner
+        @params.each do |k, v|
+          ret = translate(k, ret, v, true)
+        end
       end
-      opts.each do |k, v|
-        puts "#{k} => #{v}"
+      (opts||{}).each do |k, v|
+        #puts "#{k} => #{v}"
         ret = translate(k, ret, v)
       end
       ret
@@ -127,8 +122,6 @@ module Dash::Models
       url_opts[:until] = url_opts.delete(:etime) || ""
       url_opts.delete(:start)
       url_opts.delete(:duration)
-      url_opts.delete(:session_id) # fixme
-      url_opts.delete("session_id") # fixme
 
       # @params holds the graph-level options
       # url_opts are assumed to be directly passable to graphite... kind of
@@ -143,8 +136,18 @@ module Dash::Models
           z = opts.dup
           # opts['key'] ||= stat_name
           z[:key] ||= stat_name
-          metric = "#{stat_name}.{#{clusters.to_a.join(',')}}" +
-            ".{#{hosts.to_a.join(',')}}"
+          #######################
+          if stat_name.instance_of?(Array)
+            metric = stat_name.map do |m|
+              mm = "#{m.keys.first}.{#{clusters.to_a.join(',')}}" +
+                ".{#{hosts.to_a.join(',')}}"
+              handle_metric(mm, m[m.keys.first], true)
+            end.join(',')
+          else
+            metric = "#{stat_name}.{#{clusters.to_a.join(',')}}" +
+              ".{#{hosts.to_a.join(',')}}"
+          end
+          #######################
           z[:key] = "global #{z[:key]}"
           target << handle_metric("sumSeries(#{metric})", z)
           colors << next_color(colors, z[:color])
@@ -155,7 +158,16 @@ module Dash::Models
             z = opts.dup
             metrics = []
             hosts.each do |host|
-              metrics << "#{stat_name}.#{cluster}.#{host}"
+              #######################
+              if stat_name.instance_of?(Array)
+                metrics << stat_name.map do |m|
+                  mm = "#{m.keys.first}.#{cluster}.#{host}"
+                  handle_metric(mm, m[m.keys.first], true)
+                end.join(',')
+              else
+                metrics << "#{stat_name}.#{cluster}.#{host}"
+              end
+              #######################
             end # hosts.each
 
             z[:key] = "#{cluster} #{z[:key]}"
@@ -168,7 +180,17 @@ module Dash::Models
           clusters.each do |cluster|
             hosts.each do |host|
               label = "#{host} #{opts[:key]}"
-              metric = "#{stat_name}.#{cluster}.#{host}"
+              #################
+              if stat_name.instance_of?(Array)
+                metric = stat_name.map do |m|
+                  mm = "#{m.keys.first}.#{cluster}.#{host}"
+                  handle_metric(mm, m[m.keys.first], true)
+                end.join(',')
+              else
+                metric = "#{stat_name}.#{cluster}.#{host}"
+              end
+              #################
+
               if label =~ /\*/
                 z = opts.dup
                 # fixme proper labeling... maybe
@@ -181,7 +203,7 @@ module Dash::Models
                 colors.concat(@params[:default_colors]) if colors.empty?
               else
                 z = opts.dup
-                puts opts[:key]
+                #puts opts[:key]
                 z[:key] = "#{host}/#{cluster} #{opts[:key]}"
                 target << handle_metric(metric, z)
                 colors << next_color(colors, opts[:color])
