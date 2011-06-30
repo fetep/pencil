@@ -127,10 +127,9 @@ module Dash::Helpers
   def merge_opts
     # fixme
     # surely sinatra has a better way than this or parsing request.query_string
-    static_opts = ["cluster", "dashboard", "zoom", "host"]
+    static_opts = ["cluster", "dashboard", "zoom", "host", "session_id"]
     opts = params.dup
-    opts.delete_if { |k,v| static_opts.member?(k) || v.empty? }
-    session.merge(opts)
+    session.merge(opts).delete_if { |k,v| static_opts.member?(k) || v.empty? }
   end
 
   def cluster_switcher
