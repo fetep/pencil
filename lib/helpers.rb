@@ -44,7 +44,7 @@ module Dash::Helpers
       href = append_query_string("/dash/#{c}/#{params[:dashboard]}/#{g.name}")
       links << "<a href=\"#{href}\">#{c}</a>"
     end
-    return "(" + links.join(", ") + ")"
+    return "zoom (" + links.join(", ") + ")"
   end
 
   def suggest_dashboards_links(host, graph)
