@@ -19,12 +19,95 @@ module Dash::Models
       opts["width"] || @params[:url_opts][:width]
     end
 
+    # translate STR into graphite-speak for applying FUNC to STR
+    # graphite functions take zero or one argument
+    # pass passes STR through, instead of raising an error
+    def translate (func, str, arg=nil, pass=false)
+      # puts "calling translate"
+      # puts "func => #{func}"
+      # puts "str => #{str}"
+      # puts "arg => #{arg}"
+      # procs and lambdas don't support default arguments in 1.8, so I have to
+      # do this
+      z = lambda { |*body| "#{func}(#{body[0]||str})" }
+      y = "#{str}, #{arg}"
+      x = lambda { z.call(y) }
+
+      res = case func.to_s
+        # comb
+      when "sumSeries", "averageSeries", "minSeries", "maxSeries", "group"
+        z.call
+        # transform
+      when "scale", "offset"
+        # perhaps .to_f
+        x.call
+      when "derivative", "integral"
+        z.call
+      when "nonNegativeDerivative"
+        z.call("#{str}#{', ' + arg if arg}")
+      when "log", "timeShift", "summarize", "hitcount",
+        # calculate
+        "movingAverage", "stdev", "asPercent"
+        x.call
+      when "diffSeries", "ratio"
+        z.call
+        # filters
+      when "mostDeviant"
+        z.call("#{arg}, #{str}")
+      when "highestCurrent", "lowestCurrent", "nPercentile", "currentAbove",
+        "currentBelow", "highestAverage", "lowestAverage", "averageAbove",
+        "averageBelow", "maximumAbove", "maximumBelow"
+        x.call
+      when "sortByMaxima", "minimalist"
+        z.call
+      when "limit", "exclude"
+        x.call
+      when "key"
+        "alias(#{str}, \"#{arg}\")"
+      when "cumulative"
+      when "drawAsInfinite"
+        z.call
+      when "lineWidth"
+        x.call
+      when "dashed", "keepLastValue"
+        z.call
+      when "substr", "threshold"
+        x.call
+      when "color"
+        str #color is handled elsewhere
+      when /.*/
+        raise "BAD FUNC#{func}" unless pass
+        str
+      end
+      puts "res => #{res}"
+      return res
+    end
+
+    def handle_complex_metric (metrics, opts)
+    end
+
+    def handle_metric (name, opts)
+      #puts 'call handle_metric'
+      #puts name
+      #puts opts.size
+      #puts opts.class
+      #opts.each {|x| puts x}
+      ret = name.dup
+      @params.each do |k, v|
+        ret = translate(k, ret, v, true)
+      end
+      opts.each do |k, v|
+        puts "#{k} => #{v}"
+        ret = translate(k, ret, v)
+      end
+      ret
+    end
+
     def render_url(hosts, clusters, opts={})
       opts = {
         :sum => nil,
         :title => @params["title"],
       }.merge(opts)
-
 
       if ! [:global, :cluster, nil].member?(opts[:sum])
         raise ArgumentError, "render graph #{name}: invalid :sum - #{opts[:sum]}"
@@ -44,7 +127,11 @@ module Dash::Models
       url_opts[:until] = url_opts.delete(:etime) || ""
       url_opts.delete(:start)
       url_opts.delete(:duration)
+      url_opts.delete(:session_id) # fixme
+      url_opts.delete("session_id") # fixme
 
+      # @params holds the graph-level options
+      # url_opts are assumed to be directly passable to graphite... kind of
       if @params["stack"] == true
         url_opts[:areaMode] = "stacked"
       end
@@ -53,28 +140,27 @@ module Dash::Models
       colors = []
       if opts[:sum] == :global
         @params["metrics"].each do |stat_name, opts|
-          opts['key'] ||= stat_name
+          z = opts.dup
+          # opts['key'] ||= stat_name
+          z[:key] ||= stat_name
           metric = "#{stat_name}.{#{clusters.to_a.join(',')}}" +
             ".{#{hosts.to_a.join(',')}}"
-
-          label = "global #{opts[:key]}"
-          target << "alias(" +
-            _target("sumSeries(#{metric})") + ", #{label.inspect})"
-          colors << next_color(colors, opts[:color])
+          z[:key] = "global #{z[:key]}"
+          target << handle_metric("sumSeries(#{metric})", z)
+          colors << next_color(colors, z[:color])
         end # @params["metrics"].each
       elsif opts[:sum] == :cluster # one line per cluster/metric
         clusters.each do |cluster|
           @params["metrics"].each do |stat_name, opts|
+            z = opts.dup
             metrics = []
             hosts.each do |host|
               metrics << "#{stat_name}.#{cluster}.#{host}"
             end # hosts.each
 
-            label = "#{cluster} #{opts[:key]}"
-            target << "alias(" +
-                      _target("sumSeries(" + metrics.join(",") + ")") +
-                      ", #{label.inspect})"
-            colors << next_color(colors, opts[:color])
+            z[:key] = "#{cluster} #{z[:key]}"
+            target << handle_metric("sumSeries(#{metrics.join(',')})", z)
+            colors << next_color(colors, z[:color])
           end # metrics.each
         end # clusters.each
       else # one line per {metric,host,colo}
@@ -82,16 +168,22 @@ module Dash::Models
           clusters.each do |cluster|
             hosts.each do |host|
               label = "#{host} #{opts[:key]}"
-              metric = _target("#{stat_name}.#{cluster}.#{host}")
+              metric = "#{stat_name}.#{cluster}.#{host}"
               if label =~ /\*/
+                z = opts.dup
                 # fixme proper labeling... maybe
-                # With wildcards let graphite contruct the legend (or not).
+                # With wildcards let graphite construct the legend (or not).
                 # Since we're handling wildcards we don't know how many
                 # hosts will match, so just put in the default color list.
-                target << metric
+                # technically we do know, so this can be fixed
+                z.delete(:key)
+                target << handle_metric(metric, z)
                 colors.concat(@params[:default_colors]) if colors.empty?
               else
-                target << "alias(#{metric}, \"#{host}/#{cluster} #{label}\")"
+                z = opts.dup
+                puts opts[:key]
+                z[:key] = "#{host}/#{cluster} #{opts[:key]}"
+                target << handle_metric(metric, z)
                 colors << next_color(colors, opts[:color])
               end
             end
