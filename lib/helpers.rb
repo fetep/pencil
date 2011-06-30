@@ -38,10 +38,10 @@ module Dash::Helpers
     return append_query_string("/host/#{cluster}/#{host}")
   end
 
-  def suggest_cluster_links(clusters)
+  def suggest_cluster_links(clusters, g)
     links = []
     clusters.each do |c|
-      href = append_query_string("/dash/#{c}/#{params[:dashboard]}")
+      href = append_query_string("/dash/#{c}/#{params[:dashboard]}/#{g.name}")
       links << "<a href=\"#{href}\">#{c}</a>"
     end
     return "(" + links.join(", ") + ")"

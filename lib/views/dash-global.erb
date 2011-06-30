@@ -1,5 +1,4 @@
-<% clusters =  @dash.clusters
-   links = suggest_cluster_links(clusters) %>
+<% clusters =  @dash.clusters %>
 
 <%= cluster_switcher %>
 <%= dash_switcher %>
@@ -12,7 +11,7 @@
 <div class="graphsection" style="width:<%= g.width(merge_opts) %>;">
   <a name="<%= g.name %>">
     <span class="graphtitle"><%= g.name %></span>
-    <span class="dashlinks"><%= links %></span>
+    <span class="dashlinks"><%= suggest_cluster_links(clusters, g) %></span>
     <div class="graph">
       <img src="<%= @dash.render_global_graph(g, :dynamic_url_opts => merge_opts) %>" >
     </div>
