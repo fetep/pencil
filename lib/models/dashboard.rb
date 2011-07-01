@@ -54,11 +54,11 @@ module Dash::Models
       end
 
       # filter by what matches the graph definition
-      hosts = hosts.select { |h| h.multi_match(graph['hosts']) }
+      hosts = hosts.select { |h| h.multi_match(graph["hosts"]) }
 
       # filter if we have a dashboard-level 'hosts' filter
-      if @params['hosts']
-        hosts = hosts.select { |h| h.multi_match(@params['hosts']) }
+      if @params["hosts"]
+        hosts = hosts.select { |h| h.multi_match(@params["hosts"]) }
       end
 
       hosts.each { |h| clusters << h.cluster }
@@ -77,7 +77,7 @@ module Dash::Models
     end
 
     def get_host_wildcards(graph)
-      return graph_opts[graph]['hosts'] || @params['hosts'] || graph['hosts']
+      return graph_opts[graph]["hosts"] || @params["hosts"] || graph["hosts"]
     end
 
     def render_global_graph(graph, opts={})
@@ -95,7 +95,7 @@ module Dash::Models
       ret = []
       Dashboard.each do |name, dash|
 
-        if dash['graphs'].map { |x| x.keys.first }.member?(graph.name)
+        if dash["graphs"].map { |x| x.keys.first }.member?(graph.name)
           ret << dash
         end
       end

@@ -24,7 +24,7 @@ module Dash::Helpers
   end
 
   def cluster_graph_link(dash, g, cluster)
-    link = dash.graph_opts[g]['click'] ||
+    link = dash.graph_opts[g]["click"] ||
       "/dash/#{cluster}/#{dash.name}/#{g.name}"
     return append_query_string(link)
   end
@@ -101,7 +101,7 @@ module Dash::Helpers
   end
 
   def css_url
-    style = File.join(settings.root, 'public/style.css')
+    style = File.join(settings.root, "public/style.css")
     mtime = File.mtime(style).to_i.to_s
     return \
     %Q[<link href="/style.css?#{mtime}" rel="stylesheet" type="text/css">]
@@ -157,12 +157,12 @@ module Dash::Helpers
   end
 
   def graph_uplink
-    link = append_query_string(request.path.split('/')[0..-2].join('/'))
+    link = append_query_string(request.path.split("/")[0..-2].join("/"))
     "zoom out: <a href=\"#{link}\">#{@dash}</a>"
   end
 
   def dash_uplink
-    link = append_query_string(request.path.split('/')[0..-2].join('/'))
+    link = append_query_string(request.path.split("/")[0..-2].join("/"))
     "zoom out: <a href=\"#{link}\">#{@params[:cluster]}</a>"
   end
 
@@ -188,7 +188,7 @@ module Dash::Helpers
   def permalink
     return "" unless @stime && @duration
     format = "%x %X" # chronic understands this
-    url = request.path + '?'
+    url = request.path + "?"
     url << "&start=#{@stime.strftime(format)}"
     url << "&duration=#{ChronicDuration.output(@duration)}"
     "<a href=\"#{url}\">permalink</a>"

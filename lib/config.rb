@@ -14,14 +14,14 @@ module Dash
     def initialize
       port = 9292
       @rawconfig = {}
-      @confdir = '.'
+      @confdir = "."
 
       optparse = OptionParser.new do |o|
-        o.on('-d', '--config-dir DIR',
-          'location of the config directory (default .)') do |arg|
+        o.on("-d", "--config-dir DIR",
+          "location of the config directory (default .)") do |arg|
           @confdir = arg
         end
-        o.on('-p', '--port PORT', 'port to bind to (default 9292)') do |arg|
+        o.on("-p", "--port PORT", "port to bind to (default 9292)") do |arg|
           port = arg.to_i
         end
       end

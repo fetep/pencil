@@ -123,7 +123,7 @@ module Dash
     end
 
     get '/host/:cluster/:host/?' do
-      @host = Host.new(params[:host], { 'cluster' => params[:cluster] })
+      @host = Host.new(params[:host], { "cluster" => params[:cluster] })
       @cluster = params[:cluster]
       raise "Unknown host: #{params[:host]} in #{params[:cluster]}" unless @host
 
@@ -145,7 +145,7 @@ module Dash
     end
 
     get '/clear' do
-      puts 'clearing prefs'
+      puts "clearing prefs"
       session.clear
       redirect URI.parse(request.referrer).path
     end

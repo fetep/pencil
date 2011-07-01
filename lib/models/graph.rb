@@ -9,8 +9,8 @@ module Dash::Models
       @params["hosts"] ||= ["*"]
       @params["title"] ||= name
 
-      if not @params["metrics"]
-        raise ArgumentError, "graph #{name} needs a 'metrics' map"
+      if not @params["targets"]
+        raise ArgumentError, "graph #{name} needs a 'targets' map"
       end
     end
 
@@ -21,7 +21,8 @@ module Dash::Models
 
     # translate STR into graphite-speak for applying FUNC to STR
     # graphite functions take zero or one argument
-    # pass passes STR through, instead of raising an error
+    # pass passes STR through, instead of raising an error if FUNC isn't
+    # recognized
     def translate(func, str, arg=nil, pass=false)
       # puts "calling translate"
       # puts "func => #{func}"
@@ -133,17 +134,17 @@ module Dash::Models
       colors = []
       #fixme code duplication
       if opts[:sum] == :global
-        @params["metrics"].each do |stat_name, opts|
+        @params["targets"].each do |stat_name, opts|
           z = opts.dup
           # opts['key'] ||= stat_name
           z[:key] ||= stat_name
           #######################
           if stat_name.instance_of?(Array)
             metric = stat_name.map do |m|
-              mm = compose_metric(m.keys.first, clusters.to_a.join(','),
-                           hosts.to_a.join(','))
+              mm = compose_metric(m.keys.first, clusters.to_a.join(","),
+                           hosts.to_a.join(","))
               handle_metric(mm, m[m.keys.first], true)
-            end.join(',')
+            end.join(",")
           else
             metric = "#{stat_name}.{#{clusters.to_a.join(',')}}" +
               ".{#{hosts.to_a.join(',')}}"
@@ -152,10 +153,10 @@ module Dash::Models
           z[:key] = "global #{z[:key]}"
           target << handle_metric("sumSeries(#{metric})", z)
           colors << next_color(colors, z[:color])
-        end # @params["metrics"].each
+        end # @params["targets"].each
       elsif opts[:sum] == :cluster # one line per cluster/metric
         clusters.each do |cluster|
-          @params["metrics"].each do |stat_name, opts|
+          @params["targets"].each do |stat_name, opts|
             z = opts.dup
             metrics = []
             hosts.each do |host|
@@ -164,7 +165,7 @@ module Dash::Models
                 metrics << stat_name.map do |m|
                   mm = compose_metric(m.keys.first, cluster, host)
                   handle_metric(mm, m[m.keys.first], true)
-                end.join(',')
+                end.join(",")
               else
                 metrics << compose_metric(stat_name, cluster, host)
               end
@@ -177,7 +178,7 @@ module Dash::Models
           end # metrics.each
         end # clusters.each
       else # one line per {metric,host,colo}
-        @params["metrics"].each do |stat_name, opts|
+        @params["targets"].each do |stat_name, opts|
           clusters.each do |cluster|
             hosts.each do |host|
               label = "#{host} #{opts[:key]}"
@@ -186,7 +187,7 @@ module Dash::Models
                 metric = stat_name.map do |m|
                   mm = compose_metric(m.keys.first, cluster, host)
                   handle_metric(mm, m[m.keys.first], true)
-                end.join(',')
+                end.join(",")
               else
                 metric = compose_metric(stat_name, cluster, host)
               end
@@ -211,7 +212,7 @@ module Dash::Models
               end
             end
           end
-        end # @params["metrics"].each
+        end # @params["targets"].each
       end # if opts[:sum]
 
       url_opts[:target] = target
@@ -229,19 +230,19 @@ module Dash::Models
     end
 
     # return an array of all metrics matching the specifications in
-    # @params['metrics']
+    # @params["targets"]
     # metrics are arrays of fields (once delimited by periods)
     def expand
       url = URI.join(@params[:graphite_url], "/metrics/expand/?query=").to_s
       metrics = []
 
-      @params['metrics'].each do |metric|
+      @params["targets"].each do |metric|
         composed = compose_metric(metric.first.first, "*", "*")
         query = open("#{url}#{composed}").read
-        metrics << JSON.parse(query)['results']
+        metrics << JSON.parse(query)["results"]
       end
 
-      return metrics.flatten.map { |x| x.split('.') }
+      return metrics.flatten.map { |x| x.split(".") }
     end
 
     def hosts_clusters
@@ -250,11 +251,11 @@ module Dash::Models
 
       # field -1 is the host name, and -2 is its cluster
       hosts = metrics.map do |x|
-        Host.new(x[-1], @params.merge({ 'cluster' => x[-2] }))
+        Host.new(x[-1], @params.merge({ "cluster" => x[-2] }))
       end.uniq
 
       # filter by what matches the graph definition
-      hosts = hosts.select { |h| h.multi_match(@params['hosts']) }
+      hosts = hosts.select { |h| h.multi_match(@params["hosts"]) }
       hosts.each { |h| clusters << h.cluster }
 
       return hosts, clusters

@@ -85,12 +85,12 @@ examples/pencil.yml, which contains general configuration options:
   :date_format : "%X %x"    # strftime
   :metric_format : "%m.%c.%h" #%m metric, %c cluster, %h host
 
-A graph is a name, title, collection of metrics, and some other options. It
+A graph is a name, title, collection of targets, and some other options. It
 looks like (in YAML):
 
   graph_name:             # name pencil references this graph by
     title: "graph_title"  # title displayed on graph
-    metrics:              # list of graphite metrics
+    targets:              # list of graphite targets
       metric.1:
         :key : key         # key displayed on the legend for this metric
         :color : color     # color on the graph for this metric
@@ -100,6 +100,8 @@ looks like (in YAML):
       [...]
     stack: true           # whether to stack or not
     hosts: ["hosts1*", "test*_web", "hosts2*"] # filter on hosts
+
+fixme A target is a metric or list of metrics and associated graphite options.
 
 Similarly, a dashboard is a name, title, collection of graphs, and some other
 options. It looks like (in YAML):

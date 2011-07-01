@@ -2,7 +2,7 @@
 :graphs:
   syncstorage_qps:
     title: "syncstorage qps"
-    metrics:
+    targets:
       syncstorage.request_rate.200:
         :key: 200
         :color: green
@@ -29,7 +29,7 @@
 
   syncstorage_401:
     title: "syncstorage 401s"
-    metrics:
+    targets:
       syncstorage.request_rate.401:
         :key: 200
         :color: brown
@@ -37,7 +37,7 @@
 
   syncstorage_exceptions:
     title: "syncstorage exceptions"
-    metrics:
+    targets:
       syncstorage.log.exception:
         :key: exceptions/s
         :color: red
@@ -45,7 +45,7 @@
 
   cpu_usage:
     title: "cpu usage"
-    metrics:
+    targets:
       system.cpu.system:
         :key: CPU/system
         :color: yellow
@@ -63,14 +63,14 @@
 
   load_average:
     title: "1 minute load average"
-    metrics:
+    targets:
       system.load.1:
         :key: load
     hosts: ["*"]
 
   network_traffic:
     title: "network traffic"
-    metrics:
+    targets:
       system.network.in:
         :key: bits in
         :color: green
@@ -83,7 +83,7 @@
 
   ldap_ops:
     title: "ldap operations"
-    metrics:
+    targets:
       slapd.ops.add:
         :key: add
         :color: red
@@ -102,7 +102,7 @@
 
   mysql_ops:
     title: "mysql operations"
-    metrics:
+    targets:
       mysql.ops.delete:
         :key: delete
         :color: red

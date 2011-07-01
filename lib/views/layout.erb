@@ -30,7 +30,7 @@
           Dashboards: (<%= @cluster %>)
           <br>
           <% @dashboards.sort.each do |dash| %>
-          <li><a href="<%= dash_link(dash, @cluster) %>"><%= dash['title'] %></a></li>
+          <li><a href="<%= dash_link(dash, @cluster) %>"><%= dash["title"] %></a></li>
           <% end %>
           <br>
           Jump to Host:

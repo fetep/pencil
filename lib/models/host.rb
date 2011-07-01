@@ -10,17 +10,17 @@ module Dash::Models
 
       @graphs = []
       Graph.each do |graph_name, graph|
-        graph['hosts'].each do |h|
+        graph["hosts"].each do |h|
           if match(h)
             @graphs << graph
             break
           end
-        end # graph['hosts'].each
+        end # graph["hosts"].each
       end # Graph.each
     end
 
     def cluster
-      return @params['cluster']
+      return @params["cluster"]
     end
 
     def key
