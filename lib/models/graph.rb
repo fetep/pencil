@@ -188,7 +188,7 @@ module Dash::Models
                   handle_metric(mm, m[m.keys.first], true)
                 end.join(',')
               else
-                metrics << compose_metric(stat_name, cluster, host)
+                metric = compose_metric(stat_name, cluster, host)
               end
               #################
 
