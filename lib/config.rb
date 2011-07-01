@@ -76,6 +76,15 @@ module Dash
         @global_config[:refresh_rate] = duration
       end
 
+      @global_config[:metric_format] ||= "%m.%c.%h"
+      if @global_config[:metric_format] !~ /%m/
+        raise "missing metric (%m) in :metric_format"
+      elsif @global_config[:metric_format] !~ /%c/
+        raise "missing cluster (%c) in :metric_format"
+      elsif @global_config[:metric_format] !~ /%h/
+        raise "missing host (%h) in :metric_format"
+      end
+
       graphs_new = []
       @rawconfig[:graphs].each do |name, config|
         graphs_new << Graph.new(name, config.merge(@global_config))

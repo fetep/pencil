@@ -131,6 +131,7 @@ module Dash::Models
 
       target = []
       colors = []
+      #fixme code duplication
       if opts[:sum] == :global
         @params["metrics"].each do |stat_name, opts|
           z = opts.dup
@@ -139,8 +140,8 @@ module Dash::Models
           #######################
           if stat_name.instance_of?(Array)
             metric = stat_name.map do |m|
-              mm = "#{m.keys.first}.{#{clusters.to_a.join(',')}}" +
-                ".{#{hosts.to_a.join(',')}}"
+              mm = compose_metric(m.keys.first, clusters.to_a.join(','),
+                           hosts.to_a.join(','))
               handle_metric(mm, m[m.keys.first], true)
             end.join(',')
           else
@@ -161,11 +162,11 @@ module Dash::Models
               #######################
               if stat_name.instance_of?(Array)
                 metrics << stat_name.map do |m|
-                  mm = "#{m.keys.first}.#{cluster}.#{host}"
+                  mm = compose_metric(m.keys.first, cluster, host)
                   handle_metric(mm, m[m.keys.first], true)
                 end.join(',')
               else
-                metrics << "#{stat_name}.#{cluster}.#{host}"
+                metrics << compose_metric(stat_name, cluster, host)
               end
               #######################
             end # hosts.each
@@ -183,11 +184,11 @@ module Dash::Models
               #################
               if stat_name.instance_of?(Array)
                 metric = stat_name.map do |m|
-                  mm = "#{m.keys.first}.#{cluster}.#{host}"
+                  mm = compose_metric(m.keys.first, cluster, host)
                   handle_metric(mm, m[m.keys.first], true)
                 end.join(',')
               else
-                metric = "#{stat_name}.#{cluster}.#{host}"
+                metrics << compose_metric(stat_name, cluster, host)
               end
               #################
 
@@ -235,7 +236,9 @@ module Dash::Models
       metrics = []
 
       @params['metrics'].each do |metric|
-        query = open("#{url}#{metric.first.first}.*.*").read
+        puts @params[:metric_format] || "wtf"
+        composed = compose_metric(metric.first.first, "*", "*")
+        query = open("#{url}#{composed}").read
         metrics << JSON.parse(query)['results']
       end
 
@@ -256,15 +259,6 @@ module Dash::Models
       hosts.each { |h| clusters << h.cluster }
 
       return hosts, clusters
-    end
-
-    private
-    def _target(target)
-      res = target.dup
-      if @params["scale"]
-        res = "scale(#{res}, #{@params["scale"].to_f})"
-      end
-      return res
     end
 
     private

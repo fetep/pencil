@@ -18,3 +18,4 @@
   :host_sort: "numeric"
   :quantum: 30 # map requests to 30 second intervals
   :date_format: "%X %x" # strftime
+  :metric_format: "%m.%c.%h" #%m metric, %c cluster, %h host

@@ -64,5 +64,10 @@ module Dash::Models
       @params.merge!(hash)
     end
 
+    # compose a metric using a :metric_format
+    # format string with %c for metric, %c for cluster, and %h for host
+    def compose_metric (m, c, h)
+      @params[:metric_format].dup.gsub("%m", m).gsub("%c", c).gsub("%h", h)
+    end
   end # Dash::Models::Base
 end # Dash::Models
