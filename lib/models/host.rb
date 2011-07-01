@@ -27,10 +27,6 @@ module Dash::Models
       "#{@cluster}#{@name}"
     end
 
-    def to_s
-      @name
-    end
-
     def eql?(other)
       key == other.key
     end
