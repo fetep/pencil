@@ -235,7 +235,7 @@ module Dash::Models
       metrics = []
 
       @params['metrics'].each do |metric|
-        query = open("#{url}#{metric.first}.*.*").read
+        query = open("#{url}#{metric.first.first}.*.*").read
         metrics << JSON.parse(query)['results']
       end
 
