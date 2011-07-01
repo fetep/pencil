@@ -44,15 +44,18 @@ Dependencies are:
 
 == SETUP
 
-You should have a working graphite installation, and your metrics currently
-need to be of this form for for pencil to understand them:
+You should have a working graphite installation. Your metrics need to be
+composed of three pieces:
 
-_METRIC_._CLUSTER_._HOST_
+* "%m", _METRIC_ (the common part of each graphite path)
+* "%c", _CLUSTER_ (cluster name, varies with query)
+* "%h", _HOST_ (host name, varies with query)
 
-where _METRIC_ =~ /([^\.]+\.)+/
+The :metric_format string is specified in the configuration file (see below),
+and defaults to %m.%c.%h".
 
-You will also need to set up some YAML configuration files in order for pencil
-to work. See examples/ for example configs. Here's an example pencil.yml (the
+You need to set up some YAML configuration files in order for pencil to
+work. See examples/ for example configs. Here's an example pencil.yml (the
 default name for the config file)
 
 :config :
@@ -68,10 +71,11 @@ default name for the config file)
     :margin : 5
     :thickness : 2
 
-    :refresh_rate : 60        # how often to refresh the view
-    :host_sort : "numeric"    # add this if you want to sort hosts numerically
-    :quantum : 30             # map requests to 30 second intervals
-    :date_format : "%X %x"    # strftime
+  :refresh_rate : 60        # how often to refresh the view
+  :host_sort : "numeric"    # add this if you want to sort hosts numerically
+  :quantum : 30             # map requests to 30 second intervals
+  :date_format : "%X %x"    # strftime
+  :metric_format : "%m.%c.%h" #%m metric, %c cluster, %h host
 
 All configuration can go in pencil.yml, but if you specify a :conf_dir under
 :config, all YAML files in that directory will also be loaded. You can use this
@@ -84,9 +88,8 @@ The important top-level configuration keys are:
 * :graphs: see below
 * :dashboards: see below
 
-A graph is a name, title, collection of metrics, and some other options. A
-metric is the full graphite metric sans the HOST.CLUSTER suffix. It looks like
-(in YAML):
+A graph is a name, title, collection of metrics, and some other options. It
+looks like (in YAML):
 
   graph_name:             # name pencil references this graph by
     title: "graph_title"  # title displayed on graph
@@ -113,6 +116,9 @@ options. It looks like (in YAML):
       - graph2:
       [...]
     hosts: ["filter1*", "*filter2"]
+
+=== complex metrics and dashboard graph-level options
+FIXME document
 
 == RUNNING THE SERVER
 Once you've set up the configs, you should be able to just run
