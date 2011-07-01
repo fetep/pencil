@@ -1,6 +1,5 @@
 ---
 :config:
-  :conf_dir: "." # relative to this file
   :graphite_url: http://graphite-global.phx.weave.mozilla.com
   :default_colors:
     ["blue", "green", "yellow", "red", "purple", "brown", "aqua", "gold"]

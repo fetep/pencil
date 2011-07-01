@@ -236,7 +236,6 @@ module Dash::Models
       metrics = []
 
       @params['metrics'].each do |metric|
-        puts @params[:metric_format] || "wtf"
         composed = compose_metric(metric.first.first, "*", "*")
         query = open("#{url}#{composed}").read
         metrics << JSON.parse(query)['results']

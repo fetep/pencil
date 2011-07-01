@@ -55,12 +55,20 @@ The :metric_format string is specified in the configuration file (see below),
 and defaults to %m.%c.%h".
 
 You need to set up some YAML configuration files in order for pencil to
-work. See examples/ for example configs. Here's an example pencil.yml (the
-default name for the config file)
+work. Pencil searches the current directory (or, with -d DIR, DIR) for YAML
+files to load.
+
+The important top-level configuration keys are:
+
+* :config: general config options
+* :graphs: see below
+* :dashboards: see below
+
+See examples/ for an example configuration directory.  Here's
+examples/pencil.yml, which contains general configuration options:
 
 :config :
-  :conf_dir : "."   # directory, relative to this file, with yml files to load
-  :graphite_url : graphite URI
+  :graphite_url : URL # graphite URL
   :url_opts :
     :width : 1000
     :height : 400
@@ -76,17 +84,6 @@ default name for the config file)
   :quantum : 30             # map requests to 30 second intervals
   :date_format : "%X %x"    # strftime
   :metric_format : "%m.%c.%h" #%m metric, %c cluster, %h host
-
-All configuration can go in pencil.yml, but if you specify a :conf_dir under
-:config, all YAML files in that directory will also be loaded. You can use this
-to put dashboards and graphs in separate files (this is how the example configs
-are set up)
-
-The important top-level configuration keys are:
-
-* :config: general config options, as above
-* :graphs: see below
-* :dashboards: see below
 
 A graph is a name, title, collection of metrics, and some other options. It
 looks like (in YAML):
@@ -125,13 +122,13 @@ Once you've set up the configs, you should be able to just run
 
 pencil
 
-and get something up on localhost:4567
+and get something up on localhost:9292
 
 From there you should be able to click around and see various interesting
 collections of graphs.
 
 With no options, pencil looks for ./pencil.yml as the default config file.
 
-You can bind to a specific port with -p PORT and load a specific config file
-with -f FILE. Other rack-related options will be added at some point in the
-future.
+You can bind to a specific port with -p PORT and specify a configuration
+directory with -d DIR. Other rack-related options will be added at some point
+in the future.
