@@ -60,7 +60,7 @@ module Dash::Models
       return to_s <=> other.to_s
     end
 
-    def update_params (hash)
+    def update_params(hash)
       @params.merge!(hash)
     end
 

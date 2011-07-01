@@ -7,7 +7,7 @@ module Dash::Helpers
              ["Height", "height"]]
 
   # convert keys to symbols before lookup
-  def param_lookup (name)
+  def param_lookup(name)
     sym_hash = {}
     session.each { |k,v| sym_hash[k.to_sym] = v unless v.empty? }
     params.each { |k,v| sym_hash[k.to_sym] = v unless v.empty? }
@@ -19,12 +19,14 @@ module Dash::Helpers
     @dash.render_cluster_graph(g, cluster,
                                :title => title,
                                :dynamic_url_opts => merge_opts)
-    zoom_url = cluster_graph_link(@dash.name, g, cluster)
+    zoom_url = cluster_graph_link(@dash, g, cluster)
     return image_url, zoom_url
   end
 
-  def cluster_graph_link(name, g, cluster)
-    return append_query_string("/dash/#{cluster}/#{name}/#{g.name}")
+  def cluster_graph_link(dash, g, cluster)
+    link = dash.graph_opts[g]['click'] ||
+      "/dash/#{cluster}/#{dash.name}/#{g.name}"
+    return append_query_string(link)
   end
 
   def cluster_zoom_graph(g, cluster, host, title)
@@ -112,7 +114,7 @@ module Dash::Helpers
     end
   end
 
-  def hosts_selector (hosts)
+  def hosts_selector(hosts)
     @hosts = hosts
     erb :'partials/hosts_selector', :layout => false
   end

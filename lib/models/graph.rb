@@ -15,14 +15,14 @@ module Dash::Models
     end
 
     # fixme parameters in general
-    def width (opts={})
+    def width(opts={})
       opts["width"] || @params[:url_opts][:width]
     end
 
     # translate STR into graphite-speak for applying FUNC to STR
     # graphite functions take zero or one argument
     # pass passes STR through, instead of raising an error
-    def translate (func, str, arg=nil, pass=false)
+    def translate(func, str, arg=nil, pass=false)
       # puts "calling translate"
       # puts "func => #{func}"
       # puts "str => #{str}"
@@ -84,7 +84,7 @@ module Dash::Models
 
     # inner means we're dealing with a complex key; @params will be applied
     # later on
-    def handle_metric (name, opts, inner=false)
+    def handle_metric(name, opts, inner=false)
       ret = name.dup
       unless inner
         @params.each do |k, v|

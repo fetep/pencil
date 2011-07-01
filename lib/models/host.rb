@@ -35,7 +35,7 @@ module Dash::Models
       key == other.key
     end
 
-    def == (other)
+    def ==(other)
       key == other.key
     end
 
