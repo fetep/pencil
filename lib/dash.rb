@@ -59,8 +59,12 @@ module Dash
         @duration -= (@duration % settings.config.global_config[:quantum]||1)
       end
 
-      @etime = Time.at(@stime + @duration) if @stime
-      @etime = @request_time if @etime > @request_time
+      if @stime
+        @etime = Time.at(@stime + @duration)
+        @etime = @request_time if @etime > @request_time
+      else
+        @etime = @request_time
+      end
 
       params[:stime] = @stime.to_i.to_s
       params[:etime] = @etime.to_i.to_s
