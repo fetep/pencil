@@ -66,8 +66,7 @@ module Dash::Models
         x.call
       when "key"
         "alias(#{str}, \"#{arg}\")"
-      when "cumulative"
-      when "drawAsInfinite"
+      when "cumulative", "drawAsInfinite"
         z.call
       when "lineWidth"
         x.call
@@ -237,9 +236,17 @@ module Dash::Models
       metrics = []
 
       @params["targets"].each do |metric|
-        composed = compose_metric(metric.first.first, "*", "*")
-        query = open("#{url}#{composed}").read
-        metrics << JSON.parse(query)["results"]
+        if metric.first.instance_of?(Array)
+          metric.first.each do |m|
+            composed = compose_metric(m.first.first, "*", "*")
+            query = open("#{url}#{composed}").read
+            metrics << JSON.parse(query)["results"]
+          end
+        else
+          composed = compose_metric(metric.first.first, "*", "*")
+          query = open("#{url}#{composed}").read
+          metrics << JSON.parse(query)["results"]
+        end
       end
 
       return metrics.flatten.map { |x| x.split(".") }
