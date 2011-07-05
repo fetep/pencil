@@ -114,7 +114,7 @@ module Dash::Models
         sym_hash[k.to_sym] = v
       end
 
-      #fixme key checking may be necessary
+      # fixme key checking may be necessary
       url_opts = {
         :title => opts[:title],
       }.merge(@params[:url_opts]).merge(sym_hash)

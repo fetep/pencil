@@ -25,13 +25,13 @@ module Dash
   class App < Sinatra::Base
     include Dash::Models
     helpers Dash::Helpers
-    set :config, Dash::Config.new
+    config = Dash::Config.new
+    set :config, config
+    set :port, config.global_config[:port]
     set :run, true
     use Rack::Session::Cookie, :expire_after => 126227700 # 4 years
     set :root, File.dirname(__FILE__)
     set :static, true
-    # fixme this line doesn't work in all Sinatra versions
-    set :port, settings.config.global_config[:port]
 
     def initialize(settings={})
       super

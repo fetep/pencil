@@ -82,7 +82,7 @@ module Dash::Models
 
     def render_global_graph(graph, opts={})
       hosts = get_host_wildcards(graph)
-      _, clusters = get_valid_hosts(graph) #fixme redundant
+      _, clusters = get_valid_hosts(graph)
 
       next_url = ""
       type = opts[:zoom] ? :cluster : :global
