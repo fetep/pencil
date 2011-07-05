@@ -1,0 +1,6 @@
+<select class="select2" onchange="window.open(this.options[this.selectedIndex].value,'_top')">
+  <option value="/dash/<%= append_query_string(@cluster) %>" selected="selected"><%= @cluster %></option>
+  <% (@clusters - [@cluster]).each do |c| %>
+  <option value="/dash/<%= append_query_string(c) %>"><%= c %></option>
+  <% end %>
+</select>
