@@ -127,8 +127,6 @@ module Dash::Helpers
   end
 
   def merge_opts
-    # fixme
-    # surely sinatra has a better way than this or parsing request.query_string
     static_opts = ["cluster", "dashboard", "zoom", "host", "session_id"]
     opts = params.dup
     session.merge(opts).delete_if { |k,v| static_opts.member?(k) || v.empty? }
