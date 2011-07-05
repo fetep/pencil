@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   end
 
   spec.name = "pencil"
-  spec.version = "0.0.1"
+  spec.version = "0.2.0"
   spec.summary = "pencil -- Graphite dashboard system"
   spec.description = "Graphite dashboard frontend"
   spec.license = "Mozilla Public License (1.1)"
