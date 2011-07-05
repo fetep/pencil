@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+$: << File.dirname($0) + "/../lib"
+
+require "dash"
+
+Rack::Handler::WEBrick.run(Dash::App, :Port => Dash::App.port)

@@ -10,6 +10,8 @@
     <div id="wrap">
       <div id="header">
         <h2><%= @title %></h2>
+        <h3><%= range_string %></h3>
+        <%= permalink unless @no_graphs %>
       </div>
 
       <div id="nav">
@@ -28,7 +30,7 @@
           Dashboards: (<%= @cluster %>)
           <br>
           <% @dashboards.sort.each do |dash| %>
-          <li><a href="<%= dash_link(dash, @cluster) %>"><%= dash['title'] %></a></li>
+          <li><a href="<%= dash_link(dash, @cluster) %>"><%= dash["title"] %></a></li>
           <% end %>
           <br>
           Jump to Host:
@@ -36,7 +38,7 @@
           <%= hosts_selector(Host.all) %>
           <br>
           <br>
-          <%= input_boxen %>
+          <%= input_boxes %>
           <%= refresh_button %>
           <div id="footer"> <%= cookies_form %></div>
         </ul>
@@ -49,4 +51,5 @@
     </div>
 
   </body>
+  <div id="footer" style="color:green;">generated <%= @request_time %></div>
 </html>

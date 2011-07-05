@@ -10,30 +10,34 @@ module Dash::Models
 
       @graphs = []
       Graph.each do |graph_name, graph|
-        graph['hosts'].each do |h|
+        graph["hosts"].each do |h|
           if match(h)
             @graphs << graph
             break
           end
-        end # graph['hosts'].each
+        end # graph["hosts"].each
       end # Graph.each
     end
 
     def cluster
-      return @params['cluster']
+      return @params["cluster"]
     end
 
-    def to_s
-      @name
+    def key
+      "#{@cluster}#{@name}"
     end
 
     def eql?(other)
-      "#{@cluster}#{@name.hash}" == "#{other.cluster}#{other.name}"
+      key == other.key
+    end
+
+    def ==(other)
+      key == other.key
     end
 
     def <=>(other)
       unless @params[:host_sort] == "numeric"
-        return "#{@cluster}#{@name.hash}" <=> "#{other.cluster}#{other.name}"
+        return key <=> other.key
       end
 
       regex = /\d+/
@@ -46,12 +50,8 @@ module Dash::Models
       end
     end
 
-    def == (other)
-      "#{@cluster}#{@name.hash}" == "#{other.cluster}#{other.name}"
-    end
-
     def hash
-      "#{@cluster}#{@name}".hash
+      key.hash
     end
 
     def self.find_by_name_and_cluster(name, cluster)
