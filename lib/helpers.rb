@@ -108,7 +108,7 @@ module Dash::Helpers
   end
 
   def refresh
-    if nowish && settings.config.global_config[:refresh_rate] != false
+    if settings.config.global_config[:refresh_rate] != false && nowish
       rate = settings.config.global_config[:refresh_rate] || 60
       return %Q[<meta http-equiv="refresh" content="#{rate}">]
     end
@@ -127,8 +127,6 @@ module Dash::Helpers
   end
 
   def merge_opts
-    # fixme
-    # surely sinatra has a better way than this or parsing request.query_string
     static_opts = ["cluster", "dashboard", "zoom", "host", "session_id"]
     opts = params.dup
     session.merge(opts).delete_if { |k,v| static_opts.member?(k) || v.empty? }
@@ -166,9 +164,12 @@ module Dash::Helpers
     "zoom out: <a href=\"#{link}\">#{@params[:cluster]}</a>"
   end
 
-  # fixme make 60 * 5 configurable
   def nowish
-    @request_time.to_i - @etime.to_i < 60*5 # within a minute of now
+    if settings.config.global_config[:now_threshold] == false
+      return false
+    end
+    threshold = settings.config.global_config[:now_threshold] || 300
+    return @request_time.to_i - @etime.to_i < threshold
   end
 
   def range_string
