@@ -18,3 +18,4 @@
   :quantum: 30 # map requests to 30 second intervals
   :date_format: "%X %x" # strftime
   :metric_format: "%m.%c.%h" #%m metric, %c cluster, %h host
+  :now_threshold: 300 # Time.at(Time.now - now_threshold) considered Time.now
