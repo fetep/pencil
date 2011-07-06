@@ -1,6 +1,4 @@
-== SYNOPSIS
-
-pencil: graphite dashboarding frontend
+# pencil
 
 pencil is a monitoring frontend for graphite. It runs a webserver that dishes
 out pretty graphite urls in hopefully interesting and intuitive layouts.
@@ -25,7 +23,7 @@ Some features are:
 
 * Lots of navigation UI for bouncing around the different views
 
-== INSTALL
+## INSTALL
 
 Eventually it should just be:
 
@@ -42,7 +40,7 @@ Dependencies are:
 * chronic_duration
 * (fixme versions)
 
-== SETUP
+## SETUP
 
 You should have a working graphite installation. Your metrics need to be
 composed of three pieces:
@@ -67,59 +65,59 @@ The important top-level configuration keys are:
 See examples/ for an example configuration directory.  Here's
 examples/pencil.yml, which contains general configuration options:
 
-:config :
-  :graphite_url : URL # graphite URL
-  :url_opts :
-    :width : 1000
-    :height : 400
-    :fontSize : 15
-    :start : "8 hours ago"  # in chronic timespec format
-    :template : "noc"
-    :yMin : 0
-    :margin : 5
-    :thickness : 2
-
-  :refresh_rate : 60        # how often to refresh the view
-  :host_sort : "numeric"    # add this if you want to sort hosts numerically
-  :quantum : 30             # map requests to 30 second intervals
-  :date_format : "%X %x"    # strftime
-  :metric_format : "%m.%c.%h" #%m metric, %c cluster, %h host
+    :config:
+      :graphite_url URL # graphite URL
+      :url_opts
+        :width 1000
+        :height 400
+        :fontSize 15
+        :start "8 hours ago"  # in chronic timespec format
+        :template "noc"
+        :yMin 0
+        :margin 5
+        :thickness 2
+    
+      :refresh_rate 60        # how often to refresh the view
+      :host_sort "numeric"    # add this if you want to sort hosts numerically
+      :quantum 30             # map requests to 30 second intervals
+      :date_format "%X %x"    # strftime
+      :metric_format "%m.%c.%h" #%m metric, %c cluster, %h host
 
 A graph is a name, title, collection of targets, and some other options. It
 looks like (in YAML):
 
-  graph_name:             # name pencil references this graph by
-    title: "graph_title"  # title displayed on graph
-    targets:              # list of graphite targets
-      metric.1:
-        :key : key         # key displayed on the legend for this metric
-        :color : color     # color on the graph for this metric
-      metric.2:
-        :key : key
-        :color : color
-      [...]
-    stack: true           # whether to stack or not
-    hosts: ["hosts1*", "test*_web", "hosts2*"] # filter on hosts
+    graph_name:             # name pencil references this graph by
+      title: "graph_title"  # title displayed on graph
+      targets:              # list of graphite targets
+        metric.1:
+          :key key         # key displayed on the legend for this metric
+          :color color     # color on the graph for this metric
+        metric.2:
+          :key key
+          :color color
+        [...]
+      stack: true           # whether to stack or not
+      hosts: ["hosts1*", "test*_web", "hosts2*"] # filter on hosts
 
 fixme A target is a metric or list of metrics and associated graphite options.
 
 Similarly, a dashboard is a name, title, collection of graphs, and some other
 options. It looks like (in YAML):
 
-  dash_name:
-    title: dash_title
-    graphs:
-      - graph1:
-        hosts: ["sync*_web"] # additional hosts filter specific to this graph
-        other_opt: val       # possibly other options in the future
-      - graph2:
-      [...]
-    hosts: ["filter1*", "*filter2"]
+    dash_name:
+      title: dash_title
+      graphs:
+        - graph1:
+          hosts: ["sync*_web"] # additional hosts filter specific to this graph
+          other_opt: val       # possibly other options in the future
+        - graph2:
+        [...]
+      hosts: ["filter1*", "*filter2"]
 
-=== complex metrics and dashboard graph-level options
+### complex metrics and dashboard graph-level options
 FIXME document
 
-== RUNNING THE SERVER
+## RUNNING THE SERVER
 Once you've set up the configs, you should be able to just run
 
 pencil
