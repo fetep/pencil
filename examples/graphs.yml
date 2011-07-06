@@ -24,7 +24,7 @@
       syncstorage.request_rate.503:
         :key: 503
         :color: red
-    stack: true
+    areaMode: stacked
     hosts: ["sync*_web", "test*_web", "wp-web*"]
 
   syncstorage_401:
@@ -58,7 +58,7 @@
       system.cpu.user:
         :key: CPU/user
         :color: blue
-    stack: true
+    areaMode: stacked
     hosts: ["*"]
 
   load_average:
@@ -97,7 +97,7 @@
         :key: search
         :color: green
 
-    stack: true
+    areaMode: stacked
     hosts: ["slave*ldap", "master*ldap", "wp-master*"]
 
   mysql_ops:
@@ -116,7 +116,7 @@
         :key: select
         :color: green
 
-    stack: true
+    areaMode: stacked
     hosts: ["sync*_db", "wp-db*"]
 
   memory_usage:
@@ -124,17 +124,13 @@
     targets:
       ? - system.memory.total:
         - system.memory.free:
-            scale: -1
         - system.memory.cached:
-            scale: -1
         - system.memory.shared:
-            scale: -1
         - system.memory.buffers:
-            scale: -1
       :
         :key: used
         :color: green
-        :sumSeries:
+        :diffSeries:
       system.memory.total:
         :key: total
         :color: white
@@ -143,4 +139,9 @@
         :color: purple
  
     scale: 1024 # M -> G
-    hosts: ["*"] 
+    hosts: ["*"]
+    # some random options for demonstration
+    template: alphas
+    bgcolor: "#AFFFFF"
+    vtitle: tvtnolgrf
+    lineWidth: 20

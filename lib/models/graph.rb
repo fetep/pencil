@@ -64,7 +64,7 @@ module Dash::Models
         z.call
       when "limit", "exclude"
         x.call
-      when "key"
+      when "key", "alias"
         "alias(#{str}, \"#{arg}\")"
       when "cumulative", "drawAsInfinite"
         z.call
@@ -123,10 +123,16 @@ module Dash::Models
       url_opts.delete(:start)
       url_opts.delete(:duration)
 
-      # @params holds the graph-level options
-      # url_opts are assumed to be directly passable to graphite... kind of
-      if @params["stack"] == true
-        url_opts[:areaMode] = "stacked"
+      graphite_opts = [ "vtitle", "yMin", "yMax", "lineWidth", "areaMode",
+        "template", "lineMode", "bgcolor", "graphOnly", "hideAxes", "hideGrid",
+        "hideLegend", "fgcolor", "fontSize", "fontName", "fontItalic",
+        "fontBold" ]
+
+      @params.each do |k, v|
+        puts "#{k} => #{v}"
+        if graphite_opts.member?(k)
+          url_opts[k.to_sym] = v
+        end
       end
 
       target = []
