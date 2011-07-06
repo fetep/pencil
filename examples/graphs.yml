@@ -118,3 +118,29 @@
 
     stack: true
     hosts: ["sync*_db", "wp-db*"]
+
+  memory_usage:
+    title: "system memory usage"
+    targets:
+      ? - system.memory.total:
+        - system.memory.free:
+            scale: -1
+        - system.memory.cached:
+            scale: -1
+        - system.memory.shared:
+            scale: -1
+        - system.memory.buffers:
+            scale: -1
+      :
+        :key: used
+        :color: green
+        :sumSeries:
+      system.memory.total:
+        :key: total
+        :color: white
+      system.memory.cached:
+        :key: cached
+        :color: purple
+ 
+    scale: 1024 # M -> G
+    hosts: ["*"] 

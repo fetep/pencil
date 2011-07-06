@@ -86,7 +86,7 @@ module Dash::Models
     # later on
     def handle_metric(name, opts, inner=false)
       ret = name.dup
-      unless inner
+      if inner
         @params.each do |k, v|
           ret = translate(k, ret, v, true)
         end
@@ -147,6 +147,7 @@ module Dash::Models
           else
             metric = "#{stat_name}.{#{clusters.to_a.join(',')}}" +
               ".{#{hosts.to_a.join(',')}}"
+            metric = handle_metric(metric, {}, true)
           end
           #######################
           z[:key] = "global #{z[:key]}"
@@ -166,7 +167,7 @@ module Dash::Models
                   handle_metric(mm, m[m.keys.first], true)
                 end.join(",")
               else
-                metrics << compose_metric(stat_name, cluster, host)
+                metrics << handle_metric(compose_metric(stat_name, cluster, host), {}, true)
               end
               #######################
             end # hosts.each
@@ -188,7 +189,7 @@ module Dash::Models
                   handle_metric(mm, m[m.keys.first], true)
                 end.join(",")
               else
-                metric = compose_metric(stat_name, cluster, host)
+                metric = handle_metric(compose_metric(stat_name, cluster, host), {}, true)
               end
               #################
 
