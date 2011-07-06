@@ -13,8 +13,9 @@ Some features are:
 * Relative and absolute timespecs with auto-refresh
 
   Timeslices are measured in terms of a (possibly relative) starting time and a
-  duration. Timespecs are parsed using the chronic[http://chronic.rubyforge.org/] and
-  chronic_duration[https://github.com/hpoydar/chronic_duration] gems.
+  duration. Timespecs are parsed using the
+  [chronic](http://chronic.rubyforge.org/) and
+  [chronic_duration](https://github.com/hpoydar/chronic_duration) gems.
 
 * permalinks
 
