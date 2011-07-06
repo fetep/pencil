@@ -30,7 +30,7 @@ module Dash::Helpers
   end
 
   def cluster_zoom_graph(g, cluster, host, title)
-    image_url = g.render_url([host], [cluster], :title => title,
+    image_url = g.render_url([host.name], [cluster], :title => title,
                              :dynamic_url_opts => merge_opts)
     zoom_url = cluster_zoom_link(cluster, host)
     return image_url, zoom_url
