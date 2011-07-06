@@ -129,7 +129,6 @@ module Dash::Models
         "fontBold" ]
 
       @params.each do |k, v|
-        puts "#{k} => #{v}"
         if graphite_opts.member?(k)
           url_opts[k.to_sym] = v
         end
@@ -200,6 +199,8 @@ module Dash::Models
               #################
 
               if label =~ /\*/
+                # for this particular type of graph, don't display a legend
+                url_opts[:hideLegend] = true
                 z = opts.dup
                 # fixme proper labeling... maybe
                 # With wildcards let graphite construct the legend (or not).
@@ -211,7 +212,6 @@ module Dash::Models
                 colors.concat(@params[:default_colors]) if colors.empty?
               else
                 z = opts.dup
-                #puts opts[:key]
                 z[:key] = "#{host}/#{cluster} #{opts[:key]}"
                 target << handle_metric(metric, z)
                 colors << next_color(colors, opts[:color])
