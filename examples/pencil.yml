@@ -14,7 +14,7 @@
     :thickness: 2
 
   :refresh_rate: 60
-  :host_sort: "numeric"
+  :host_sort: "sensible"
   :quantum: 30 # map requests to 30 second intervals
   :date_format: "%X %x" # strftime
   :metric_format: "%m.%c.%h" #%m metric, %c cluster, %h host

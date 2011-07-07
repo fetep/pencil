@@ -33,11 +33,9 @@ These are options that go under the :config key in pencil configuration files.
 
   Set this to false to disable automatic refreshing.
 
-* :host_sort ["default", "sensible", "numeric"], optional, default "default"]
+* :host_sort ["builtin", "sensible", "numeric"], optional, default "sensible"]
 
-  *FIXME actually implement this*
-
-  Set to "default" to sort using ruby's builtin String sort.
+  Set to "builtin" to sort using ruby's builtin String sort.
 
   Set to "sensible" if you want to sort like this:
 
