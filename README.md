@@ -69,20 +69,20 @@ examples/pencil.yml, which contains general configuration options:
     :config:
       :graphite_url URL # graphite URL
       :url_opts
-        :width 1000
-        :height 400
-        :fontSize 15
-        :start "8 hours ago"  # in chronic timespec format
-        :template "noc"
-        :yMin 0
-        :margin 5
-        :thickness 2
+        :width: 1000
+        :height: 400
+        :fontSize: 15
+        :start: "8 hours ago"  # in chronic timespec format
+        :template: "noc"
+        :yMin: 0
+        :margin: 5
+        :thickness: 2
     
-      :refresh_rate 60        # how often to refresh the view
-      :host_sort "numeric"    # add this if you want to sort hosts numerically
-      :quantum 30             # map requests to 30 second intervals
-      :date_format "%X %x"    # strftime
-      :metric_format "%m.%c.%h" #%m metric, %c cluster, %h host
+      :refresh_rate: 60        # how often to refresh the view
+      :host_sort: "numeric"    # add this if you want to sort hosts numerically
+      :quantum: 30             # map requests to 30 second intervals
+      :date_format: "%X %x"    # strftime
+      :metric_format: "%m.%c.%h" #%m metric, %c cluster, %h host
 
 A graph is a name, title, collection of targets, and some other options. It
 looks like (in YAML):
@@ -91,11 +91,11 @@ looks like (in YAML):
       title: "graph_title"  # title displayed on graph
       targets:              # list of graphite targets
         metric.1:
-          :key key         # key displayed on the legend for this metric
-          :color color     # color on the graph for this metric
+          :key: key         # key displayed on the legend for this metric
+          :color: color     # color on the graph for this metric
         metric.2:
-          :key key
-          :color color
+          :key: key
+          :color: color
         [...]
       stack: true           # whether to stack or not
       hosts: ["hosts1*", "test*_web", "hosts2*"] # filter on hosts
