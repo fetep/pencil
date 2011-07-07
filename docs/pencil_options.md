@@ -15,7 +15,7 @@ These are options that go under the :config key in pencil configuration files.
 
   A map of default graph options.
 
-  In addition to <a href="#gopts">graph-level options</a>), an important default option
+  In addition to <a href="#gopts">graph-level options</a>, an important default option
   you should set under :url_opts is
 
     :start: TIMESPEC
@@ -37,7 +37,7 @@ These are options that go under the :config key in pencil configuration files.
 
   *FIXME actually implement this*
 
-  Set to "default" to sort on using ruby's builtin string sort.
+  Set to "default" to sort using ruby's builtin String sort.
 
   Set to "sensible" if you want to sort like this:
 
@@ -89,8 +89,8 @@ minor annotations:
 * yMin: Fixnum
 * yMax: Fixnum
 * lineWidth: Fixnum (line thickness in pixels)
-* areaMode: [first, all, stacked] (see graphite documentation)
-* template: [noc, alphas] (alphas inverts colors)
+* areaMode: \[first, all, stacked\] (see graphite documentation)
+* template: \[noc, alphas\] (alphas inverts colors)
 * lineMode: staircase
 * bgcolor: String
 * graphOnly: bool (hide legend, axes, grid)
