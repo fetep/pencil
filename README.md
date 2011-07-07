@@ -128,7 +128,8 @@ and get something up on localhost:9292
 From there you should be able to click around and see various interesting
 collections of graphs.
 
-With no options, pencil looks for ./pencil.yml as the default config file.
+With no options, pencil looks in the current directory for YAML files and loads
+them.
 
 You can bind to a specific port with -p PORT and specify a configuration
 directory with -d DIR. Other rack-related options will be added at some point
