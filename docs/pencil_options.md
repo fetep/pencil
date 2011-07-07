@@ -33,16 +33,16 @@ These are options that go under the :config key in pencil configuration files.
 
   Set this to false to disable automatic refreshing.
 
-* :host_sort ["builtin", "sensible", "numeric"], optional, default "sensible"
+* :host_sort ["builtin", "numeric", "sensible"], optional, default "sensible"
 
   Set to "builtin" to sort using ruby's builtin String sort.
+
+  Set to "numeric" to sort hosts numerically (i.e. match secondarily on the
+  first \d+).
 
   Set to "sensible" if you want to sort like this:
 
   http://www.bofh.org.uk/2007/12/16/comprehensible-sorting-in-ruby
-
-  Set to "numeric" to sort hosts numerically (i.e. match secondarily on the
-  first \d+).
 
 * :quantum [Fixnum, optional, no default value]
 

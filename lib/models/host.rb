@@ -36,7 +36,9 @@ module Dash::Models
     end
 
     def <=>(other)
-      if @params[:host_sort] == "numeric"
+      if @params[:host_sort] == "builtin"
+        return key <=> other.key
+      elsif @params[:host_sort] == "numeric"
         regex = /\d+/
         match = @name.match(regex)
         match2 = other.name.match(regex)
@@ -45,8 +47,6 @@ module Dash::Models
         else
           return match[0].to_i <=> match2[0].to_i
         end
-      elsif @params[:host_sort] == "default"
-        return key <=> other.key
       else
         # http://www.bofh.org.uk/2007/12/16/comprehensible-sorting-in-ruby
         sensible = lambda do |k|
