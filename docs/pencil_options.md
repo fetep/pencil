@@ -33,7 +33,7 @@ These are options that go under the :config key in pencil configuration files.
 
   Set this to false to disable automatic refreshing.
 
-* :host_sort ["builtin", "sensible", "numeric"], optional, default "sensible"]
+* :host_sort ["builtin", "sensible", "numeric"], optional, default "sensible"
 
   Set to "builtin" to sort using ruby's builtin String sort.
 
