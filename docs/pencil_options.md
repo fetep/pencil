@@ -44,13 +44,13 @@ These are options that go under the :config key in pencil configuration files.
   Set to "numeric" to sort hosts numerically (i.e. match secondarily on the
   first \d+).
 
-* :quantum [Fixnum, optional, default 30]
+* :quantum [Fixnum, optional, no default value]
 
   Map requests to NUM second intervals. Pencil floors request times to the
   minute, and does some modular arithmetic to do this mapping. This is
   especially useful for implementing a caching layer, so that many requests
-  coming in simultaneously in real-time wouldn't require graphite to generate
-  different images for each request.
+  coming in near-simultaneously won't require graphite to generate different
+  images for each request.
 
   Adding &noq=1 to a pencil url will disable this in case you need
   super-granularity for some reason, but you didn't hear it from me.
@@ -72,12 +72,12 @@ These are options that go under the :config key in pencil configuration files.
   If you want a literal %[mch] in your metric format string you likely have
   bigger problems than not being able to do so.
 
-* <a name="threshold"> :now\_threshold: [Fixnum, optional, default 300]
+* <a name="threshold"/> :now\_threshold: [Fixnum, optional, default 300]
 
   How many seconds before Time.now an end time is considered to still be 'now',
   for the purposes of adding meta-refresh and displaying time intervals.
 
-## <a name="gopts"> Graph-level Options
+## <a name="gopts"/> Graph-level Options
 This is a list of the supported graph-level options for pencil, which
 correspond to request(image)-level options for graphite. These options are
 key-value pairs, and are passed directly to graphite. Here is the list, with
