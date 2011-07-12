@@ -23,8 +23,6 @@ Gem::Specification.new do |spec|
   spec.bindir = "bin"
   spec.executables << "pencil"
 
-  spec.extra_rdoc_files = ["README.rdoc"]
-
   spec.authors = ["Pete Fritchman", "Wesley Dawson"]
   spec.email = ["petef@databits.net", "wdawson@mozilla.com"]
   spec.homepage = "https://github.com/fetep/pencil"
