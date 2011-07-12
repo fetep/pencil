@@ -45,11 +45,7 @@ Some features are:
 
 ## INSTALL
 
-Eventually it should just be:
-
 gem install pencil
-
-...but it isn't yet.
 
 Dependencies are:
 
