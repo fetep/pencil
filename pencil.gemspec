@@ -1,13 +1,13 @@
 # -*- ruby -*-
 Gem::Specification.new do |spec|
   files = []
-  dirs = %w(lib, docs, examples)
+  dirs = %w(lib docs examples)
   dirs.each do |dir|
     files += Dir["#{dir}/**/*"]
   end
 
   spec.name = "pencil"
-  spec.version = "0.2.0"
+  spec.version = "0.2.1"
   spec.summary = "pencil -- Graphite dashboard system"
   spec.description = "Graphite dashboard frontend"
   spec.license = "Mozilla Public License (1.1)"
@@ -19,7 +19,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency("chronic_duration")
 
   spec.files = files
-  spec.require_paths << "lib"
   spec.bindir = "bin"
   spec.executables << "pencil"
 
