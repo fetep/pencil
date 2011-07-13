@@ -3,4 +3,4 @@ $: << File.dirname($0) + "/../lib"
 
 require "dash"
 
-Rack::Handler::WEBrick.run(Dash::App, :Port => Dash::App.port)
+Rack::Handler::Mongrel.run(Dash::App, :Port => Dash::App.port)
