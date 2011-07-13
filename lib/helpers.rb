@@ -188,7 +188,7 @@ module Dash::Helpers
 
   def permalink
     return "" unless @stime && @duration
-    format = "%x %X" # chronic understands this
+    format = "%F %T" # chronic REALLY understands this
     url = request.path + "?"
     url << "&start=#{@stime.strftime(format)}"
     url << "&duration=#{ChronicDuration.output(@duration)}"
