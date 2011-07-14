@@ -1,6 +1,7 @@
 <span class="graphtitle">
   dashboards:
   <%= @dashboards.sort.collect do |d|
+      # this works unless you have a cluster with the same name as a dashboard
       sub = append_query_string(request.path.sub(@dash.name, d.name))
       @dash == d ? "#{d}" : "<a href=\"#{sub}\">#{d}</a>"
       end.join(" ") %>

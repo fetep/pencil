@@ -1,7 +1,10 @@
 <span class="graphtitle">
   graphs:
   <%= @dash.graphs.map { |g| g.name }.collect do |g|
-     sub = append_query_string(request.path.sub(@zoom.name, g))
+     reversed = request.path.split("/").reverse
+     i = reversed.index(@zoom.name)
+     reversed[i] = g
+     sub = append_query_string(reversed.reverse.join('/'))
      @zoom.name == g ? "#{g}" : "<a href=\"#{sub}\">#{g}</a>"
      end.join(" ") %>
 </span>
