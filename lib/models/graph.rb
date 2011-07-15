@@ -145,8 +145,9 @@ module Dash::Models
           #######################
           if stat_name.instance_of?(Array)
             metric = stat_name.map do |m|
-              mm = compose_metric(m.keys.first, clusters.to_a.join(","),
-                           hosts.to_a.join(","))
+              mm = compose_metric(m.keys.first,
+                           "{#{clusters.to_a.join(',')}}",
+                           "{#{hosts.to_a.join(',')}}")
               handle_metric(mm, m[m.keys.first], true)
             end.join(",")
           else
