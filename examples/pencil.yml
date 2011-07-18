@@ -21,4 +21,4 @@
   :now_threshold: 300 # Time.at(Time.now - now_threshold) considered Time.now
 
   # set this if you have a new graphite that supports color(series, "color")
-#  :use_color: true
+  # :use_color: true
