@@ -77,6 +77,23 @@ These are options that go under the :config key in pencil configuration files.
   How many seconds before Time.now an end time is considered to still be 'now',
   for the purposes of adding meta-refresh and displaying time intervals.
 
+* :use_color: [Boolean, optional, default false]
+
+  In graphite 0.9.8 and earlier coloring of targets sucks. Coloring is not done
+  on a per-target basis, but rather by an additional parameter
+  "colorList". Pencil handles colors by appending a target's color parameter
+  (or a suitable default) onto this list. Targets are processed in order and
+  consume the first color available in colorList.
+
+  This sucks because nonexistent targets occasionally produced by pencil don't
+  consume their associated color, which screws up the coloring of every
+  subsequent metric.
+
+  The latest Graphite trunk supports color as a property of a target, set with
+  color(target, "COLOR"). If you are using a new graphite and want to take
+  advantage of this more accurate coloring technique set :use_color to true,
+  and bask in the glory of color correctness.
+
 ## <a name="gopts"/> Graph-level Options
 This is a list of the supported graph-level options for pencil, which
 correspond to request(image)-level options for graphite. These options are
@@ -172,5 +189,7 @@ Most of these options take a single argument.
 * threshold
 * color
 
-Note: key and color are interpreted differently from the other options, which
-are more simply translated.
+Note: key is interpreted differently from the other options, which are more
+simply translated.
+
+color's interpretation depends on whether :use_color is set.

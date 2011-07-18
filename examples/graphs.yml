@@ -15,12 +15,6 @@
       syncstorage.request_rate.404:
         :key: 404
         :color: purple
-      syncstorage.request_rate.500:
-        :key: 500
-        :color: yellow
-      syncstorage.request_rate.502:
-        :key: 502
-        :color: "#cc0000"
       syncstorage.request_rate.503:
         :key: 503
         :color: red
@@ -31,7 +25,7 @@
     title: "syncstorage 401s"
     targets:
       syncstorage.request_rate.401:
-        :key: 200
+        :key: 401
         :color: brown
     hosts: ["sync*_web", "test*_web", "wp-web*"]
 
@@ -42,6 +36,64 @@
         :key: exceptions/s
         :color: red
     hosts: ["sync*_web", "test*_web", "wp-web*"]
+
+  syncreg_qps:
+    title: "syncreg qps"
+    targets:
+      syncreg.request_rate.200:
+        :key: 200
+        :color: green
+      syncreg.request_rate.302:
+        :key: 302
+        :color: blue
+      syncreg.request_rate.401:
+        :key: 401
+        :color: brown
+      syncreg.request_rate.404:
+        :key: 404
+        :color: purple
+      syncreg.request_rate.503:
+        :key: 503
+        :color: red
+    areaMode: stacked
+    hosts: ["wp-reg*"]
+
+  syncreg_exceptions:
+    title: "syncreg exceptions"
+    targets:
+      syncreg.log.exception:
+        :key: exceptions/s
+        :color: red
+    hosts: ["wp-reg*"]
+
+  syncsreg_qps:
+    title: "syncsreg qps"
+    targets:
+      syncsreg.request_rate.200:
+        :key: 200
+        :color: green
+      syncsreg.request_rate.302:
+        :key: 302
+        :color: blue
+      syncsreg.request_rate.401:
+        :key: 401
+        :color: brown
+      syncsreg.request_rate.404:
+        :key: 404
+        :color: purple
+      syncsreg.request_rate.503:
+        :key: 503
+        :color: red
+    areaMode: stacked
+    hosts: ["wp-sreg*"]
+
+  syncsreg_exceptions:
+    title: "syncsreg exceptions"
+    targets:
+      syncsreg.log.exception:
+        :key: exceptions/s
+        :color: red
+    hosts: ["wp-sreg*"]
 
   cpu_usage:
     title: "cpu usage"
@@ -145,3 +197,27 @@
     bgcolor: "#AFFFFF"
     vtitle: tvtnolgrf
     lineWidth: 20
+
+  sync_node_alloc:
+    title: "node alloc rate"
+    targets:
+      sync.users.alloc_rate.scl2:
+        :key: scl2 alloc/s
+        :color: green
+      sync.users.alloc_rate.phx1:
+        :key: phx1 alloc/s
+        :color: blue
+ 
+    hosts: ["wp-adm01"]
+
+  sync_node_actives:
+    title: "node actives"
+    targets:
+      sync.users.active.scl2:
+        :key: scl2 actives
+        :color: green
+      sync.users.active.phx1:
+        :key: phx1 actives
+        :color: blue
+ 
+    hosts: ["wp-adm01"]

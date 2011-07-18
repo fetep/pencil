@@ -75,7 +75,7 @@ module Dash::Models
       when "substr", "threshold"
         x.call
       when "color"
-        str #color is handled elsewhere
+        @params[:use_color] ? "color(#{str}, \"#{arg}\")" : str
       else
         raise "BAD FUNC #{func}" unless pass
         str
@@ -136,7 +136,7 @@ module Dash::Models
 
       target = []
       colors = []
-      #fixme code duplication
+      #FIXME code duplication
       if opts[:sum] == :global
         @params["targets"].each do |stat_name, opts|
           z = opts.dup
@@ -158,7 +158,10 @@ module Dash::Models
           #######################
           z[:key] = "global #{z[:key]}"
           target << handle_metric("sumSeries(#{metric})", z)
-          colors << next_color(colors, z[:color])
+          if !@params[:use_color] ||
+            (!z[:color] && @params[:use_color])
+            colors << next_color(colors, z[:color])
+          end
         end # @params["targets"].each
       elsif opts[:sum] == :cluster # one line per cluster/metric
         clusters.each do |cluster|
@@ -180,7 +183,10 @@ module Dash::Models
 
             z[:key] = "#{cluster} #{z[:key]}"
             target << handle_metric("sumSeries(#{metrics.join(',')})", z)
-            colors << next_color(colors, z[:color])
+            if !@params[:use_color] ||
+              (!z[:color] && @params[:use_color])
+              colors << next_color(colors, z[:color])
+            end
           end # metrics.each
         end # clusters.each
       else # one line per {metric,host,colo}
@@ -200,9 +206,11 @@ module Dash::Models
               #################
 
               if label =~ /\*/
-                # for this particular type of graph, don't display a legend
+                # for this particular type of graph, don't display a legend,
+                # and color with abandon
                 url_opts[:hideLegend] = true
                 z = opts.dup
+                z.delete(:color)
                 # fixme proper labeling... maybe
                 # With wildcards let graphite construct the legend (or not).
                 # Since we're handling wildcards we don't know how many
@@ -215,7 +223,10 @@ module Dash::Models
                 z = opts.dup
                 z[:key] = "#{host}/#{cluster} #{opts[:key]}"
                 target << handle_metric(metric, z)
-                colors << next_color(colors, opts[:color])
+                if !@params[:use_color] ||
+                  (!opts[:color] && @params[:use_color])
+                  colors << next_color(colors, opts[:color])
+                end
               end
             end
           end
@@ -288,7 +299,7 @@ module Dash::Models
         default_colors << preferred_color
       end
 
-      weights = Hash.new { |h, k| h[k] = 0 }
+      weights = Hash.new(0)
       colors.each do |c|
         weights[c] += 1
       end
