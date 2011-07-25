@@ -16,8 +16,11 @@
     end %>
 <br>
 <% end %>
+
+<% if (hosts.to_set - seen_hosts).size > 0 %>
 <h3>Other Hosts (not associated with a dashboard)</h3>
 <%= (hosts.to_set - seen_hosts).sort.collect do |h|
     href = append_query_string("/host/#{@cluster}/#{h}")
     "<li><a href=\"#{href}\">#{h}</a></li>"
     end %>
+<% end %>

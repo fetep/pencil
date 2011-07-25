@@ -73,7 +73,11 @@ module Dash
 
     get %r[^/(dash/?)?$] do
       @no_graphs = true
-      redirect '/dash/global'
+      if settings.config.clusters.size == 1
+        redirect "/dash/#{settings.config.clusters.first}"
+      else
+        redirect '/dash/global'
+      end
     end
 
     get '/dash/:cluster/:dashboard/:zoom/?' do
