@@ -51,7 +51,7 @@ module Dash::Models
         # calculate
         "movingAverage", "stdev", "asPercent"
         x.call
-      when "diffSeries", "ratio"
+      when "diffSeries", "divideSeries"
         z.call
         # filters
       when "mostDeviant"
@@ -83,7 +83,6 @@ module Dash::Models
     end
 
     # inner means we're dealing with a complex key; @params will be applied
-    # later on
     def handle_metric(name, opts, inner=false)
       ret = name.dup
       if inner
