@@ -1,4 +1,6 @@
 # -*- ruby -*-
+require File.join(File.dirname(__FILE__), "VERSION")  # For PENCIL_VERSION
+
 Gem::Specification.new do |spec|
   files = []
   dirs = %w(lib docs examples)
@@ -7,7 +9,7 @@ Gem::Specification.new do |spec|
   end
 
   spec.name = "pencil"
-  spec.version = "0.2.4"
+  spec.version = PENCIL_VERSION
   spec.summary = "pencil -- Graphite dashboard system"
   spec.description = "Graphite dashboard frontend"
   spec.license = "Mozilla Public License (1.1)"

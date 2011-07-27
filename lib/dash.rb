@@ -17,6 +17,8 @@ require "chronic_duration"
 require "optparse"
 require "rubyfixes"
 
+require File.join(File.dirname(__FILE__), "..", "VERSION")
+
 # fixme style.css isn't actually cached, you need to set something up with
 # rack to cache static files
 
