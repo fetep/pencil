@@ -116,6 +116,10 @@ supported options. It looks like (in YAML):
       hosts: ["hosts1*", "test*_web", "hosts2*"] # filter on hosts
       areaMode: stacked
 
+(Note that in any case where you would use a hash you may use an
+[? : omap](http://www.yaml.org/spec/current.html#id2504191) instead, to ensure
+the order in which options are applied)
+
 Graph-level options are applied to the graph as a whole, where target-level
 options apply only to the specific target.
 

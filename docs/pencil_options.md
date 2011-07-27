@@ -120,10 +120,24 @@ minor annotations:
 
 ## Target-level Options
 This is a list of the supported target-level options for pencil. These are
-mosly a list of transformations graphite supports, including summation and
+mostly a list of transformations graphite supports, including summation and
 scaling of metrics. You can apply them to individual metrics, or lists of
 metrics. See the example configs for how this works. Also see the graphite
 composer for the effects of these options, many of which are untested.
+
+A note on the divideSeries case: for aggregate graphs, pencil takes the ratio
+of the sums, as opposed to the sums of the ratios, for ease of implementation
+and because it makes some sense. If you're not a fan of 80k URLs then you will
+agree. divideSeries should only ever be used with two targets, like this:
+
+    ? - stats.timers.mysql.innodb.threads_active_read.mean:
+      - stats.timers.mysql.innodb.threads_total_read.mean:
+    :
+      !omap
+      - :divideSeries:
+
+(Notice the omap, as opposed to a hash, to impose an order in which options are
+applied)
 
 ### Combinations
 These functions take an arbitrary number of targets (usually simple metrics)
@@ -156,7 +170,7 @@ for arguments.
 * stdev
 * asPercent
 * diffSeries
-* ratio
+* divideSeries (NOTE: takes exactly 1 series as divisor)
 
 ### Filters
 Most of these options take a single argument.
