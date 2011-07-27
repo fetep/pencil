@@ -15,14 +15,6 @@
   </div>
 </div>
 
-<div class="graphsection" style="width:<%= @zoom.width(merge_opts) %>;">
-  <a name="by_host">
-    <span class="graphtitle"><%= @zoom.name %> / <%= @cluster %> :: by host</span>
-    <div class="graph">
-      <img src="<%= @dash.render_cluster_graph(@zoom, @cluster, :zoom => true, :dynamic_url_opts => merge_opts) %>">
-    </div>
-</div>
-
 <% hosts.each do |host| %>
 <div class="graphsection" style="width:<%= @zoom.width(merge_opts) %>;">
   <a name="<%= host %>">
