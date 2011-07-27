@@ -138,8 +138,7 @@ module Dash::Models
       #FIXME code duplication
       if opts[:sum] == :global
         @params["targets"].each do |stat_name, opts|
-          z = opts.dup
-          # opts['key'] ||= stat_name
+          z = Marshal.load(Marshal.dump(opts))
           z[:key] ||= stat_name
           #######################
           if stat_name.instance_of?(Array)
@@ -147,7 +146,13 @@ module Dash::Models
               mm = compose_metric(m.keys.first,
                            "{#{clusters.to_a.join(',')}}",
                            "{#{hosts.to_a.join(',')}}")
-              handle_metric(mm, m[m.keys.first], true)
+
+              if z.keys.member?(:divideSeries)
+                handle_metric(translate(:sumSeries, mm),
+                       m[m.keys.first], true)
+              else
+                handle_metric(mm, m[m.keys.first], true)
+              end
             end.join(",")
           else
             metric = "#{stat_name}.{#{clusters.to_a.join(',')}}" +
@@ -156,7 +161,19 @@ module Dash::Models
           end
           #######################
           z[:key] = "global #{z[:key]}"
-          target << handle_metric("sumSeries(#{metric})", z)
+          # target << handle_metric(translate(:sumSeries, metric), z)
+
+          if z.keys.member?(:divideSeries) # special case
+              # apply divideSeries, sumSeries then other options
+              res = translate(:divideSeries, metric)
+              res = translate(:sumSeries, res)
+              z.delete(:divideSeries)
+              h = YAML::Omap.new
+              z.each { |k,v| h[k] = v unless k == :divideSeries }
+              target << handle_metric(res, h)
+            else
+              target << handle_metric(translate(:sumSeries, metric), z)
+            end
           if !@params[:use_color] ||
             (!z[:color] && @params[:use_color])
             colors << next_color(colors, z[:color])
@@ -165,25 +182,45 @@ module Dash::Models
       elsif opts[:sum] == :cluster # one line per cluster/metric
         clusters.each do |cluster|
           @params["targets"].each do |stat_name, opts|
-            z = opts.dup
+            z = Marshal.load(Marshal.dump(opts))
             metrics = []
-            hosts.each do |host|
-              #######################
-              if stat_name.instance_of?(Array)
-                metrics << stat_name.map do |m|
-                  mm = compose_metric(m.keys.first, cluster, host)
+            #######################
+            h = "{#{hosts.to_a.join(',')}}"
+            if stat_name.instance_of?(Array)
+              metrics << stat_name.map do |m|
+                mm = compose_metric(m.keys.first, cluster, h)
+                # note: we take the ratio of the sums in this case, instead of
+                # the sums of the ratios
+                if z.keys.member?(:divideSeries)
+                  # divideSeries is picky about the number of series given as
+                  # arguments, so sum them in this case
+                  handle_metric(translate(:sumSeries, mm),
+                         m[m.keys.first], true)
+                else
                   handle_metric(mm, m[m.keys.first], true)
-                end.join(",")
-              else
-                metrics << handle_metric(compose_metric(stat_name, cluster, host), {}, true)
-              end
-              #######################
-            end # hosts.each
-
+                end
+              end.join(",")
+            else
+              metrics << handle_metric(compose_metric(stat_name,
+                                               cluster, h), {}, true)
+            end
+            #######################
             z[:key] = "#{cluster} #{z[:key]}"
-            target << handle_metric("sumSeries(#{metrics.join(',')})", z)
-            if !@params[:use_color] ||
-              (!z[:color] && @params[:use_color])
+
+            if z.keys.member?(:divideSeries) # special case
+              # apply divideSeries, sumSeries then other options
+              res = translate(:divideSeries, metrics.join(','))
+              res = translate(:sumSeries, res)
+              z.delete(:divideSeries)
+              h = YAML::Omap.new
+              z.each { |k,v| h[k] = v unless k == :divideSeries }
+              target << handle_metric(res, h)
+            else
+              target << handle_metric(translate(:sumSeries,
+                                      metrics.join(',')), z)
+            end
+
+            if !@params[:use_color] || (!z[:color] && @params[:use_color])
               colors << next_color(colors, z[:color])
             end
           end # metrics.each
@@ -208,7 +245,7 @@ module Dash::Models
                 # for this particular type of graph, don't display a legend,
                 # and color with abandon
                 url_opts[:hideLegend] = true
-                z = opts.dup
+                z = Marshal.load(Marshal.dump(opts))
                 z.delete(:color)
                 # fixme proper labeling... maybe
                 # With wildcards let graphite construct the legend (or not).
@@ -219,8 +256,8 @@ module Dash::Models
                 target << handle_metric(metric, z)
                 colors.concat(@params[:default_colors]) if colors.empty?
               else
-                z = opts.dup
-                z[:key] = "#{host}/#{cluster} #{opts[:key]}"
+                z = Marshal.load(Marshal.dump(opts))
+                z[:key] = "#{host}/#{cluster} #{z[:key]}"
                 target << handle_metric(metric, z)
                 if !@params[:use_color] ||
                   (!opts[:color] && @params[:use_color])
@@ -270,6 +307,7 @@ module Dash::Models
       return metrics.flatten.map { |x| x.split(".") }
     end
 
+    # FIXMEEEE needs to be fixed for different metric formats
     def hosts_clusters
       metrics = expand
       clusters = Set.new
