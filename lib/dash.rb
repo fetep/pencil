@@ -17,8 +17,6 @@ require "chronic_duration"
 require "optparse"
 require "rubyfixes"
 
-require File.join(File.dirname(__FILE__), "..", "VERSION")
-
 # fixme style.css isn't actually cached, you need to set something up with
 # rack to cache static files
 
@@ -35,6 +33,7 @@ module Dash
     use Rack::Session::Cookie, :expire_after => 126227700 # 4 years
     set :root, File.dirname(__FILE__)
     set :static, true
+    set :logging, true
 
     def initialize(settings={})
       super

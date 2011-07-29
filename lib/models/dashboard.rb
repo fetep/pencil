@@ -15,7 +15,7 @@ module Dash::Models
       @graph_opts = {}
       params["graphs"].each do |name|
         # graphs map to option hashes
-        if name.instance_of?(Hash)
+        if name.instance_of?(Hash) # could be YAML::Omap
           g = Graph.find(name.keys.first) # should only be one key
           @graph_opts[g] = name[name.keys.first]||{}
         else
