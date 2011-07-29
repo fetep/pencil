@@ -62,15 +62,15 @@ You should have a working graphite installation. Your metrics need to be
 composed of three pieces:
 
 * "%m", _METRIC_ (the common part of each graphite path)
-* "%c", _CLUSTER_ (cluster name, varies with query)
-* "%h", _HOST_ (host name, varies with query)
+* "%c", _CLUSTER_ (cluster name, varies with query, must not contain periods)
+* "%h", _HOST_ (host name, varies with query, must not contain periods)
 
 The :metric_format string is specified in a configuration file (see below), and
-defaults to %m.%c.%h".
+defaults to %m.%c.%h". It should contain only one %m, but is otherwise mostly
+unrestricted.
 
-You need to set up these YAML configuration files in order for pencil to
-work. Pencil searches the current directory (or, with -d DIR, DIR) for YAML
-files to load.
+You need to set up YAML configuration files in order for pencil to work. Pencil
+searches the current directory (or, with -d DIR, DIR) for YAML files to load.
 
 The important top-level configuration keys are:
 

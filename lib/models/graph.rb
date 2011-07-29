@@ -312,9 +312,22 @@ module Dash::Models
       metrics = expand
       clusters = Set.new
 
-      # field -1 is the host name, and -2 is its cluster
-      hosts = metrics.map do |x|
-        Host.new(x[-1], @params.merge({ "cluster" => x[-2] }))
+      f = @params[:metric_format].dup.split("%m")
+      first = f.first.split(".")
+      last = f.last.split(".")
+      ci = hi = nil
+      first.each_with_index do |v, i|
+        ci = i if v.match("%c")
+        hi = i if v.match("%h")
+      end
+      unless ci && hi
+        last.reverse.each_with_index do |v, i|
+          ci = -1 -i if v.match("%c")
+          hi = -1 -i if v.match("%h")
+        end
+      end
+      hosts = metrics.map do |m|
+        Host.new(m[hi], @params.merge({ "cluster" => m[ci] }))
       end.uniq
 
       # filter by what matches the graph definition
