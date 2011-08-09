@@ -121,8 +121,7 @@ module Dash::Helpers
 
   def append_query_string(str)
     v = str.dup
-    query = request.query_string.chomp("&permalink=1")
-    (v << "?#{query}") unless request.query_string.empty?
+    (v << "?#{request.query_string}") unless request.query_string.empty?
     return v
   end
 

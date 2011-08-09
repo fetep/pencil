@@ -51,6 +51,7 @@ Dependencies are:
 
 * rack
 * sinatra
+* mongrel
 * json
 * chronic
 * chronic_duration

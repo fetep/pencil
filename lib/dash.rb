@@ -129,8 +129,8 @@ module Dash
     end
 
     get '/host/:cluster/:host/?' do
-      @host = Host.new(params[:host], { "cluster" => params[:cluster] })
-      @cluster = params[:cluster]
+      @host = Host.find_by_name_and_cluster(params[:host], params[:cluster])
+      @cluster = @host.cluster
       raise "Unknown host: #{params[:host]} in #{params[:cluster]}" unless @host
 
       @title = "#{@host.cluster} :: host :: #{@host.name}"
