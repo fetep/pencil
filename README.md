@@ -118,7 +118,7 @@ supported options. It looks like (in YAML):
       areaMode: stacked
 
 (Note that in any case where you would use a hash you may use an
-[? : omap](http://www.yaml.org/spec/current.html#id2504191) instead, to ensure
+[omap](http://www.yaml.org/spec/current.html#id2504191) instead, to ensure
 the order in which options are applied)
 
 Graph-level options are applied to the graph as a whole, where target-level
