@@ -2,7 +2,7 @@
 require File.join(File.dirname(__FILE__), "VERSION")  # For PENCIL_VERSION
 
 Gem::Specification.new do |spec|
-  files = []
+  files = ["VERSION.rb"]
   dirs = %w(lib docs examples)
   dirs.each do |dir|
     files += Dir["#{dir}/**/*"]
