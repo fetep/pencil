@@ -35,7 +35,7 @@
           <br>
           Jump to Host:
           <br>
-          <%= hosts_selector(Host.all) %>
+          <%= hosts_selector(* @cluster == "global" ? [Host.all, true] : [Host.find_by_cluster(@cluster), false]) %>
           <br>
           <br>
           <%= input_boxes %>
@@ -52,6 +52,6 @@
 
   </body>
   <div id="footer" style="color:green;">
-    generated <%= @request_time %> by <a href="https://github.com/petef/pencil">pencil</a> v<%= PENCIL_VERSION %>
+    generated <%= @request_time %> by <a href="https://github.com/fetep/pencil">pencil</a> v<%= PENCIL_VERSION %>
   </div>
 </html>

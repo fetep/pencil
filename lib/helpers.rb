@@ -114,7 +114,8 @@ module Dash::Helpers
     end
   end
 
-  def hosts_selector(hosts)
+  def hosts_selector(hosts, print_clusters=false)
+    @print_clusters = print_clusters
     @hosts = hosts
     erb :'partials/hosts_selector', :layout => false
   end
