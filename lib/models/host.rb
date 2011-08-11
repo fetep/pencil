@@ -4,12 +4,14 @@ require "models/graph"
 module Dash::Models
   class Host < Base
     attr_accessor :graphs
+    attr_reader :cluster
 
-    def initialize(name, params={})
-      super
+    def initialize(name, cluster, params={})
+      super(name, params)
+      @cluster = cluster
       # hack for the case where colo{1,2}.host1 both exist
       @@objects[self.class.to_s].delete(name)
-      @@objects[self.class.to_s]["#{@params[:cluster]}#{name}"] = self
+      @@objects[self.class.to_s]["#{cluster}#{name}"] = self
 
       @graphs = []
       Graph.each do |graph_name, graph|
@@ -24,10 +26,6 @@ module Dash::Models
 
     def self.find(name)
       return @@objects[self.name][key] rescue []
-    end
-
-    def cluster
-      return @params["cluster"]
     end
 
     def key

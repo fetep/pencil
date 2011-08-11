@@ -307,11 +307,11 @@ module Dash::Models
       return metrics.flatten.map { |x| x.split(".") }
     end
 
-    # FIXMEEEE needs to be fixed for different metric formats
     def hosts_clusters
       metrics = expand
       clusters = Set.new
 
+      # find the indicies of the clusters and hosts
       f = @params[:metric_format].dup.split("%m")
       first = f.first.split(".")
       last = f.last.split(".")
@@ -327,7 +327,7 @@ module Dash::Models
         end
       end
       hosts = metrics.map do |m|
-        Host.new(m[hi], @params.merge({ "cluster" => m[ci] }))
+        Host.new(m[hi], m[ci], @params)
       end.uniq
 
       # filter by what matches the graph definition
