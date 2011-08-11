@@ -17,16 +17,20 @@
       <div id="nav">
         <% if @cluster %>
         <ul>
+          <!-- fixme change this to the cluster overview link when there's only one cluster-->
           Global Views:
           <li><a href="<%= cluster_link("global") %>">overview</a></li>
           <br>
+          <% clusters = settings.config.clusters %>
+          <% if clusters.size > 1 %>
           Cluster Views:
           <br>
-          <% clusters = settings.config.clusters %>
+
           <% clusters.sort.each do |cluster| %>
           <li><a href="<%= cluster_link(cluster) %>"><%= cluster %></a></li>
           <% end %>
           <br>
+          <% end %>
           Dashboards: (<%= @cluster %>)
           <br>
           <% @dashboards.sort.each do |dash| %>
