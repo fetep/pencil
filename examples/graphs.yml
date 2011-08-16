@@ -25,7 +25,7 @@
     title: "syncstorage 401s"
     targets:
       syncstorage.request_rate.401:
-        :key: 401
+        :key: 200
         :color: brown
     hosts: ["sync*_web", "test*_web", "wp-web*"]
 
@@ -193,10 +193,10 @@
     scale: 1024 # M -> G
     hosts: ["*"]
     # some random options for demonstration
-    template: alphas
-    bgcolor: "#AFFFFF"
-    vtitle: tvtnolgrf
-    lineWidth: 20
+    # template: alphas
+    # bgcolor: "#AFFFFF"
+    # vtitle: tvtnolgrf
+    # lineWidth: 20
 
   sync_node_alloc:
     title: "node alloc rate"
@@ -221,3 +221,100 @@
         :color: blue
  
     hosts: ["wp-adm01"]
+
+  mysql_pending_file_io:
+    title: "mysql pending file i/o"
+    targets:
+      stats.timers.mysql.innodb.pending_read.mean:
+        :key: read
+        :color: green
+      stats.timers.mysql.innodb.pending_write.mean:
+        :key: write
+        :color: blue
+      stats.timers.mysql.innodb.pending_ibuf.mean:
+        :key: ibuf
+        :color: brown
+      stats.timers.mysql.innodb.pending_log.mean:
+        :key: log
+        :color: red
+      stats.timers.mysql.innodb.pending_sync.mean:
+        :key: sync
+        :color: yellow
+
+    hosts: ["wp-db*", "sync*_db"]
+
+  mysql_history_length:
+    title: "mysql transaction history"
+    targets:
+      stats.timers.mysql.innodb.history_length.mean:
+        :key: read
+        :color: green
+
+    hosts: ["wp-db*", "sync*_db"]
+
+  mysql_file_io_threads_usage:
+    title: "mysql file i/o threads active (% used)"
+    targets:
+      ? - stats.timers.mysql.innodb.threads_active_read.mean:
+        - stats.timers.mysql.innodb.threads_total_read.mean:
+      :
+        !omap
+        - :divideSeries:
+        - :color: green
+        - :asPercent: 1.0
+        - :movingAverage: 10
+        - :key: read
+      ? - stats.timers.mysql.innodb.threads_active_write.mean:
+        - stats.timers.mysql.innodb.threads_total_write.mean:
+      :
+        !omap
+        - :divideSeries:
+        - :color: blue
+        - :asPercent: 1.0
+        - :movingAverage: 10
+        - :key: write
+      ? - stats.timers.mysql.innodb.threads_active_ibuf.mean:
+        - stats.timers.mysql.innodb.threads_total_ibuf.mean:
+      :
+        !omap
+        - :divideSeries:
+        - :color: brown
+        - :asPercent: 1.0
+        - :movingAverage: 10
+        - :key: ibuf
+      ? - stats.timers.mysql.innodb.threads_active_log.mean:
+        - stats.timers.mysql.innodb.threads_total_log.mean:
+      :
+        !omap
+        - :divideSeries:
+        - :color: red
+        - :asPercent: 1.0
+        - :movingAverage: 10
+        - :key: log
+    hosts: ["wp-db*", "sync*_db"]
+
+  mysql_file_io_threads:
+    title: "mysql file i/o threads"
+    targets:
+      stats.timers.mysql.innodb.threads_active_read.mean:
+        !omap
+        - :color: green
+        - :movingAverage: 10
+        - :key: read
+      stats.timers.mysql.innodb.threads_active_write.mean:
+        !omap
+        - :color: blue
+        - :movingAverage: 10
+        - :key: write
+      stats.timers.mysql.innodb.threads_active_ibuf.mean:
+        !omap
+        - :color: brown
+        - :movingAverage: 10
+        - :key: ibuf
+      stats.timers.mysql.innodb.threads_active_log.mean:
+        !omap
+        - :color: red
+        - :movingAverage: 10
+        - :key: log
+
+    hosts: ["wp-db*", "sync*_db"]

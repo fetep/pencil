@@ -51,6 +51,10 @@
       - load_average:
       - cpu_usage:
       - network_traffic:
+      - mysql_pending_file_io:
+      - mysql_history_length:
+      - mysql_file_io_threads:
+      - mysql_file_io_threads_usage:
     hosts: ["sync*_db", "wp-db*"]
   sync_node_alloc:
     title: sync node allocation
