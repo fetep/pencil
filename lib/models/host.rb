@@ -69,7 +69,7 @@ module Dash::Models
 
     def self.find_by_name_and_cluster(name, cluster)
       Host.each do |host_name, host|
-        next unless host_name == name
+        next unless host.name == name
         return host if host.cluster == cluster
       end
       return nil
