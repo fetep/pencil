@@ -42,11 +42,11 @@ div#wrap {
 div#header {
     padding: 15px;
     margin: 0px;
-    margin-left: 16%;
+    margin-left: 23%;
 }
 
 div#nav {
-    width: 15%;
+    width: 20%;
     padding: 10px;
     margin-top: 1px;
     float: left;
@@ -54,7 +54,7 @@ div#nav {
 }
 
 div#main {
-    margin-left: 16%;
+    margin-left: 23%;
     margin-top: 1px;
     padding: 10px;
     color: #4CBB17;
