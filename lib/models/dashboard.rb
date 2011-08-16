@@ -25,6 +25,7 @@ module Dash::Models
         @graphs << g if g
       end
 
+      @valid_hosts_table = {} # cache calls to get_valid_hosts
     end
 
     def clusters
@@ -45,6 +46,10 @@ module Dash::Models
     end
 
     def get_valid_hosts(graph, cluster=nil)
+      if @valid_hosts_table[[graph, cluster]]
+        return @valid_hosts_table[[graph, cluster]]
+      end
+
       clusters = Set.new
       if cluster
         hosts = Host.find_by_cluster(cluster)
@@ -63,6 +68,7 @@ module Dash::Models
 
       hosts.each { |h| clusters << h.cluster }
 
+      @valid_hosts_table[[graph, cluster]] = [hosts, clusters]
       return hosts, clusters
     end
 
