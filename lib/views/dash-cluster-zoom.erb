@@ -1,6 +1,6 @@
 <% hosts = @dash.get_valid_hosts(@zoom, @cluster)[0].sort %>
 
-<%= cluster_switcher %>
+<%= cluster_switcher(@dash.clusters) %>
 <%= graph_switcher %>
 <%= graph_uplink %>
 <br>

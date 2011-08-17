@@ -132,7 +132,8 @@ module Dash::Helpers
     session.merge(opts).delete_if { |k,v| static_opts.member?(k) || v.empty? }
   end
 
-  def cluster_switcher
+  def cluster_switcher(clusters)
+    @clusters = clusters
     erb :'partials/cluster_switcher', :layout => false
   end
 

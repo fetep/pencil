@@ -1,5 +1,5 @@
 clusters:
-<%= settings.config.clusters.sort.collect do |c|
+<%= @clusters.sort.collect do |c|
     sub = append_query_string(request.path.sub(@cluster, c))
     @cluster == c ? "#{c}" : "<a href=\"#{sub}\">#{c}</a>"
     end.join(" ") %>
