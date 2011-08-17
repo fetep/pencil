@@ -55,7 +55,6 @@ module Dash::Models
         hosts = Host.find_by_cluster(cluster)
       else
         hosts = Host.all
-        hosts.each { |h| clusters << h.cluster }
       end
 
       # filter by what matches the graph definition
