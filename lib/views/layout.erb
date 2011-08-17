@@ -33,7 +33,9 @@
           <% end %>
           Dashboards: (<%= @cluster %>)
           <br>
-          <% @dashboards.sort.each do |dash| %>
+          <% @dashboards.select do |d|
+             @cluster == "global" || d.clusters.member?(@cluster)
+             end.sort.each do |dash| %>
           <li><a href="<%= dash_link(dash, @cluster) %>"><%= dash["title"] %></a></li>
           <% end %>
           <br>
