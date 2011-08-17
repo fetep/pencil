@@ -133,13 +133,11 @@ module Dash
       erb :host
     end
 
-    # fixme make sure not to save shitty values for :start, :duration
-    # remove stime, etime
-    # there is definitely something wrong here
-    # disallow saving from, until
+    # fixme make sure not to save shitty values for :start
     get '/saveprefs' do
       puts 'saving prefs'
-      params.each do |k,v|
+      params.each do |k ,v|
+        next if [:etime, :stime, :duration].member?(k.to_sym)
         session[k] = v unless v.empty?
       end
       redirect URI.parse(request.referrer).path
