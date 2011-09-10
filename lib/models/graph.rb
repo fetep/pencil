@@ -155,8 +155,9 @@ module Dash::Models
               end
             end.join(",")
           else
-            metric = "#{stat_name}.{#{clusters.to_a.join(',')}}" +
-              ".{#{hosts.to_a.join(',')}}"
+            metric = compose_metric(stat_name,
+                             "{#{clusters.to_a.join(',')}}",
+                             "{#{hosts.to_a.join(',')}}")
             metric = handle_metric(metric, {}, true)
           end
           #######################
