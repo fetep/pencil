@@ -291,7 +291,7 @@ module Dash::Models
       if a
         "<div class=title>#{a[2]}:</div> #{a[1]}"
       else
-        target
+        target.match("(.*)")[1] + "<div class=error>fixme</div>"
       end
     end
 
