@@ -281,18 +281,18 @@ module Dash::Models
         end
       end
       url += url_parts.join("&")
-      desc = target.map {|x| unwrap_target(x)}.join(" ")
+      desc = target.map {|x| unwrap_target(x)}.join("<br>")
       puts desc
       return url, desc
     end
 
     # for presenting in <img title="">
     def unwrap_target (target)
-      a = target.match(/^alias\((.*\)), "(.*)"\)$/)
+      a = target.match(/^alias\((.+), "(.*)"\)$/)
       if a
-        "#{a[2]}: #{a[1]}"
+        "<div class=title>#{a[2]}:</div> #{a[1]}"
       else
-        return target
+        target
       end
     end
 
