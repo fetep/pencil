@@ -282,7 +282,6 @@ module Dash::Models
       end
       url += url_parts.join("&")
       desc = target.map {|x| unwrap_target(x)}.join("<br>")
-      puts desc
       return url, desc
     end
 
