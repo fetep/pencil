@@ -10,18 +10,19 @@
 <div class="graphsection" style="width:<%= @zoom.width(merge_opts) %>;">
   <span class="graphtitle"><%= @zoom.name %> / <%= @cluster %> :: summary</span>
   <div class="graph">
-    <img src="<%= @dash.render_cluster_graph(@zoom, @cluster, :dynamic_url_opts => merge_opts) %>">
+  <% url, desc = @dash.render_cluster_graph(@zoom, @cluster, :dynamic_url_opts => merge_opts) %>
+    <img class="blue" title="<%= desc %>" src="<%= url %>">
   </div>
 </div>
 
 <% hosts.each do |host| %>
 <div class="graphsection" style="width:<%= @zoom.width(merge_opts) %>;">
   <a name="<%= host %>">
-    <% image_url, zoom_url = cluster_zoom_graph(@zoom, @cluster, host, "#{@zoom.name} / #{@cluster} / #{host}") %>
+    <% image_url, desc, zoom_url = cluster_zoom_graph(@zoom, @cluster, host, "#{@zoom.name} / #{@cluster} / #{host}") %>
     <span class="graphtitle"><%= @zoom.name %> / <%= @cluster %> / <%= host %></span>
     <span class="dashlinks">(<a href="<%= zoom_url %>">host</a>)</span>
     <div class="graph">
-      <a href="<%= zoom_url %>"><img src="<%= image_url %>"></a>
+      <a href="<%= zoom_url %>"><img class="blue" title="<%= desc%>" src="<%= image_url %>"></a>
     </div>
 </div>
 <% end %>

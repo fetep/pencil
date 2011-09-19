@@ -15,12 +15,12 @@ module Dash::Helpers
   end
 
   def cluster_graph(g, cluster, title="wtf")
-    image_url = \
+    image_url, desc = \
     @dash.render_cluster_graph(g, cluster,
                                :title => title,
                                :dynamic_url_opts => merge_opts)
     zoom_url = cluster_graph_link(@dash, g, cluster)
-    return image_url, zoom_url
+    return image_url, desc, zoom_url
   end
 
   def cluster_graph_link(dash, g, cluster)
@@ -30,10 +30,10 @@ module Dash::Helpers
   end
 
   def cluster_zoom_graph(g, cluster, host, title)
-    image_url = g.render_url([host.name], [cluster], :title => title,
+    image_url, desc = g.render_url([host.name], [cluster], :title => title,
                              :dynamic_url_opts => merge_opts)
     zoom_url = cluster_zoom_link(cluster, host)
-    return image_url, zoom_url
+    return image_url, desc, zoom_url
   end
 
   def cluster_zoom_link(cluster, host)

@@ -77,8 +77,8 @@ module Dash::Models
 
       hosts = get_host_wildcards(graph)
       opts[:sum] = :cluster unless opts[:zoom]
-      graph_url = graph.render_url(hosts.to_a, clusters, opts)
-      return graph_url
+      graph_url, desc = graph.render_url(hosts.to_a, clusters, opts)
+      return graph_url, desc
     end
 
     def get_host_wildcards(graph)
@@ -92,8 +92,8 @@ module Dash::Models
       next_url = ""
       type = opts[:zoom] ? :cluster : :global
       options = opts.merge({:sum => type})
-      graph_url = graph.render_url(hosts, clusters, options)
-      return graph_url
+      graph_url, desc = graph.render_url(hosts, clusters, options)
+      return graph_url, desc
     end
 
     def self.find_by_graph(graph)

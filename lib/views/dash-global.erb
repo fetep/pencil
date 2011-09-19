@@ -14,7 +14,8 @@
     <span class="dashlinks"><%= suggest_cluster_links(clusters, g) %></span>
     <div class="graph">
       <% zoom_url = cluster_graph_link(@dash, g, "global") %>
-      <a href="<%= zoom_url %>"><img src="<%= @dash.render_global_graph(g, :dynamic_url_opts => merge_opts) %>"></a>
+      <% url, desc = @dash.render_global_graph(g, :dynamic_url_opts => merge_opts) %>
+      <a href="<%= zoom_url %>"><img class="blue" title="<%= desc %>" src="<%= url %>"></a>
     </div>
 </div>
 <% end %>

@@ -281,7 +281,19 @@ module Dash::Models
         end
       end
       url += url_parts.join("&")
-      return url
+      desc = target.map {|x| unwrap_target(x)}.join(" ")
+      puts desc
+      return url, desc
+    end
+
+    # for presenting in <img title="">
+    def unwrap_target (target)
+      a = target.match(/^alias\((.*\)), "(.*)"\)$/)
+      if a
+        "#{a[2]}: #{a[1]}"
+      else
+        return target
+      end
     end
 
     # return an array of all metrics matching the specifications in
