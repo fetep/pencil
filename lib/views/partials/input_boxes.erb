@@ -1,25 +1,36 @@
-<form name="input" method="get"><table style="font-size:small;">
-    <% @prefs.each do |label, name|
-       val = param_lookup(name) %>
-    <tr>
-      <td><%= label %>:</td>
-      <td><nobr><input <%= "value=\"#{val}\" " if val %>size="<%= name =~ /start|duration/ ? 10 : 4 %>" type="text" name="<%= name %>">
-          <% if name == "start" %>
-          <a href="http://chronic.rubyforge.org/" target="_blank">?</a>
-          <% elsif name == "duration" %>
-          <a href="https://github.com/hpoydar/chronic_duration" target="_blank">?</a>
-          <% end %></nobr>
-        <%= if name == "start"
-            "<div class=\"error\">Bad Time!</a>" unless \
-            Chronic.parse(param_lookup(name))
-            elsif name == "duration" && param_lookup(name)
-            "<div class=\"error\">Bad Interval!</a>" unless \
-            ChronicDuration.parse(param_lookup(name))
-            end %>
-      </td>
-    </tr>
+<div class="nav-box ui-corner-all" id="settings">
+  <h3 class="ui-corner-top ui-state-default">Graph Settings</h3>
+  <div class="nav-box-inner">
+    <form action="/process" name="input" method="get">
+      <% @prefs.each do |label, name|
+         val = param_lookup(name) %>
+      <label for="<%= name%>"><%= label%></label>
+      <input  <%= "value=\"#{val}\" " if val %> size="<%= name =~ /start|duration/ ? 10 : 4 %>" name="<%= name %>" id="<%= name %>" type="text"/>
+      <% if name == "start" %>
+      <a href="http://chronic.rubyforge.org/" class="inline-link" target="_blank">
+        <% if Chronic.parse(param_lookup(name)) %>
+        ?
+        <% else %>
+        <div class="error">Bad timespec!</div>
+        <% end %>
+      </a>
+      <% elsif name == "duration" %>
+      <a href="https://github.com/hpoydar/chronic_duration" class="inline-link" target="_blank">
+        <% if !param_lookup(name) || ChronicDuration.parse(param_lookup(name)) %>
+        ?
+        <% else %>
+        <div class="error">Bad interval!</div>
+        <% end %>
+      </a>
       <% end %>
-  </table> <input type="submit" value="Submit">
-</form>
-
-<form method="get"> <input type="submit" value="Clear"></form>
+      <% end %>
+      <div class="button-holder">
+        <input class="ui-state-default ui-corner-all ui-button" type="submit" value="Submit" name="action" />
+        <input class="ui-state-default ui-corner-all ui-button" type="submit" value="Clear" name="action" /><br>
+        <input class="ui-state-default ui-corner-all ui-button" type="submit" value="Save" name="action" />
+        <input class="ui-state-default ui-corner-all ui-button" type="submit" value="Reset" name="action" />
+      </div>
+    </form>
+    <div style="clear:both;"></div>
+  </div>
+</div>

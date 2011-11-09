@@ -1,63 +1,77 @@
 <html>
   <head>
-    <%= css_url %>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <link href="/css/thedoc.css" rel="stylesheet" type="text/css">
+    <link href="/css/jquery_themes/pencil/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css">
     <link href="/favicon.ico" rel="icon" type="text/x-icon">
     <link href="/favicon.ico" rel="shortcut icon" type="text/x-icon">
+    <script type="text/javascript" src="/js/jquery-1.6.2.min.js"></script>
+    <script type="text/javascript" src="/js/jquery-ui-1.8.16.custom.min.js"></script>
+    <script type="text/javascript" src="/js/cufon.js"></script>
+    <script type="text/javascript" src="/js/product-design.font.js"></script>
+    <script type="text/javascript" src="/js/gotham.font.js"></script>
+    <title>Pencil</title>
+    <script type="text/javascript">
+        Cufon.replace('#header h1, #header h4', { fontFamily: 'product-design'});
+        Cufon.replace('#main h2, #main h3, #main h4, #nav h3', { fontFamily: 'gotham'});
+    </script>
     <%= refresh unless @no_graphs %>
   </head>
-  <body bgcolor="black">
-
-    <div id="wrap">
+  <body>
+    <div id="container">
       <div id="header">
-        <h2><%= @title %></h2>
-        <h3><%= range_string %></h3>
-        <%= permalink unless @no_graphs %>
+        <h1>Pencil</h1>
+        <h4>Powered by graphite</h4>
       </div>
 
-      <div id="nav">
-        <% if @cluster %>
-        <ul>
-          <!-- fixme change this to the cluster overview link when there's only one cluster-->
-          Global Views:
-          <li><a href="<%= cluster_link("global") %>">overview</a></li>
-          <br>
-          <% clusters = settings.config.clusters %>
-          <% if clusters.size > 1 %>
-          Cluster Views:
-          <br>
-
-          <% clusters.sort.each do |cluster| %>
-          <li><a href="<%= cluster_link(cluster) %>"><%= cluster %></a></li>
+      <div id="middle">
+        <div id="left_pane">
+          <div id="nav" class="ui-corner-bottom">
+            <% if @cluster %>
+            <!-- fixme change this to the cluster overview link when there's only one cluster-->
+            <h3>Global Views:</h3>
+            <ul>
+              <li><a href="<%= cluster_link("global") %>">overview</a></li>
+              <% clusters = settings.config.clusters %>
+            </ul>
+            <% if clusters.size > 1 %>
+            <h3>Cluster Views:</h3>
+            <ul>
+              <% clusters.sort.each do |cluster| -%>
+              <li><a href="<%= cluster_link(cluster) %>"><%= cluster %></a></li>
+              <% end %>
+            </ul>
+            <% end %>
+            <h3>Dashboards: (<%= @cluster %>)</h3>
+            <ul>
+              <% @dashboards.select do |d|
+                 @cluster == "global" || d.clusters.member?(@cluster)
+                 end.sort.each do |dash| -%>
+              <li><a href="<%= dash_link(dash, @cluster) %>"><%= dash["title"] %></a></li>
+              <% end %>
+            </ul>
+            <div class="jump-box">
+              <h3>Jump to Host:</h3>
+              <%= hosts_selector(* @cluster == "global" ? [Host.all, true] : [Host.find_by_cluster(@cluster), false]) %>
+            </div>
+            <%= input_boxes %>
+          </div>
           <% end %>
-          <br>
-          <% end %>
-          Dashboards: (<%= @cluster %>)
-          <br>
-          <% @dashboards.select do |d|
-             @cluster == "global" || d.clusters.member?(@cluster)
-             end.sort.each do |dash| %>
-          <li><a href="<%= dash_link(dash, @cluster) %>"><%= dash["title"] %></a></li>
-          <% end %>
-          <br>
-          Jump to Host:
-          <br>
-          <%= hosts_selector(* @cluster == "global" ? [Host.all, true] : [Host.find_by_cluster(@cluster), false]) %>
-          <br>
-          <br>
-          <%= input_boxes %>
-          <%= refresh_button %>
-          <div id="footer"> <%= cookies_form %></div>
-        </ul>
-      </div>
-      <% end %>
-
-      <div id="main">
-        <%= yield %>
+        </div>
+        <div id="right_pane">
+          <div id="main">
+            <%= yield %>
+          </div>
+          <div style="clear:both;"></div>
+        </div><!--/closes right_pane -->
+      </div><!--/closes middle-->
+      <div style="clear:both;"></div>
+      <div id="footer">
+        generated <%= @request_time %> by <a href="https://github.com/fetep/pencil" target="_blank">pencil</a> v<%= PENCIL_VERSION %>
       </div>
     </div>
-
+    <script type="text/javascript">
+      Cufon.now();
+    </script>
   </body>
-  <div id="footer" style="color:green;">
-    generated <%= @request_time %> by <a href="https://github.com/fetep/pencil" target="_blank">pencil</a> v<%= PENCIL_VERSION %>
-  </div>
 </html>

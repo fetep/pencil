@@ -1,7 +1,7 @@
 module Dash::Helpers
   include Dash::Models
 
-  @@prefs = [["Start", "start"],
+  @@prefs = [["Start Time", "start"],
              ["Duration", "duration"],
              ["Width", "width"],
              ["Height", "height"]]
@@ -82,16 +82,6 @@ module Dash::Helpers
     erb :'partials/input_boxes', :layout => false
   end
 
-  def cookies_form
-    @prefs = @@prefs
-    erb :'partials/cookies_form', :layout => false
-  end
-
-  def refresh_button
-    @prefs = @@prefs
-    erb :'partials/refresh_button', :layout => false
-  end
-
   def dash_link(dash, cluster)
     return append_query_string("/dash/#{cluster}/#{dash.name}")
   end
@@ -100,6 +90,7 @@ module Dash::Helpers
     return append_query_string("/dash/#{cluster}")
   end
 
+  # fixme this isn't used anymore, but should
   def css_url
     style = File.join(settings.root, "public/style.css")
     mtime = File.mtime(style).to_i.to_s
@@ -132,6 +123,10 @@ module Dash::Helpers
     session.merge(opts).delete_if { |k,v| static_opts.member?(k) || v.empty? }
   end
 
+  def shortcuts(str)
+    @str = str
+    erb :'partials/shortcuts', :layout => false
+  end
   def cluster_switcher(clusters)
     @clusters = clusters
     erb :'partials/cluster_switcher', :layout => false
@@ -165,6 +160,22 @@ module Dash::Helpers
     "zoom out: <a href=\"#{link}\">#{@params[:cluster]}</a>"
   end
 
+  # fixme this is a hack
+  def header(str)
+    <<FOO
+<div class="path_container">
+              <h2>#{@title}</h2>
+                <span class="zoom">
+                #{str}
+                </span>
+            </div>
+            <div id="timeslice_container">
+              <h3 id="timeslice">#{range_string}</h3>
+              #{permalink unless @no_graphs}
+            </div>
+FOO
+  end
+
   def nowish
     if settings.config.global_config[:now_threshold] == false
       return false
@@ -193,6 +204,6 @@ module Dash::Helpers
     url = request.path + "?"
     url << "&start=#{@stime.strftime(format)}"
     url << "&duration=#{ChronicDuration.output(@duration)}"
-    "<a href=\"#{url}\">permalink</a>"
+    "<a id=\"permalink\" href=\"#{url}\">permalink</a>"
   end
 end
