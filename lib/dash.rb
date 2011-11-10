@@ -29,6 +29,7 @@ module Dash
     set :root, File.dirname(__FILE__)
     set :static, true
     set :logging, true
+    set :erb, :trim => '-'
 
     def initialize(settings={})
       super
@@ -47,7 +48,7 @@ module Dash
         @stime -= @stime.sec unless @params["noq"]
       end
       if duration
-        @duration = ChronicDuration.parse(duration)
+        @duration = ChronicDuration.parse(duration) || 0
       else
         @duration = @request_time.to_i - @stime.to_i
       end
@@ -71,9 +72,9 @@ module Dash
     get %r[^/(dash/?)?$] do
       @no_graphs = true
       if settings.config.clusters.size == 1
-        redirect "/dash/#{settings.config.clusters.first}"
+        redirect append_query_string("/dash/#{settings.config.clusters.first}")
       else
-        redirect '/dash/global'
+        redirect append_query_string('/dash/global')
       end
     end
 
@@ -133,20 +134,28 @@ module Dash
       erb :host
     end
 
-    # fixme make sure not to save shitty values for :start
-    get '/saveprefs' do
-      puts 'saving prefs'
-      params.each do |k ,v|
-        next if [:etime, :stime, :duration].member?(k.to_sym)
-        session[k] = v unless v.empty?
+    get '/process' do
+      case params["action"]
+      when "Save"
+        # fixme make sure not to save shitty values for :start
+        puts 'saving prefs'
+        params.each do |k ,v|
+          next if [:etime, :stime, :duration].member?(k.to_sym)
+          session[k] = v unless v.empty?
+        end
+        redirect URI.parse(request.referrer).path
+      when "Clear"
+        puts URI.parse(request.referrer).path
+        redirect URI.parse(request.referrer).path
+      when "Reset"
+        puts "clearing prefs"
+        session.clear
+        redirect URI.parse(request.referrer).path
+      when "Submit"
+        # fixme offensive to sensibility
+        redirect URI.parse(request.referrer).path + "?" + \
+        request.query_string.sub("&action=Submit", "").sub("?action=Submit", "")
       end
-      redirect URI.parse(request.referrer).path
-    end
-
-    get '/clear' do
-      puts "clearing prefs"
-      session.clear
-      redirect URI.parse(request.referrer).path
     end
   end # Dash::App
 end # Dash

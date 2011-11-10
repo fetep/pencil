@@ -1,17 +1,17 @@
-<% clusters =  @dash.clusters %>
-
+<%= header(dash_uplink) %>
+<% clusters = @dash.clusters %>
 <%= cluster_switcher(clusters) %>
 <%= dash_switcher %>
-<%= dash_uplink %>
-<br>
-<br>
-<%= @dash.graphs.collect { |g| "<a href=\"##{g.name}\">#{g.name}</a>" }.join(" ") %>
+<%= shortcuts(@dash.graphs.collect { |g| "<a href=\"##{g.name}\">#{g.name}</a>" }.join(" ")) %>
 
 <% @dash.graphs.each do |g| %>
-<div class="graphsection" style="width:<%= g.width(merge_opts) %>;">
-  <a name="<%= g.name %>">
-    <span class="graphtitle"><%= g.name %></span>
-    <span class="dashlinks"><%= suggest_cluster_links(clusters, g) %></span>
+<div class="graph_container">
+  <a name="<%= g.name %>"></a>
+    <h3><%= g.name %>
+      <span class="tools">
+        <%= suggest_cluster_links(clusters, g) %>
+      </span>
+    </h3>
     <div class="graph">
       <% zoom_url = cluster_graph_link(@dash, g, "global") %>
       <% url, desc = @dash.render_global_graph(g, :dynamic_url_opts => merge_opts) %>
