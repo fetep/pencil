@@ -92,10 +92,10 @@ module Dash::Helpers
 
   # fixme this isn't used anymore, but should
   def css_url
-    style = File.join(settings.root, "public/style.css")
+    style = File.join(settings.root, "public/css/style.css")
     mtime = File.mtime(style).to_i.to_s
     return \
-    %Q[<link href="/style.css?#{mtime}" rel="stylesheet" type="text/css">]
+    %Q[<link href="/css/style.css?#{mtime}" rel="stylesheet" type="text/css">]
   end
 
   def refresh
