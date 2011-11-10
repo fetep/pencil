@@ -5,13 +5,12 @@
     <link href="/css/jquery_themes/pencil/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css">
     <link href="/favicon.ico" rel="icon" type="text/x-icon">
     <link href="/favicon.ico" rel="shortcut icon" type="text/x-icon">
+    <!-- fixme get minified versions, update jquery -->
     <script src="/js/jquery.js" type="text/javascript"></script>
     <script src="/js/jquery.bgiframe.js" type="text/javascript"></script>
     <script src="/js/jquery.dimensions.js" type="text/javascript"></script>
     <script src="/js/jquery.tooltip.js" type="text/javascript"></script>
 
-    <script type="text/javascript" src="/js/jquery-1.6.2.min.js"></script>
-    <script type="text/javascript" src="/js/jquery-ui-1.8.16.custom.min.js"></script>
     <script type="text/javascript" src="/js/cufon.js"></script>
     <script type="text/javascript" src="/js/product-design.font.js"></script>
     <script type="text/javascript" src="/js/gotham.font.js"></script>
@@ -81,7 +80,6 @@
     <script type="text/javascript">
       $(document).ready(function() {
 	  $("img[title]").tooltip({
-      track: true,
       showURL: false,
 	  <!-- // use div.tooltip as our tooltip -->
 	  tip: '.tooltip',
@@ -92,7 +90,6 @@
 	  // the time before the tooltip is shown
 	  predelay: 100,
 	  // tweak the position
-	  position: "center",
 	  <!-- offset: [-50, -80] -->
 	  });
       });
