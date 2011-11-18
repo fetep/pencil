@@ -245,7 +245,7 @@ h3 a{
 }
 
 a {
-    color: #15317E;
+    color: #99ccff;
 }
 
 a:visited {
@@ -324,10 +324,7 @@ select {
     position: absolute;
     z-index: 0;
     border: 1px solid #4CBB17;
-    font-size:14px;
     background-color: #0f0f0f;
     padding: 5px;
-    opacity: 0.95;
+    opacity: 1;
 }
-
-
