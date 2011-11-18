@@ -146,7 +146,7 @@ div.group_container.first {
     border-bottom: none;
 }
 div.group_container.last {
-    
+
 }
 
 div.group_container a {
@@ -319,15 +319,15 @@ select {
     color: #99ccff;
 }
 
-#tooltip {
-	position: absolute;
-	z-index: 0;
-	border: 1px solid #111;
-    color: green;
-	font-size:13px;
+.tooltip {
+    display: none;
+    position: absolute;
+    z-index: 0;
+    border: 1px solid #4CBB17;
+    font-size:14px;
     background-color: #0f0f0f;
-	padding: 5px;
-	opacity: 0.95;
+    padding: 5px;
+    opacity: 0.95;
 }
 
-#tooltip h3, #tooltip div { margin: 0; }
+

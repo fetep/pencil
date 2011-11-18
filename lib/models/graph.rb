@@ -281,7 +281,7 @@ module Dash::Models
         end
       end
       url += url_parts.join("&")
-      desc = target.map {|x| unwrap_target(x)}.join("<br>")
+      desc = target.map {|x| unwrap_target(x)}.join("<br>" + "<a href='http://mozilla.org'>moz</a>")
       return url, desc
     end
 
