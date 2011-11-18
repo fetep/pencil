@@ -18,7 +18,7 @@
 <div class="graph_container">
   <a name="<%= cluster %>"></a>
     <% graph_name = "#{@dash.name} / #{@zoom.name} / #{cluster}" %>
-  <% image_url, desc, zoom_url = cluster_graph(@zoom, cluster, graph_name) %>
+  <% url, desc, zoom_url = cluster_graph(@zoom, cluster, graph_name) %>
   <h3><%= graph_name %>
     <span class="tools">(<a href="<%= zoom_url %>">zoom</a>)</span>
   </h3>

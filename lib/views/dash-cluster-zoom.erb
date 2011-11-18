@@ -17,7 +17,7 @@
 <% hosts.each do |host| %>
 <div class="graph_container">
   <a name="<%= host %>"></a>
-  <% image_url, desc, zoom_url = cluster_zoom_graph(@zoom, @cluster, host, "#{@zoom.name} / #{@cluster} / #{host}") %>
+  <% url, desc, zoom_url = cluster_zoom_graph(@zoom, @cluster, host, "#{@zoom.name} / #{@cluster} / #{host}") %>
   <h3><%= @zoom.name %> / <%= @cluster %> / <%= host %>
     <span class="tools">(<a href="<%= zoom_url %>">host</a>)</span>
   </h3>
