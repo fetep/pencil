@@ -10,7 +10,7 @@
   </h3>
   <div class="graph">
   <% url, desc = @dash.render_cluster_graph(@zoom, @cluster, :dynamic_url_opts => merge_opts) %>
-    <img title="<%= desc %>" src="<%= url %>">
+  <%= img(url, desc) %>
   </div>
 </div>
 
@@ -22,7 +22,7 @@
     <span class="tools">(<a href="<%= zoom_url %>">host</a>)</span>
   </h3>
   <div class="graph">
-    <a href="<%= zoom_url %>"><img title="<%= desc%>" src="<%= image_url %>"></a>
+    <%= img(url, desc, zoom_url) %>
   </div>
 </div>
 <% end %>

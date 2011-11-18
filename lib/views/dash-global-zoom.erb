@@ -10,7 +10,7 @@
   <h3><%= graph_name %></h3>
   <div class="graph">
     <% url, desc = @dash.render_global_graph(@zoom, :dynamic_url_opts => merge_opts) %>
-    <img title="<%= desc %>" src="<%= url %>">
+    <%= img(url, desc) %>
   </div>
 </div>
 
@@ -23,7 +23,7 @@
     <span class="tools">(<a href="<%= zoom_url %>">zoom</a>)</span>
   </h3>
     <div class="graph">
-      <a href="<%= zoom_url %>"><img title="<%= desc %>" src="<%= image_url %>"></a>
+      <%= img(url, desc, zoom_url) %>
     </div>
 </div>
 <% end %>

@@ -270,6 +270,32 @@ module Dash::Models
         end # @params["targets"].each
       end # if opts[:sum]
 
+      # fixme some code duplication
+      desc = []
+      url_parts = []
+      target.each_with_index do |t, i|
+        a = t.match(/^alias\((.+), "(.*)"\)$/)
+        d = nil
+        if a
+          d = a[2]
+          f = a[1]
+        else
+          raise "fuck"
+        end
+
+        url_opts[:target] = t
+        url_opts[:colorList] = colors[i]
+        url = URI.join(@params[:graphite_url], "/render/?").to_s
+        url_parts = []
+        url_opts.each do |k, v|
+          [v].flatten.each do |v|
+            url_parts << "#{URI.escape(k.to_s)}=#{URI.escape(v.to_s)}"
+          end
+        end
+        url += url_parts.join("&amp;")
+        desc << [d, f, url]
+      end
+
       url_opts[:target] = target
       url_opts[:colorList] = colors.join(",")
 
@@ -280,19 +306,9 @@ module Dash::Models
           url_parts << "#{URI.escape(k.to_s)}=#{URI.escape(v.to_s)}"
         end
       end
-      url += url_parts.join("&")
-      desc = target.map {|x| unwrap_target(x)}.join("<br>" + "<a href='http://mozilla.org'>moz</a>")
-      return url, desc
-    end
+      url += url_parts.join("&amp;")
 
-    # for presenting in <img title="">
-    def unwrap_target (target)
-      a = target.match(/^alias\((.+), "(.*)"\)$/)
-      if a
-        "<div class=title>#{a[2]}:</div> #{a[1]}"
-      else
-        target.match("(.*)")[1] + "<div class=error>fixme</div>"
-      end
+      return url, desc
     end
 
     # return an array of all metrics matching the specifications in

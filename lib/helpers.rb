@@ -176,6 +176,17 @@ module Dash::Helpers
 FOO
   end
 
+  def img (url, desc=nil, zoom=nil)
+    desc.map! {|d, f, u| "#{d}: <a href='#{u}' target='_blank'>#{f}</a>"}
+    if zoom
+      %Q|<a href="#{zoom}"><img title="#{desc.join('<br>')}" src="#{url}"></a>|
+    elsif desc
+      %Q|<img title="#{desc.join('<br>')}" src="#{url}"></a>|
+    else
+      %Q|<a><img src="#{url}"></a>|
+    end
+  end
+
   def nowish
     if settings.config.global_config[:now_threshold] == false
       return false
