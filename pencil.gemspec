@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency("mongrel")
   spec.add_dependency("rack")
-  spec.add_dependency("sinatra")
+  spec.add_dependency("sinatra", "= 1.2.6")
   spec.add_dependency("json")
   spec.add_dependency("chronic")
   spec.add_dependency("chronic_duration")
