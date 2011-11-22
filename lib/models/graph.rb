@@ -125,7 +125,7 @@ module Dash::Models
       graphite_opts = [ "vtitle", "yMin", "yMax", "lineWidth", "areaMode",
         "template", "lineMode", "bgcolor", "graphOnly", "hideAxes", "hideGrid",
         "hideLegend", "fgcolor", "fontSize", "fontName", "fontItalic",
-        "fontBold" ]
+        "fontBold", "logBase" ]
 
       @params.each do |k, v|
         if graphite_opts.member?(k)
