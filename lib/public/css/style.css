@@ -3,6 +3,7 @@ body {
     color: #fff;
     margin: 0px;
     font-family: Verdana, Arial, Tahoma, sans-serif;
+    min-width: 1200px;
 }
 
 #header {
