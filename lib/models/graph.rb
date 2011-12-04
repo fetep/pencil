@@ -288,7 +288,7 @@ module Dash::Models
           end
         end
         url += url_parts.join("&amp;")
-        desc << [d, f, url]
+        desc << [d, URI.escape(f), url]
       end
 
       url_opts[:target] = target
