@@ -5,4 +5,4 @@ require "dash"
 
 STDOUT.puts "pencil v#{Pencil::VERSION} on port #{Dash::App.port}, PID #{$$}"
 
-Rack::Handler::Mongrel.run(Dash::App, :Port => Dash::App.port)
+run Dash::App, :Port => Dash::App.port
