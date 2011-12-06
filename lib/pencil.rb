@@ -1,9 +1,4 @@
-require "namespace"
-
-require "config"
 require "erb"
-require "helpers"
-require "models"
 require "rack"
 require "sinatra/base"
 require "json"
@@ -12,15 +7,20 @@ require "yaml"
 require "chronic"
 require "chronic_duration"
 require "optparse"
-require "rubyfixes"
+
+require "pencil/version"
+require "pencil/config"
+require "pencil/helpers"
+require "pencil/models"
+require "pencil/rubyfixes"
 
 $:.unshift(File.dirname(__FILE__))
 
-module Dash
+module Pencil
   class App < Sinatra::Base
-    include Dash::Models
-    helpers Dash::Helpers
-    config = Dash::Config.new
+    include Pencil::Models
+    helpers Pencil::Helpers
+    config = Pencil::Config.new
     set :config, config
     set :port, config.global_config[:port]
     set :run, true
@@ -156,5 +156,5 @@ module Dash
         request.query_string.sub("&action=Submit", "").sub("?action=Submit", "")
       end
     end
-  end # Dash::App
-end # Dash
+  end # Pencil::App
+end # Pencil

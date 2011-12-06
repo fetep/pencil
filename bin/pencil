@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
 
-require 'pencil/version'
-require "dash"
+require 'pencil'
 
-STDOUT.puts "pencil v#{Pencil::VERSION} on port #{Dash::App.port}, PID #{$$}"
+STDOUT.puts "pencil v#{Pencil::VERSION} on port #{Pencil::App.port}, PID #{$$}"
 
-run Dash::App, :Port => Dash::App.port
+run Pencil::App, :Port => Pencil::App.port

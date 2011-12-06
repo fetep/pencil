@@ -1,8 +1,8 @@
-require "models"
+require "pencil/models"
 
-module Dash
+module Pencil
   class Config
-    include Dash::Models
+    include Pencil::Models
 
     attr_reader :dashboards
     attr_reader :graphs
@@ -98,5 +98,5 @@ module Dash
       @dashboards, @graphs = dashboards_new, graphs_new
       @hosts, @clusters = hosts_new, clusters_new
     end
-  end # Dash::Config
-end # Dash
+  end # Pencil::Config
+end # Pencil
