@@ -1,8 +1,8 @@
 # -*- ruby -*-
-require File.join(File.dirname(__FILE__), "VERSION")  # For PENCIL_VERSION
+require File.expand_path('../lib/pencil/version', __FILE__)
 
 Gem::Specification.new do |spec|
-  files = ["VERSION.rb"]
+  files = []
   dirs = %w(lib docs examples)
   dirs.each do |dir|
     files += Dir["#{dir}/**/*"]
