@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
-
 require 'pencil'
 
-STDOUT.puts "pencil v#{Pencil::VERSION} on port #{Pencil::App.port}, PID #{$$}"
+Pencil::App.run!
 
-run Pencil::App, :Port => Pencil::App.port
