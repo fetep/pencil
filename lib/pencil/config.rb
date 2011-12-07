@@ -35,7 +35,7 @@ module Pencil
       configs.each { |c| @rawconfig.merge!(YAML.load(File.read(c))) }
 
       [:graphs, :dashboards, :config].each do |c|
-        if not @rawconfig[c]
+        if not @rawconfig[c.to_s]
           raise "Missing config name '#{c.to_s}'"
         end
       end
