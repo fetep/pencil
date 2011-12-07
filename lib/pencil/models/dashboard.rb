@@ -16,11 +16,11 @@ module Pencil
         @graph_opts = {}
         params["graphs"].each do |name|
           # graphs map to option hashes
-          if name.instance_of?(Hash) # could be YAML::Omap
+          if name.respond_to?(:keys) # could be YAML::Omap
             g = Graph.find(name.keys.first) # should only be one key
             @graph_opts[g] = name[name.keys.first]||{}
           else
-            raise "Bad format for graph (must be a hash)"
+            raise "Bad format for graph (must be a hash-y; #{name.class}:#{name.inspect} is not)"
           end
 
           @graphs << g if g

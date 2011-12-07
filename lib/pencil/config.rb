@@ -1,3 +1,4 @@
+require 'map'
 require "pencil/models"
 
 module Pencil
@@ -33,6 +34,7 @@ module Pencil
     def reload!
       configs = Dir.glob("#{@confdir}/*.y{a,}ml")
       configs.each { |c| @rawconfig.merge!(YAML.load(File.read(c))) }
+      @rawconfig = Map(@rawconfig)
 
       [:graphs, :dashboards, :config].each do |c|
         if not @rawconfig[c.to_s]
