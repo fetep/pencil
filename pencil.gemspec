@@ -14,7 +14,6 @@ Gem::Specification.new do |spec|
   spec.description = "Graphite dashboard frontend"
   spec.license = "Mozilla Public License (1.1)"
 
-  spec.add_dependency("mongrel")
   spec.add_dependency("rack")
   spec.add_dependency("sinatra", "= 1.2.6")
   spec.add_dependency("json")
