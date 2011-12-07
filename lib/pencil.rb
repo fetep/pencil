@@ -25,7 +25,7 @@ module Pencil
     set :port, config.global_config[:port]
     set :run, true
     use Rack::Session::Cookie, :expire_after => 126227700 # 4 years
-    set :root, File.dirname(__FILE__)
+    set :root, File.expand_path('../pencil', __FILE__)
     set :static, true
     set :logging, true
     set :erb, :trim => '-'
