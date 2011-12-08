@@ -14,8 +14,6 @@ require "pencil/helpers"
 require "pencil/models"
 require "pencil/rubyfixes"
 
-$:.unshift(File.dirname(__FILE__))
-
 module Pencil
   class App < Sinatra::Base
     include Pencil::Models
