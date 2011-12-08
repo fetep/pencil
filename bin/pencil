@@ -1,9 +1,5 @@
 #!/usr/bin/env ruby
-$: << File.dirname($0) + "/../lib"
+require 'pencil'
 
-require File.join(File.dirname(__FILE__), "..", "VERSION")
-require "dash"
+Pencil::App.run!
 
-STDOUT.puts "pencil v#{PENCIL_VERSION} on port #{Dash::App.port}, PID #{$$}"
-
-Rack::Handler::Mongrel.run(Dash::App, :Port => Dash::App.port)

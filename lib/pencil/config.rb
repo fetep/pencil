@@ -1,9 +1,9 @@
-require "rubygems"
-require "models"
+require 'map'
+require "pencil/models"
 
-module Dash
+module Pencil
   class Config
-    include Dash::Models
+    include Pencil::Models
 
     attr_reader :dashboards
     attr_reader :graphs
@@ -34,9 +34,10 @@ module Dash
     def reload!
       configs = Dir.glob("#{@confdir}/*.y{a,}ml")
       configs.each { |c| @rawconfig.merge!(YAML.load(File.read(c))) }
+      @rawconfig = Map(@rawconfig)
 
       [:graphs, :dashboards, :config].each do |c|
-        if not @rawconfig[c]
+        if not @rawconfig[c.to_s]
           raise "Missing config name '#{c.to_s}'"
         end
       end
@@ -99,5 +100,5 @@ module Dash
       @dashboards, @graphs = dashboards_new, graphs_new
       @hosts, @clusters = hosts_new, clusters_new
     end
-  end # Dash::Config
-end # Dash
+  end # Pencil::Config
+end # Pencil
