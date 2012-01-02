@@ -32,8 +32,27 @@ module Dash
     end
 
     def reload!
-      configs = Dir.glob("#{@confdir}/*.y{a,}ml")
-      configs.each { |c| @rawconfig.merge!(YAML.load(File.read(c))) }
+      configs = Dir.glob("#{@confdir}/**/*.y{a,}ml")
+      configs.each do |c|
+        yml = YAML.load(File.read(c))
+        next unless yml
+        @rawconfig[:config] = yml[:config] if yml[:config]
+        a = @rawconfig[:dashboards] 
+        b = yml[:dashboards] 
+        c = @rawconfig[:graphs]
+        d = yml[:graphs]
+
+        if a && b
+          a.merge!(b)
+        elsif b
+          @rawconfig[:dashboards] = b
+        end
+        if c && d
+          c.merge!(d)
+        elsif d
+          @rawconfig[:graphs] = d
+        end
+      end
 
       [:graphs, :dashboards, :config].each do |c|
         if not @rawconfig[c]

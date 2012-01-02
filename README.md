@@ -141,6 +141,12 @@ A graph is just a graph name => options hash. Options specified in a dashboard
 for a graph override the options in the original graph's definition when
 displaying the dashboard.
 
+Pencil loads all the yaml files in its configuration directory and
+subdirectories. To facilitate organization of graphs and dashboards into
+multiple files the :graphs and :dashboards top-level keys are merged
+recursively during the load. The resulting pencil data structure will
+include all graphs and dashboards defined under these keys.
+
 ### complex metrics and dashboard graph-level options
 A simple target is just a metric => options map. Targets can also be complex,
 where the key is an ordered list of simple targets. This is useful, for
