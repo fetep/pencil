@@ -179,11 +179,11 @@ FOO
   def img (url, desc=nil, zoom=nil)
     desc.map! {|d, f, u| "#{d}: <a href='#{u}' target='_blank'>#{f}</a>"}
     if zoom
-      %Q|<a href="#{zoom}"><img title="#{desc.join('<br>')}" src="#{url}"></a>|
+      %Q|<a href="#{zoom}"><img src="#{url}"></a><div class="tooltip">#{desc.join('<br>')}</div>|
     elsif desc
-      %Q|<img title="#{desc.join('<br>')}" src="#{url}"></a>|
+      %Q|<img src="#{url}"></a><div class="tooltip">#{desc.join('<br>')}</div>|
     else
-      %Q|<a><img src="#{url}"></a>|
+      %Q|<a><img src="#{url}"></a><div class="tooltip"></div>|
     end
   end
 

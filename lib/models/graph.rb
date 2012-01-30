@@ -92,6 +92,7 @@ module Dash::Models
       ret
     end
 
+    # should pass title for <img title=>
     def render_url(hosts, clusters, opts={})
       opts = {
         :sum => nil,
@@ -288,7 +289,7 @@ module Dash::Models
           end
         end
         url += url_parts.join("&amp;")
-        desc << [d, URI.escape(f), url]
+        desc << [d, f, url]
       end
 
       url_opts[:target] = target

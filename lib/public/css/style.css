@@ -198,7 +198,6 @@ div.group_container_small h4 {
 }
 
 div.graph_container {
-    position: relative;
     border: 1px #333 dotted;
     margin-top: 10px;
 }
