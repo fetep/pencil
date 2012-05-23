@@ -64,8 +64,8 @@ module Dash
         @etime = @request_time
       end
 
-      params[:stime] = @stime.to_i.to_s
-      params[:etime] = @etime.to_i.to_s
+      session[:stime] = @stime.to_i.to_s
+      session[:etime] = @etime.to_i.to_s
       # fixme reload hosts after some expiry
     end
 
