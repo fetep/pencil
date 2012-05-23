@@ -14,6 +14,10 @@ module Dash::Models
       end
     end
 
+    def width(opts={})
+      opts["width"] || @params[:url_opts][:width]
+    end
+
     # translate STR into graphite-speak for applying FUNC to STR
     # graphite functions take zero or one argument
     # pass passes STR through, instead of raising an error if FUNC isn't
