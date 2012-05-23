@@ -78,7 +78,10 @@ module Dash::Models
     end
 
     # inner means we're dealing with a complex key; @params will be applied
+    # make sure to apply alias and color arguments last, if applicable
     def handle_metric(name, opts, inner=false)
+      later = []
+      puts opts.class
       ret = name.dup
       if inner
         @params.each do |k, v|
@@ -86,7 +89,13 @@ module Dash::Models
         end
       end
       (opts||{}).each do |k, v|
-        #puts "#{k} => #{v}"
+        if k == :color || k == :key
+          later << [k, v]
+        else
+          ret = translate(k, ret, v)
+        end
+      end
+      later.each do |k, v|
         ret = translate(k, ret, v)
       end
       ret
