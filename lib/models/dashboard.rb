@@ -57,12 +57,14 @@ module Dash::Models
         hosts = Host.all
       end
 
-      # filter by what matches the graph definition
-      hosts = hosts.select { |h| h.multi_match(graph["hosts"]) }
-
-      # filter if we have a dashboard-level 'hosts' filter
-      if @params["hosts"]
-        hosts = hosts.select { |h| h.multi_match(@params["hosts"]) }
+      # filter as:
+      #   - the dashboard graph hosts definition
+      #   - the dashboard hosts definition
+      #   - the graph hosts definition
+      # this is new behavior: before the filters were additive
+      filter = graph_opts[graph]["hosts"] || @params["hosts"] || graph["hosts"]
+      if filter
+        hosts = hosts.select { |h| h.multi_match(filter) }
       end
 
       hosts.each { |h| clusters << h.cluster }
