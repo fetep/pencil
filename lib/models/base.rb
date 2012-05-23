@@ -69,5 +69,15 @@ module Dash::Models
     def compose_metric (m, c, h)
       @params[:metric_format].dup.gsub("%m", m).gsub("%c", c).gsub("%h", h)
     end
+
+    # used to make sure partial metrics are not considered
+    # e.g. foo.bar.baz.colo1.host1 but not
+    #      foo.bar.baz.subkey.subkey2[.colo1.host1]
+    # where the latter is returned by the graphite expand api but not as a full
+    # metric
+    # essentially equivalent to matching like /[:METRIC:]$/
+    def compose_metric2 (m, c, h)
+      compose_metric(m, c, h) + ".*"
+    end
   end # Dash::Models::Base
 end # Dash::Models

@@ -203,7 +203,9 @@ Most of these options take a single argument.
 * threshold
 * color
 
-Note: key is interpreted differently from the other options, which are more
+Note: key and color are applied after all other options are applied.
+
+key is interpreted differently from the other options, which are more
 simply translated.
 
 color's interpretation depends on whether :use_color is set.

@@ -14,6 +14,10 @@ module Dash::Models
       end
     end
 
+    def width(opts={})
+      opts["width"] || @params[:url_opts][:width]
+    end
+
     # translate STR into graphite-speak for applying FUNC to STR
     # graphite functions take zero or one argument
     # pass passes STR through, instead of raising an error if FUNC isn't
@@ -78,7 +82,9 @@ module Dash::Models
     end
 
     # inner means we're dealing with a complex key; @params will be applied
+    # make sure to apply alias and color arguments last, if applicable
     def handle_metric(name, opts, inner=false)
+      later = []
       ret = name.dup
       if inner
         @params.each do |k, v|
@@ -86,7 +92,13 @@ module Dash::Models
         end
       end
       (opts||{}).each do |k, v|
-        #puts "#{k} => #{v}"
+        if k == :color || k == :key
+          later << [k, v]
+        else
+          ret = translate(k, ret, v)
+        end
+      end
+      later.each do |k, v|
         ret = translate(k, ret, v)
       end
       ret
@@ -315,16 +327,18 @@ module Dash::Models
       metrics = []
 
       @params["targets"].each do |metric|
-        if metric.first.instance_of?(Array)
-          metric.first.each do |m|
-            composed = compose_metric(m.first.first, "*", "*")
-            query = open("#{url}#{composed}").read
-            metrics << JSON.parse(query)["results"]
-          end
-        else
-          composed = compose_metric(metric.first.first, "*", "*")
+        unless metric.first.instance_of?(Array)
+          # wrap it
+          metric[0] = [{metric[0] => nil}]
+        end
+        metric.first.each do |m|
+          composed = compose_metric(m.first.first, "*", "*")
+          composed2 = compose_metric2(m.first.first, "*", "*")
           query = open("#{url}#{composed}").read
-          metrics << JSON.parse(query)["results"]
+          query2 = open("#{url}#{composed2}").read
+          results = JSON.parse(query)["results"]
+          results2 = JSON.parse(query2)["results"].map {|x| x.split('.')[0..-2].join('.')}
+          metrics << results - results2
         end
       end
 

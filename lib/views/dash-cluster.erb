@@ -4,7 +4,7 @@
 <%= shortcuts(@dash.graphs.collect { |g| "<a href=\"##{g.name}\">#{g.name}</a>" }.join(" ")) %>
 
 <% @dash.graphs.each do |g| %>
-<div class="graph_container">
+<div class="graph_container" style="width:<%= g.width(merge_opts) %>;">
   <a name="<%= g.name %>"></a>
   <% url, desc, zoom_url = cluster_graph(g, @cluster, "#{g.name} / #{@cluster}") %>
   <h3><%= g.name %>
