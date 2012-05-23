@@ -81,7 +81,6 @@ module Dash::Models
     # make sure to apply alias and color arguments last, if applicable
     def handle_metric(name, opts, inner=false)
       later = []
-      puts opts.class
       ret = name.dup
       if inner
         @params.each do |k, v|
