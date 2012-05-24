@@ -4,7 +4,7 @@
    boards = @dashboards
    seen_hosts = Set.new %>
 
-<% boards.each do |b| %>
+<% boards.sort.each do |b| %>
 <h3><a href="/dash/<%= "#{@cluster}/#{append_query_string(b.name)}" %>"><%= b.name %></a>
   <% dash_hosts = b.get_all_hosts()[0]
      seen_hosts += dash_hosts %>
