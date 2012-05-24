@@ -298,7 +298,9 @@ module Dash::Models
       url = URI.join(@params[:graphite_url], "/metrics/expand/?query=").to_s
       metrics = []
 
-      @params["targets"].each do |metric|
+      @params["targets"].each do |k, v|
+        # temporary hack for Map class complaining block parameters
+        metric = [k, v]
         unless metric.first.instance_of?(Array)
           # wrap it
           metric[0] = [{metric[0] => nil}]
