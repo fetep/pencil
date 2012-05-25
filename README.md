@@ -93,7 +93,7 @@ an example pencil.yml, which contains general configuration options:
         :yMin: 0
         :margin: 5
         :thickness: 2
-    
+
       :refresh_rate: 60        # how often to refresh the view
       :host_sort: "numeric"    # add this if you want to sort hosts numerically
       :quantum: 30             # map requests to 30 second intervals
@@ -131,7 +131,7 @@ options. It looks like (in YAML):
       title: dash_title
       graphs:
         - graph1:
-          hosts: ["sync*_web"] # additional hosts filter specific to this graph
+          hosts: ["sync*_web"] # hosts filter specific to this graph
           other_opt: val       # possibly other options in the future
         - graph2:
         [...]
@@ -146,6 +146,12 @@ subdirectories. To facilitate organization of graphs and dashboards into
 multiple files the :graphs and :dashboards top-level keys are merged
 recursively during the load. The resulting pencil data structure will
 include all graphs and dashboards defined under these keys.
+
+A few words on host filters: two wildcards are supported: "*" and "#".
+"*" consumes as /.*/ (like a shell wildcard) and "#" as /\d+/ (one or more
+digits). Be aware that "#" may require explicit enumeration in graphite URLs
+(and is currently implemented in this way) and you might have to configure
+Apache to accept longer URLs if you have many hosts that match a "#".
 
 ### complex metrics and dashboard graph-level options
 A simple target is just a metric => options map. Targets can also be complex,

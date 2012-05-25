@@ -78,6 +78,15 @@ module Dash::Models
       # the hosts filter
 
       hosts = get_host_wildcards(graph)
+
+      # graphite doesn't support strict matching (as /\d+/), so we need to
+      # enumerate the hosts if a "#" wildcard is found
+      if ! (filter = hosts.select { |h| h =~ /#/ }).empty?
+        hosts_new = hosts - filter
+        hosts2 = Host.all.select { |h| h.multi_match(filter) }
+        hosts = (hosts2.map {|h| h.name } + hosts_new).sort.uniq.join(',')
+      end
+
       opts[:sum] = :cluster unless opts[:zoom]
       graph_url = graph.render_url(hosts.to_a, clusters, opts)
       return graph_url
