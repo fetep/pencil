@@ -5,7 +5,7 @@
 <%= graph_switcher %>
 <%= shortcuts(clusters.sort.collect { |h| "<a href=\"##{h}\">#{h}</a>" }.join(" ")) %>
 
-<div class="graph_container">
+<div class="graph_container" style="width:<%= @zoom.width(merge_opts) %>;">
   <% graph_name = "#{@zoom.name} overview" %>
   <h3><%= graph_name %></h3>
   <div class="graph">
@@ -14,7 +14,7 @@
 </div>
 
 <% clusters.sort.each do |cluster| %>
-<div class="graph_container">
+<div class="graph_container" style="width:<%= @zoom.width(merge_opts) %>;">
   <a name="<%= cluster %>"></a>
   <% graph_name = "#{@dash.name} / #{@zoom.name} / #{cluster}" %>
   <% image_url, zoom_url = cluster_graph(@zoom, cluster, graph_name) %>
