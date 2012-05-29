@@ -1,10 +1,4 @@
-require "rubygems"
-require "namespace"
-
-require "config"
 require "erb"
-require "helpers"
-require "models"
 require "rack"
 require "sinatra/base"
 require "json"
@@ -13,20 +7,23 @@ require "yaml"
 require "chronic"
 require "chronic_duration"
 require "optparse"
-require "rubyfixes"
 
-$:.unshift(File.dirname(__FILE__))
+require "pencil/version"
+require "pencil/config"
+require "pencil/helpers"
+require "pencil/models"
+require "pencil/rubyfixes"
 
-module Dash
+module Pencil
   class App < Sinatra::Base
-    include Dash::Models
-    helpers Dash::Helpers
-    config = Dash::Config.new
+    include Pencil::Models
+    helpers Pencil::Helpers
+    config = Pencil::Config.new
     set :config, config
     set :port, config.global_config[:port]
     set :run, true
     use Rack::Session::Cookie, :expire_after => 126227700 # 4 years
-    set :root, File.dirname(__FILE__)
+    set :root, File.expand_path('../pencil', __FILE__)
     set :static, true
     set :logging, true
     set :erb, :trim => '-'
@@ -157,5 +154,5 @@ module Dash
         request.query_string.sub("&action=Submit", "").sub("?action=Submit", "")
       end
     end
-  end # Dash::App
-end # Dash
+  end # Pencil::App
+end # Pencil
