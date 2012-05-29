@@ -15,11 +15,13 @@ module Pencil
       port = 9292
       @rawconfig = {}
       @confdir = "."
+      @recursive = false
 
       optparse = OptionParser.new do |o|
         o.on("-d", "--config-dir DIR",
           "location of the config directory (default .)") do |arg|
           @confdir = arg
+          @recursive = true
         end
         o.on("-p", "--port PORT", "port to bind to (default 9292)") do |arg|
           port = arg.to_i
@@ -32,7 +34,9 @@ module Pencil
     end
 
     def reload!
-      configs = Dir.glob("#{@confdir}/**/*.y{a,}ml")
+      # only do a recursive search if "-d" is specified
+      configs = Dir.glob("#{@confdir}/#{@recursive ? '**/' : ''}*.y{a,}ml")
+
       configs.each do |c|
         yml = YAML.load(File.read(c))
         next unless yml
