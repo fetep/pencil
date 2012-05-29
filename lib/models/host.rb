@@ -22,6 +22,7 @@ module Dash::Models
           end
         end # graph["hosts"].each
       end # Graph.each
+      @graphs.sort!
     end
 
     def self.find(name)
