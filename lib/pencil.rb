@@ -40,10 +40,14 @@ module Pencil
       # time stuff
       start = param_lookup("start")
       duration = param_lookup("duration")
+
       @stime = Chronic.parse(start)
       if @stime
         @stime -= @stime.sec unless @params["noq"]
+      elsif start =~ /^\d+$/ #epoch
+        @stime = Time.at start.to_i
       end
+
       if duration
         @duration = ChronicDuration.parse(duration) || 0
       else

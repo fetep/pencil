@@ -199,6 +199,10 @@ module Pencil
 
     end
 
+    def valid_time (s)
+      Chronic.parse(s) || s =~ /^\d+$/
+    end
+
     def permalink
       return "" unless @stime && @duration
       format = "%F %T" # chronic REALLY understands this

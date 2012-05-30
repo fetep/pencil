@@ -8,7 +8,7 @@
       <input  <%= "value=\"#{val}\" " if val %> size="<%= name =~ /start|duration/ ? 10 : 4 %>" name="<%= name %>" id="<%= name %>" type="text"/>
       <% if name == "start" %>
       <a href="http://chronic.rubyforge.org/" class="inline-link" target="_blank">
-        <% if Chronic.parse(param_lookup(name)) %>
+        <% if valid_time(param_lookup(name)) %>
         ?
         <% else %>
         <div class="error">Bad timespec!</div>
