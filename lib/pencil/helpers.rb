@@ -207,8 +207,8 @@ module Pencil
       return "" unless @stime && @duration
       format = "%F %T" # chronic REALLY understands this
       url = request.path + "?"
-      url << "&start=#{@stime.strftime(format)}"
-      url << "&duration=#{ChronicDuration.output(@duration)}"
+      url << "&amp;start=#{@stime.strftime(format)}"
+      url << "&amp;duration=#{ChronicDuration.output(@duration)}"
       "<a id=\"permalink\" href=\"#{url}\">permalink</a>"
     end
   end

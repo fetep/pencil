@@ -291,7 +291,7 @@ module Pencil
             url_parts << "#{URI.escape(k.to_s)}=#{URI.escape(v.to_s)}"
           end
         end
-        url += url_parts.join("&")
+        url += url_parts.join("&amp;")
         return url
       end
 
