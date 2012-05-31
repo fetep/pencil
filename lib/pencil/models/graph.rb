@@ -146,8 +146,8 @@ module Pencil
         colors = []
         #FIXME code duplication
         if opts[:sum] == :global
-          @params["targets"].each do |stat_name, opts|
-            z = new_map(opts)
+          @params["targets"].each do |stat_name, o|
+            z = new_map(o)
 
             z[:key] ||= stat_name
             #######################
@@ -175,25 +175,25 @@ module Pencil
             # target << handle_metric(translate(:sumSeries, metric), z)
 
             if z.keys.member?('divideSeries') # special case
-                # apply divideSeries, sumSeries then other options
-                res = translate(:divideSeries, metric)
-                res = translate(:sumSeries, res)
-                z.delete(:divideSeries)
-                h = YAML::Omap.new
-                z.each { |k,v| h[k] = v unless k == 'divideSeries' }
-                target << handle_metric(res, h)
-              else
-                target << handle_metric(translate(:sumSeries, metric), z)
-              end
+              # apply divideSeries, sumSeries then other options
+              res = translate(:divideSeries, metric)
+              res = translate(:sumSeries, res)
+              z.delete(:divideSeries)
+              h = YAML::Omap.new
+              z.each { |k,v| h[k] = v unless k == 'divideSeries' }
+              target << handle_metric(res, h)
+            else
+              target << handle_metric(translate(:sumSeries, metric), z)
+            end
             if !@params[:use_color] ||
-              (!z[:color] && @params[:use_color])
+                (!z[:color] && @params[:use_color])
               colors << next_color(colors, z[:color])
             end
           end # @params["targets"].each
         elsif opts[:sum] == :cluster # one line per cluster/metric
           clusters.each do |cluster|
-            @params["targets"].each do |stat_name, opts|
-              z = new_map(opts)
+            @params["targets"].each do |stat_name, o|
+              z = new_map(o)
 
               metrics = []
               #######################
@@ -207,14 +207,14 @@ module Pencil
                     # divideSeries is picky about the number of series given as
                     # arguments, so sum them in this case
                     handle_metric(translate(:sumSeries, mm),
-                           m[m.keys.first], true)
+                                  m[m.keys.first], true)
                   else
                     handle_metric(mm, m[m.keys.first], true)
                   end
                 end.join(",")
               else
                 metrics << handle_metric(compose_metric(stat_name,
-                                                 cluster, h), {}, true)
+                                                        cluster, h), {}, true)
               end
               #######################
               z[:key] = "#{cluster} #{z[:key]}"
@@ -229,7 +229,7 @@ module Pencil
                 target << handle_metric(res, h)
               else
                 target << handle_metric(translate(:sumSeries,
-                                        metrics.join(',')), z)
+                                                  metrics.join(',')), z)
               end
 
               if !@params[:use_color] || (!z[:color] && @params[:use_color])
@@ -238,8 +238,8 @@ module Pencil
             end # metrics.each
           end # clusters.each
         else # one line per {metric,host,colo}
-          @params["targets"].each do |stat_name, opts|
-            z = new_map(opts)
+          @params["targets"].each do |stat_name, o|
+            z = new_map(o)
             clusters.each do |cluster|
               hosts.each do |host|
                 label = "#{host} #{z[:key]}"
@@ -287,8 +287,8 @@ module Pencil
         url = URI.join(@params[:graphite_url], "/render/?").to_s
         url_parts = []
         url_opts.each do |k, v|
-          [v].flatten.each do |v|
-            url_parts << "#{URI.escape(k.to_s)}=#{URI.escape(v.to_s)}"
+          [v].flatten.each do |v2|
+            url_parts << "#{URI.escape(k.to_s)}=#{URI.escape(v2.to_s)}"
           end
         end
         url += url_parts.join("&amp;")
@@ -339,8 +339,8 @@ module Pencil
         end
         unless ci && hi
           last.reverse.each_with_index do |v, i|
-            ci = -1 -i if v.match("%c")
-            hi = -1 -i if v.match("%h")
+            ci = (-1) -i if v.match("%c")
+            hi = (-1) -i if v.match("%h")
           end
         end
         hosts = metrics.map do |m|

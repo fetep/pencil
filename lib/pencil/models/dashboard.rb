@@ -14,13 +14,14 @@ module Pencil
 
         @graphs = []
         @graph_opts = {}
-        params["graphs"].each do |name|
-          # graphs map to option hashes
-          if name.respond_to?(:keys) # could be YAML::Omap
-            g = Graph.find(name.keys.first) # should only be one key
-            @graph_opts[g] = name[name.keys.first]||{}
+        params["graphs"].each do |n|
+          if n.respond_to?(:keys)
+            key = n.keys.first # should only be one key
+            val = n.values.first
+            g = Graph.find(key)
+            @graph_opts[g] = val||{}
           else
-            raise "Bad format for graph (must be a hash-y; #{name.class}:#{name.inspect} is not)"
+            raise "Bad format for graph (must be a hash-y; #{n.class}:#{n.inspect} is not)"
           end
 
           @graphs << g if g
@@ -101,7 +102,6 @@ module Pencil
         hosts = get_host_wildcards(graph)
         _, clusters = get_valid_hosts(graph)
 
-        next_url = ""
         type = opts[:zoom] ? :cluster : :global
         options = opts.merge({:sum => type})
         graph_url = graph.render_url(hosts, clusters, options)
