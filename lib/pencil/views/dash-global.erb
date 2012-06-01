@@ -7,7 +7,7 @@
 <% @dash.graphs.each do |g| %>
 <div class="graph_container" style="width:<%= g.width(merge_opts) %>;">
   <a name="<%= g.name %>"></a>
-    <h3><%= g.name %>
+    <h3><a href="#<%= g.name %>"><%= g.name %></a>
       <span class="tools">
         <%= suggest_cluster_links(clusters, g) %>
       </span>

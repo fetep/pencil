@@ -6,7 +6,7 @@
 <%= shortcuts(hosts.collect { |h| "<a href=\"##{h}\">#{h}</a>" }.join(" ")) %>
 
 <div class="graph_container" style="width:<%= @zoom.width(merge_opts) %>;">
-  <h3><%= @zoom.name %> / <%= @cluster %> :: summary
+  <h3><a name="summary" href="#summary"><%= @zoom.name %> / <%= @cluster %> :: summary</a>
   </h3>
   <div class="graph">
     <img src="<%= @dash.render_cluster_graph(@zoom, @cluster, :dynamic_url_opts => merge_opts) %>">
@@ -17,7 +17,7 @@
 <div class="graph_container" style="width:<%= @zoom.width(merge_opts) %>;">
   <a name="<%= host %>"></a>
   <% image_url, zoom_url = cluster_zoom_graph(@zoom, @cluster, host, "#{@zoom.name} / #{@cluster} / #{host}") %>
-  <h3><%= @zoom.name %> / <%= @cluster %> / <%= host %>
+  <h3><a href="#<%= host %>"><%= @zoom.name %> / <%= @cluster %> / <%= host %></a>
     <span class="tools">(<a href="<%= zoom_url %>">host</a>)</span>
   </h3>
   <div class="graph">

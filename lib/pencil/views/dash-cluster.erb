@@ -7,7 +7,7 @@
 <div class="graph_container" style="width:<%= g.width(merge_opts) %>;">
   <a name="<%= g.name %>"></a>
   <% image_url, zoom_url = cluster_graph(g, @cluster, "#{g.name} / #{@cluster}") %>
-  <h3><%= g.name %>
+  <h3><a href="#<%= g.name %>"><%= g.name %></a>
     <span class="tools">(<a href="<%= zoom_url %>">zoom</a>)</span>
   </h3>
   <div class="graph">
