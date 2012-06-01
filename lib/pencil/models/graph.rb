@@ -116,15 +116,10 @@ module Pencil
           raise ArgumentError, "render graph #{name}: invalid :sum - #{opts[:sum]}"
         end
 
-        sym_hash = {}
-        (opts[:dynamic_url_opts]||[]).each do |k,v|
-          sym_hash[k.to_sym] = v
-        end
-
-        # fixme key checking may be necessary
-        url_opts = {
+        # FIXME actually use Maps for everything initially instead of this crap
+        url_opts = Map({
           :title => opts[:title],
-        }.merge(@params[:url_opts]).merge(sym_hash)
+        }).merge(Map(@params[:url_opts])).merge(Map(opts[:dynamic_url_opts]))
 
         url_opts[:from] = url_opts.delete(:stime) || ""
         url_opts[:until] = url_opts.delete(:etime) || ""
