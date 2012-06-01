@@ -1,11 +1,12 @@
 <%= header(graph_uplink) %>
-<% hosts = @dash.get_valid_hosts(@zoom, @cluster)[0].sort %>
+<% hosts = @dash.get_valid_hosts(@zoom, @cluster)[0].sort 
+   width = @zoom.width(merge_opts) %>
 
 <%= cluster_switcher(@dash.clusters) %>
 <%= graph_switcher %>
 <%= shortcuts(hosts.collect { |h| "<a href=\"##{h}\">#{h}</a>" }.join(" ")) %>
 
-<div class="graph_container" style="width:<%= @zoom.width(merge_opts) %>;">
+<div class="graph_container" style="width:<%= width %>;">
   <h3><a name="summary" href="#summary"><%= @zoom.name %> / <%= @cluster %> :: summary</a>
   </h3>
   <div class="graph">
@@ -14,7 +15,7 @@
 </div>
 
 <% hosts.each do |host| %>
-<div class="graph_container" style="width:<%= @zoom.width(merge_opts) %>;">
+<div class="graph_container" style="width:<%= width %>;">
   <a name="<%= host %>"></a>
   <% image_url, zoom_url = cluster_zoom_graph(@zoom, @cluster, host, "#{@zoom.name} / #{@cluster} / #{host}") %>
   <h3><a href="#<%= host %>"><%= @zoom.name %> / <%= @cluster %> / <%= host %></a>
