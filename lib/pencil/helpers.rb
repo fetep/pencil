@@ -114,7 +114,10 @@ module Pencil
 
     def append_query_string(str)
       v = str.dup
-      (v << "?#{request.query_string}") unless request.query_string.empty?
+      # CGI.unescapeHTML()?
+      unless request.query_string.empty?
+        v << "?#{request.query_string.gsub("&", "&amp;")}"
+      end
       return v
     end
 
