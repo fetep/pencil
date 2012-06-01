@@ -91,7 +91,6 @@ module Pencil
       return append_query_string("/dash/#{cluster}")
     end
 
-    # fixme this isn't used anymore, but should
     def css_url
       style = File.join(settings.root, "public/style.css")
       mtime = File.mtime(style).to_i.to_s
