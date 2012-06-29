@@ -37,7 +37,7 @@
             <% if clusters.size > 1 %>
             <h3>Cluster Views:</h3>
             <ul>
-              <% clusters.sort.each do |cluster| -%>
+              <% clusters.sort.each do |cluster| %>
               <li><a href="<%= cluster_link(cluster) %>"><%= cluster %></a></li>
               <% end %>
             </ul>
@@ -46,7 +46,7 @@
             <ul>
               <% @dashboards.select do |d|
                  @cluster == "global" || d.clusters.member?(@cluster)
-                 end.sort.each do |dash| -%>
+                 end.sort.each do |dash| %>
               <li><a href="<%= dash_link(dash, @cluster) %>"><%= dash["title"] %></a></li>
               <% end %>
             </ul>
