@@ -75,14 +75,14 @@ div.nav-box-inner label{
     float: left;
     display: inline;
     text-align: right;
-    height: 16px;
-    margin-top: 4px;
+    height: 1.5em;
+    margin-top: 0.25em;
 }
 
 div.nav-box-inner input{
     float: left;
     display: inline-block;
-    height: 16px;
+    height: 1.5em;
     margin-top: 4px;
     color: #fff;
 }
