@@ -1,6 +1,14 @@
 module Pencil::Helpers
   include Pencil::Models
 
+  # Sinatra 1.3 has a logger object
+  v = Sinatra::VERSION.split('.').map(&:to_i)
+  if v[0] <= 1 && v[1] <= 2
+    def logger
+      request.logger
+    end
+  end
+
   @@prefs = [["Start Time", "start"],
              ["Duration", "duration"],
              ["Width", "width"],
