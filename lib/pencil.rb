@@ -23,16 +23,31 @@ module Pencil
     set :port, config.global_config[:port]
     set :run, true
     use Rack::Session::Cookie, :expire_after => 126227700 # 4 years
+    use Rack::Logger
     set :root, File.expand_path('../pencil', __FILE__)
     set :static, true
     set :logging, true
     set :erb, :trim => '-'
+    set :numthreads, 0
 
     def initialize(settings={})
       super
     end
 
     before do
+      settings.config.lock.lock
+      if settings.numthreads == 0 &&
+          settings.config.reload_available &&
+          !settings.config.reload_pending
+        logger.info 'new config available, reloading...'
+        settings.config.reload! #fast operation
+        logger.info "config version #{settings.config.version} loaded"
+        settings.config.reload_available = false
+        settings.config.reload_pending = false
+      end
+      settings.numthreads += 1
+      settings.config.lock.unlock
+
       session[:not] #fixme kludge is back
       @request_time = Time.now
       @dashboards = Dashboard.all
@@ -68,6 +83,12 @@ module Pencil
       session[:stime] = @stime.to_i.to_s
       session[:etime] = @etime.to_i.to_s
       # fixme reload hosts after some expiry
+    end
+
+    after do
+      settings.config.lock.lock
+      settings.numthreads -= 1
+      settings.config.lock.unlock
     end
 
     get %r[^/(dash/?)?$] do
@@ -139,17 +160,17 @@ module Pencil
       case params["action"]
       when "Save"
         # fixme make sure not to save shitty values for :start
-        puts 'saving prefs'
+        logger.info 'saving prefs'
         params.each do |k ,v|
           next if [:etime, :stime, :duration].member?(k.to_sym)
           session[k] = v unless v.empty?
         end
         redirect URI.parse(request.referrer).path
       when "Clear"
-        puts URI.parse(request.referrer).path
+        logger.info URI.parse(request.referrer).path
         redirect URI.parse(request.referrer).path
       when "Reset"
-        puts "clearing prefs"
+        logger.info "clearing prefs"
         session.clear
         redirect URI.parse(request.referrer).path
       when "Submit"
@@ -158,5 +179,12 @@ module Pencil
         request.query_string.sub("&action=Submit", "").sub("?action=Submit", "")
       end
     end
+
+    get '/reload' do
+      logger.info "manual reload triggered"
+      settings.config.trigger_restart
+      "manual reload triggered"
+    end
+
   end # Pencil::App
 end # Pencil

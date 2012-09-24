@@ -94,6 +94,8 @@ an example pencil.yml, which contains general configuration options:
         :margin: 5
         :thickness: 2
 
+      :autoreload: true        # whether to automatically reload config files
+      :poll_interval: 500      # if using autoreload, polling interval in seconds
       :refresh_rate: 60        # how often to refresh the view
       :host_sort: "numeric"    # add this if you want to sort hosts numerically
       :quantum: 30             # map requests to 30 second intervals
@@ -196,3 +198,15 @@ them.
 You can bind to a specific port with -p PORT and specify a configuration
 directory with -d DIR. Other rack-related options will be added at some point
 in the future.
+
+### Reloading configuration
+Accessing
+
+localhost:9292/reload
+
+will attempt to reload the configuration files manually. Automatic reloading on
+changes in the configuration directory is supported. After a change is detected
+a reload is scheduled, staged, and verified before being loaded into the
+running pencil instance. See
+[this](http://jim-mcbeath.blogspot.com/2010/01/reload-that-config-file.html)
+for the general idea.
