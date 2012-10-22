@@ -14,11 +14,11 @@ module Pencil::Models
     METRIC_REGEXP = /[^(),]+/
 
     def render_url
-      @@render_url ||= URI.join(self.class.graphite_url, '/render/?')
+      @@render_url ||= "#{URI.join(self.class.graphite_url, '/render/?')}"
     end
     def expand_url
       @@expand_url ||= \
-      URI.join(self.class.graphite_url, '/metrics/expand/?leavesOnly=1&query=')
+      "#{URI.join(self.class.graphite_url, '/metrics/expand/?leavesOnly=1&query=')}"
     end
 
     def initialize(file, overrides={}, info={})
