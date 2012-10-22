@@ -73,6 +73,8 @@ module Pencil
       @title = 'Overview'
       if cluster == 'global' && @multi
         @cluster = @fakeglobal
+      elsif cluster == 'global' && @clusters.size == 1
+        @cluster = @clusters.first
       else
         @cluster = @clusters.find {|x| x.name == cluster}
         @title = "cluster :: #{cluster}"
