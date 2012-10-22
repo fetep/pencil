@@ -85,7 +85,7 @@ module Pencil::Models
       prefix = prefix + ' ' unless prefix =~ / $/
       replace = @metrics.map do |m|
         [m, "#{@aggregator}(#{compose_metric(m, w(clusters), w(hosts))})"]
-      end
+      end.uniq
       target_order.each do |t|
         target = targets[t]
         target[:alias] = prefix + target[:alias]
