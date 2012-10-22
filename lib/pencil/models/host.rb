@@ -1,51 +1,32 @@
-require "pencil/models/base"
-require "pencil/models/graph"
+require 'pencil/models/base'
+require 'pencil/models/graph'
 
 module Pencil
   module Models
     class Host < Base
-      attr_accessor :graphs
-      attr_reader :cluster
+      @@sort_method = 'sensible'
+      def self.sort_method= (val)
+        @@sort_method = val
+      end
+      attr_accessor :graphs, :noassoc # set by Config after initialization
+      attr_reader :shortname, :cluster
 
-      def initialize(name, cluster, params={})
-        super(name, params)
+      def self.get_name (name, cluster)
+        cluster ? "#{name}.#{cluster}" : name
+      end
+      def initialize(name, cluster)
+        @name = self.class.get_name(name, cluster)
+        @shortname = name
+        super(@name)
         @cluster = cluster
-        # hack for the case where colo{1,2}.host1 both exist
-        @@objects[self.class.to_s].delete(name)
-        @@objects[self.class.to_s]["#{cluster}#{name}"] = self
-
         @graphs = []
-        Graph.each do |graph_name, graph|
-          graph["hosts"].each do |h|
-            if match(h)
-              @graphs << graph
-              break
-            end
-          end # graph["hosts"].each
-        end # Graph.each
-        @graphs.sort!
-      end
-
-      def self.find(name)
-        return @@objects[self.name][key] rescue []
-      end
-
-      def key
-        "#{@cluster}#{@name}"
-      end
-
-      def eql?(other)
-        key == other.key
-      end
-
-      def ==(other)
-        key == other.key
+        @noassoc = false
       end
 
       def <=>(other)
-        if @params[:host_sort] == "builtin"
+        if @@sort_method == 'builtin'
           return key <=> other.key
-        elsif @params[:host_sort] == "numeric"
+        elsif @@sort_method == 'numeric'
           regex = /\d+/
           match = @name.match(regex)
           match2 = other.name.match(regex)
@@ -58,33 +39,23 @@ module Pencil
           # http://www.bofh.org.uk/2007/12/16/comprehensible-sorting-in-ruby
           sensible = lambda do |k|
             k.to_s.split(
-                   /((?:(?:^|\s)[-+])?(?:\.\d+|\d+(?:\.\d+?(?:[eE]\d+)?(?:$|(?![eE\.])))?))/ms
-                   ).map { |v| Float(v) rescue v.downcase }
+                         /((?:(?:^|\s)[-+])?(?:\.\d+|\d+(?:\.\d+?(?:[eE]\d+)?(?:$|(?![eE\.])))?))/ms
+                         ).map { |v| Float(v) rescue v.downcase }
           end
           return sensible.call(self) <=> sensible.call(other)
         end
       end
 
-      def hash
-        key.hash
+      def path
+        @cluster ? "#{@cluster}/#{shortname}" : "#{shortname}"
       end
 
-      def self.find_by_name_and_cluster(name, cluster)
-        Host.each do |host_name, host|
-          next unless host.name == name
-          return host if host.cluster == cluster
-        end
-        return nil
+      def match(glob)
+        return true if glob == '*'
+        # convert glob to a regular expression
+        glob_re = /^#{Regexp.escape(glob).gsub('\*', '.*').gsub('\#', '\d+')}$/
+        return @shortname.match(glob_re)
       end
-
-      def self.find_by_cluster(cluster)
-        ret = []
-        Host.each do |name, host|
-          ret << host if host.cluster == cluster
-        end
-        return ret
-      end
-
     end # Pencil::Models::Host
   end # Pencil::Models
 end

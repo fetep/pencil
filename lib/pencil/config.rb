@@ -1,9 +1,15 @@
-require 'map'
-require 'pencil/models'
 require 'logger'
 require 'pathname'
 require 'thread'
 require 'find'
+require 'optparse'
+require 'json'
+require 'open-uri'
+require 'yaml'
+require 'set'
+
+require 'pencil/models'
+require 'pencil/attime'
 
 module Pencil
   class Config
@@ -13,172 +19,175 @@ module Pencil
     attr_reader :graphs
     attr_reader :hosts
     attr_reader :clusters
-    attr_reader :global_config
-    attr_reader :confdir
-    attr_reader :lock
+    attr_reader :clustermap
+    attr_reader :config_file
     attr_reader :version
-    attr_reader :autoreload, :poll_interval
-    attr_accessor :mtime, :mtime_d
-    attr_accessor :reload_available, :reload_pending
+    attr_reader :port
 
     def initialize
-      port = 9292
-      @rawconfig = {}
-      @confdir = "."
+      @port = 9292
+      @config_file = File.expand_path './pencil.yml'
       @recursive = false
-      @reload_available = false
-      @reload_pending = false
-      # mapping of config files to mtimes
-      @mtime = {}
-      @mtime_d = {}
-      @lock = Mutex.new
-      @autoreload = false
-      @poll_thread_active = false
       @logger = Logger.new(STDOUT) # fixme use the sinatra logger
 
       optparse = OptionParser.new do |o|
-        o.on("-d", "--config-dir DIR",
-             "location of the config directory (default .)") do |arg|
-          @confdir = arg
-          @recursive = true
+        o.on('-f', '--config-file FILE',
+             'location of the config file (default ./pencil.yml)') do |arg|
+          @config_file = File.expand_path arg
         end
-        o.on("-p", "--port PORT", "port to bind to (default 9292)") do |arg|
-          port = arg.to_i
+        o.on('-p', '--port PORT', 'port to bind to (default 9292)') do |arg|
+          @port = arg.to_i
         end
       end
 
       optparse.parse!
-      poll
       stage_load
       reload!
-
-      @global_config[:port] = port
     end
 
-    # check the config directory for changes
-    def poll
-      trigger = false
-      #fixme remove stale entries
-      Find.find(@confdir) do |f|
-        if File.directory? f
-          if !@mtime_d[f] || (@mtime_d[f] && File.mtime(f) != @mtime_d[f])
-            @mtime_d[f] = File.mtime(f)
-            trigger = true
-          end
-        elsif filetest f
-          if !@mtime[f] || (@mtime[f] && File.mtime(f) != @mtime[f])
-            @mtime[f] = File.mtime(f)
-            trigger = true
-          end
-        end
-      end
-      return trigger
-    end
-
-    def filetest (f)
-      File.file?(f) && f =~ /\.ya?ml$/
+    def [] (key)
+      @config[key]
     end
 
     def stage_load
-      @rawconfig = {}
-      # only do a recursive search if "-d" is specified
-      configs = Dir.glob("#{@confdir}/#{@recursive ? '**/' : ''}*.y{a,}ml")
-
-      configs.each do |c|
-        yml = YAML.load(File.read(c))
-        next unless yml
-        @rawconfig[:config] = yml[:config] if yml[:config]
-        a = @rawconfig[:dashboards]
-        b = yml[:dashboards]
-        c = @rawconfig[:graphs]
-        d = yml[:graphs]
-
-        if a && b
-          a.merge!(b)
-        elsif b
-          @rawconfig[:dashboards] = b
-        end
-        if c && d
-          c.merge!(d)
-        elsif d
-          @rawconfig[:graphs] = d
-        end
-      end
-      @rawconfig = Map(@rawconfig)
-
-      [:graphs, :dashboards, :config].each do |c|
-        if not @rawconfig[c.to_s]
-          raise "Missing config name '#{c.to_s}'"
-        end
+      defaults = {
+        :host_sort => 'sensible',
+        :metric_format => '%m.%c.%h',
+        :refresh_rate => 60,
+        :views =>
+        [{'-1h' => 'one hour view'},
+         {'default' => {'-8h' => 'eight hour view'}},
+         {'-1day' => 'one day view'}]
+      }
+      unless File.readable?(@config_file) && File.file?(@config_file)
+        abort "config file #{@config_file} not found or not readable (-f)"
       end
 
-      @_global_config = @rawconfig[:config]
+      yaml = YAML::load_file @config_file
+      abort "couldn't parse #{@config_file} as YAML" unless yaml
+      @_config = defaults.merge(yaml)
+
       # do some sanity checking of other configuration parameters
-      [:graphite_url, :url_opts].each do |c|
-        if not @_global_config[c]
-          raise "Missing config name '#{c.to_s}'"
+      [:graphite_url, :templates_dir].each do |c|
+        if not yaml[c]
+          abort "Missing config name ':#{c.to_s}'"
+        end
+      end
+      PencilGraph.graphite_url = yaml[:graphite_url]
+      PencilGraph.metric_format = yaml[:metric_format]
+
+      @templates_dir = yaml[:templates_dir]
+
+      if Pathname.new(@templates_dir).relative?
+        @templates_dir = File.expand_path @templates_dir
+      end
+
+      unless File.readable?(@templates_dir) && File.directory?(@templates_dir)
+        abort "templates directory #{@templates_dir} not found or not readable"
+      end
+
+      # fixme handle exceptions in ATTime code
+      klass = Struct.new(:from, :offset, :label, :is_default)
+      # views like [[graphite, offset, label=nil, default]]
+      @_config[:views].map! do |h|
+        if h.is_a? String
+          klass.new(h, ATTime.parseTimeOffset(h), nil)
+        elsif h.keys.first.to_s == 'default'
+          if h.values.first.is_a? String
+            klass.new(h.values.first, ATTime.parseTimeOffset(h.values.first), nil, true)
+          else
+            klass.new(h.values.first.keys.first,
+                      ATTime.parseTimeOffset(h.values.first.keys.first),
+                      h.values.first.values.first, true)
+          end
+        else
+          klass.new(h.keys.first, ATTime.parseTimeOffset(h.keys.first), h.values.first)
+        end
+      end
+      default = @_config[:views].select {|x| x.is_default}
+      if default.size > 1
+        puts "warning: multiple default timeslices, using first: #{@_config[:views].first.from}"
+        default[1..-1].each {|x| x.is_default = false}
+      elsif default.size == 0
+        puts "warning: no default timeslice, using first: #{@_config[:views].first.from}"
+        @_config[:views].first.is_default = true
+      end
+
+      # fixme warn on duplicate names, error checking
+      # load graph definitions first
+      @_graphs = {}
+      @_dashboards = {}
+      Dir.glob("#{@templates_dir}/**/*.graph").each do |f|
+        g = PencilGraph.new(f, yaml[:default_url_opts])
+        @_graphs[g.name] = g
+      end
+      Dir.glob("#{@templates_dir}/**/*.y{a,}ml").map do |f|
+        d = Dashboard.new(f, @templates_dir)
+        @_dashboards[d.name] = d
+      end
+
+      if yaml[:metric_format] !~ /%m/
+        abort 'missing metric (%m) in :metric_format'
+      elsif yaml[:metric_format] !~ /%h/
+        abort 'missing host (%h) in :metric_format'
+      end
+
+      @_hosts = {}
+      clusters = SortedSet.new
+      clustermap = {} # cluster name => cluster
+
+      # fixme not reload safe
+      Host.sort_method = @_config[:host_sort]
+      @_graphs.each do |name, graph|
+        hosts = graph.discover_hosts
+        hosts.each do |hname, cluster|
+          name = Host.get_name(hname, cluster)
+          @_hosts[name] ||= Host.new(hname, cluster)
+          @_hosts[name].graphs << graph.name
+          clusters << cluster if cluster
+          clustermap[cluster||:global] ||= SortedSet.new
+          clustermap[cluster||:global] << @_hosts[name]
         end
       end
 
-      @_autoreload = @_global_config[:autoreload] || false
-      @_poll_interval = @_global_config[:poll_interval] || 300
-
-      # possibly check more url_opts here as well
-      if @_global_config[:url_opts][:start]
-        if !ChronicDuration.parse(@_global_config[:url_opts][:start])
-          raise "bad default timespec in :url_opts"
+      noassoc = {} # cluster => hosts
+      @_hosts.each do |name, h|
+        h.graphs.sort!
+        assoc = false
+        @_dashboards.each do |dname, d|
+          d.graphs.each do |g, hash|
+            hash['hosts'].each do |w|
+              if h.match(w)
+                d.assoc[g][w] << h
+                assoc = true
+              end
+            end
+          end
+        end
+        unless assoc
+          puts "#{h.name} not associated with a dashboard"
+          noassoc[h.cluster||:global] ||= SortedSet.new
+          noassoc[h.cluster||:global] << h
         end
       end
 
-      @_global_config[:default_colors] ||=
-        ["blue", "green", "yellow", "red", "purple", "brown", "aqua", "gold"]
-
-      if @_global_config[:refresh_rate]
-        duration = ChronicDuration.parse(@_global_config[:refresh_rate].to_s)
-        if !duration
-          raise "couldn't parse key :refresh_rate"
+      @_clusters = []
+      if clusters.size == 0
+        @_clusters <<
+          Cluster.new(nil, clustermap[:global], noassoc[:global], true)
+      else
+        clusters.each do |c|
+          @_clusters << Cluster.new(c, clustermap[c], noassoc[c])
         end
-        @_global_config[:refresh_rate] = duration
       end
-
-      @_global_config[:metric_format] ||= "%m.%c.%h"
-      if @_global_config[:metric_format] !~ /%m/
-        raise "missing metric (%m) in :metric_format"
-      elsif @_global_config[:metric_format] !~ /%c/
-        raise "missing cluster (%c) in :metric_format"
-      elsif @_global_config[:metric_format] !~ /%h/
-        raise "missing host (%h) in :metric_format"
-      end
-
-      graphs_new = []
-      @rawconfig[:graphs].each do |name, config|
-        graphs_new << Graph.new(name, config.merge(@_global_config))
-      end
-
-      dashboards_new = []
-      @rawconfig[:dashboards].each do |name, config|
-        dashboards_new << Dashboard.new(name, config.merge(@_global_config))
-      end
-
-      hosts_new = Set.new
-      clusters_new = Set.new
-
-      # generate host and cluster information at init time
-      graphs_new.each do |g|
-        hosts, clusters = g.hosts_clusters
-        hosts.each { |h| hosts_new << h }
-        clusters.each { |h| clusters_new << h }
-      end
-
-      @_dashboards, @_graphs = dashboards_new, graphs_new
-      @_hosts, @_clusters = hosts_new, clusters_new
+      @_clusters.sort!
     end
 
     def load_verify_stage
       begin
-        @logger.info "staging load"
+        @logger.info 'staging load'
         stage_load
-        @logger.info "staging load succeeded"
+        @logger.info 'staging load succeeded'
         @logger.info "the next request will load configuration #{@version}"
       rescue Exception => err
         @logger.error "error reloading configuration:\n#{err}"
@@ -189,63 +198,13 @@ module Pencil
     end
 
     def reload!
-      @poll_interval = @_poll_interval
-      @autoreload = @_autoreload
-      spawn_polling_thread if @autoreload && !@poll_thread_active
       @dashboards, @graphs = @_dashboards, @_graphs
       @hosts, @clusters = @_hosts, @_clusters
-      @global_config = @_global_config
-      @_global_config = @_dashboards = @_graphs = @_hosts = @_clusters = nil
+      @config = @_config
+      @clustermap = @_clustermap
+      @_clustermap = @_config = @_dashboards = nil
+      @_graphs = @_hosts = @_clusters = nil
       @version = Time.now.to_i
-    end
-
-    def trigger_restart
-      poll
-      @lock.lock
-      if @reload_pending || @reload_available
-        @lock.unlock
-      else
-        @reload_pending = true
-        @lock.unlock
-        @logger.info "scheduling a config reload for #{Time.now + 10}"
-        Thread.new do
-          begin
-            sleep 10
-            available = load_verify_stage # new structures loaded and valid
-            @lock.lock
-            @reload_available = available
-            @reload_pending = false
-            @lock.unlock
-          rescue Exception => err
-            @logger.error err
-          end
-        end
-      end
-    end
-
-    # TODO delay execution of trigger thread every time a config file changes
-    # FIXME with Mongrel, when the application exits, if this thread was
-    # spawned within a request context the server believes it is serving a
-    # request and waits indefinitely for it to finish, even though its parent
-    # thread served the request. This will only happen if the :autoreload
-    # parameter is changed from false to true during a config change, an
-    # unlikely event.
-    def spawn_polling_thread
-      @logger.info "spawning polling thread"
-      @poll_thread_active = true
-      Thread.new do
-        while true
-          break unless @autoreload
-          begin
-            trigger_restart if poll
-            sleep @poll_interval
-          rescue Exception => err
-            @logger.error err
-          end
-        end
-        @logger.info "polling thread finished"
-        @poll_thread_active = false
-      end
     end
 
   end # Pencil::Config

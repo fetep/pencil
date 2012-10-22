@@ -1,190 +1,137 @@
-require "erb"
-require "rack"
-require "sinatra/base"
-require "json"
-require "open-uri"
-require "yaml"
-require "chronic"
-require "chronic_duration"
-require "optparse"
+require 'sinatra/base'
+require 'sinatra/cookies'
 
-require "pencil/version"
-require "pencil/config"
-require "pencil/helpers"
-require "pencil/models"
-require "pencil/rubyfixes"
+require 'pencil/version'
+require 'pencil/config'
+require 'pencil/helpers'
+require 'pencil/models'
 
 module Pencil
   class App < Sinatra::Base
+    helpers Sinatra::Cookies
+    set :static, true
+    set :views, File.join(File.expand_path(File.dirname(__FILE__)), '..', 'views')
+
+    set :config, Pencil::Config.new
+    set :port, settings.config.port
+    set :erb, :trim => '-'
+    use Rack::Logger
+    set :logging, true
+    set :cache, {}
+
     include Pencil::Models
     helpers Pencil::Helpers
-    config = Pencil::Config.new
-    set :config, config
-    set :port, config.global_config[:port]
-    set :run, true
-    use Rack::Session::Cookie, :expire_after => 126227700 # 4 years
-    use Rack::Logger
-    set :root, File.expand_path('../pencil', __FILE__)
-    set :static, true
-    set :logging, true
-    set :erb, :trim => '-'
-    set :numthreads, 0
 
-    def initialize(settings={})
-      super
+    # fixme don't rely on rubygems
+    if Sinatra.const_defined?('VERSION') && Gem::Version.new(Sinatra::VERSION) >= Gem::Version.new('1.3.0')
+      set :public_folder, File.join(File.expand_path(File.dirname(__FILE__)), '..', 'static')
+    else
+      set :public, File.join(File.expand_path(File.dirname(__FILE__)), '..', 'static')
     end
 
     before do
-      settings.config.lock.lock
-      if settings.numthreads == 0 &&
-          settings.config.reload_available &&
-          !settings.config.reload_pending
-        logger.info 'new config available, reloading...'
-        settings.config.reload! #fast operation
-        logger.info "config version #{settings.config.version} loaded"
-        settings.config.reload_available = false
-        settings.config.reload_pending = false
-      end
-      settings.numthreads += 1
-      settings.config.lock.unlock
-
-      session[:not] #fixme kludge is back
+      @refresh_rate = settings.config[:refresh_rate] * 1000 # s -> ms
       @request_time = Time.now
-      @dashboards = Dashboard.all
-      @no_graphs = false
-      # time stuff
-      start = param_lookup("start")
-      duration = param_lookup("duration")
-
-      @stime = Chronic.parse(start)
-      if @stime
-        @stime -= @stime.sec unless @params["noq"]
-      elsif start =~ /^\d+$/ #epoch
-        @stime = Time.at start.to_i
+      if params[:from]
+        if params[:from] =~ /^\d+/
+          @view = :calendar
+        else
+          view = settings.config[:views].find {|x| x.from == params[:from]}
+          @view = view if view
+        end
       end
+      @view ||= settings.config[:views].find {|x| x.is_default}
+      @overrides = {:timezone => cookies['tz']}
+      @overrides[:width] = cookies['mw'] if cookies['mw']
 
-      if duration
-        @duration = ChronicDuration.parse(duration) || 0
+      if @view == :calendar
+        @overrides[:from] = params[:from]
+        @overrides[:until] = params[:until]
       else
-        @duration = @request_time.to_i - @stime.to_i
+        @overrides[:from] = @view.from
+        @overrides[:until] = 'now'
       end
-
-      unless @params["noq"]
-        @duration -= (@duration % settings.config.global_config[:quantum]||1)
-      end
-
-      if @stime
-        @etime = Time.at(@stime + @duration)
-        @etime = @request_time if @etime > @request_time
-      else
-        @etime = @request_time
-      end
-
-      session[:stime] = @stime.to_i.to_s
-      session[:etime] = @etime.to_i.to_s
-      # fixme reload hosts after some expiry
+      @dashboards = settings.config.dashboards
+      @graphs = settings.config.graphs
+      @fakeglobal = Cluster.new(nil, nil, nil, true) #fixme move to config
+      @clusters = settings.config.clusters
+      @multi = @clusters.size > 1
+      @hosts = settings.config.hosts
     end
 
-    after do
-      settings.config.lock.lock
-      settings.numthreads -= 1
-      settings.config.lock.unlock
-    end
-
+    # FIXME the redirecting when there is a single or no cluster is shoddy
     get %r[^/(dash/?)?$] do
-      @no_graphs = true
-      if settings.config.clusters.size == 1
-        redirect append_query_string("/dash/#{settings.config.clusters.first}")
+      if @clusters.size == 1
+        redirect append_query_string("/dash/#{@clusters.first}")
       else
         redirect append_query_string('/dash/global')
       end
     end
 
-    get '/dash/:cluster/:dashboard/:zoom/?' do
-      @cluster = params[:cluster]
-      @dash = Dashboard.find(params[:dashboard])
-      raise "Unknown dashboard: #{params[:dashboard].inspect}" unless @dash
-
-      @zoom = nil
-      @dash.graphs.each do |graph|
-        @zoom = graph if graph.name == params[:zoom]
-      end
-      raise "Unknown zoom parameter: #{params[:zoom]}" unless @zoom
-
-      @title = "dashboard :: #{@cluster} :: #{@dash['title']} :: #{params[:zoom]}"
-
-      if @cluster == "global"
-        erb :'dash-global-zoom'
+    get '/dash/:cluster/?' do
+      cluster = params[:cluster]
+      @title = 'Overview'
+      if cluster == 'global' && @multi
+        @cluster = @fakeglobal
       else
-        erb :'dash-cluster-zoom'
+        @cluster = @clusters.find {|x| x.name == cluster}
+        @title = "cluster :: #{cluster}"
       end
+      erb :global
     end
 
     get '/dash/:cluster/:dashboard/?' do
-      @cluster = params[:cluster]
-      @dash = Dashboard.find(params[:dashboard])
-      raise "Unknown dashboard: #{params[:dashboard].inspect}" unless @dash
+      cluster = params[:cluster]
+      @dash = @dashboards[params[:dashboard]]
+      raise "dashboard #{params[:dashboard]} not found" unless @dash
 
-      @title = "dashboard :: #{@cluster} :: #{@dash['title']}"
+      @title = "dashboard :: #{@cluster} :: #{@dash.title}"
 
-      if @cluster == "global"
-        erb :'dash-global'
+      if cluster == 'global'
+        @cluster = @fakeglobal
+        @target = @clusters
+        @method = :render_global
       else
-        erb :'dash-cluster'
+        @cluster = @clusters.find {|x| x.name == cluster}
+        @target = [@cluster]
+        @method = :render_cluster
       end
+      erb :dashboard
     end
 
-    get '/dash/:cluster/?' do
-      @no_graphs = true
-      @cluster = params[:cluster]
-      if @cluster == "global"
-        @title = "Overview"
-        erb :global
+    get '/dash/:cluster/:dashboard/:zoom/?' do
+      cluster = params[:cluster]
+      @dash = @dashboards[params[:dashboard]]
+      raise "Unknown dashboard: #{params[:dashboard].inspect}" unless @dash
+
+      @zoom = @graphs[params[:zoom]]
+      raise "Unknown zoom parameter: #{params[:zoom]}" unless @zoom
+
+      @title = "dashboard :: #{cluster} :: #{@dash.title} :: #{params[:zoom]}"
+
+      if cluster == 'global'
+        if !@multi
+          erb :'cluster-zoom'
+        else
+          @cluster = @fakeglobal
+          erb :'global-zoom'
+        end
       else
-        @title = "cluster :: #{params[:cluster]}"
-        erb :cluster
+        @cluster = @clusters.find {|x| x.name == cluster}
+        erb :'cluster-zoom'
       end
     end
 
     get '/host/:cluster/:host/?' do
-      @host = Host.find_by_name_and_cluster(params[:host], params[:cluster])
-      @cluster = @host.cluster
+      cluster = params[:cluster] == 'global' ? nil : params[:cluster]
+      @host = @hosts[Host.get_name(params[:host], cluster)]
       raise "Unknown host: #{params[:host]} in #{params[:cluster]}" unless @host
+
+      @cluster = @cluster = @clusters.find {|x| x.name == cluster}
 
       @title = "#{@host.cluster} :: host :: #{@host.name}"
 
       erb :host
     end
-
-    get '/process' do
-      case params["action"]
-      when "Save"
-        # fixme make sure not to save shitty values for :start
-        logger.info 'saving prefs'
-        params.each do |k ,v|
-          next if [:etime, :stime, :duration].member?(k.to_sym)
-          session[k] = v unless v.empty?
-        end
-        redirect URI.parse(request.referrer).path
-      when "Clear"
-        logger.info URI.parse(request.referrer).path
-        redirect URI.parse(request.referrer).path
-      when "Reset"
-        logger.info "clearing prefs"
-        session.clear
-        redirect URI.parse(request.referrer).path
-      when "Submit"
-        # fixme offensive to sensibility
-        redirect URI.parse(request.referrer).path + "?" + \
-        request.query_string.sub("&action=Submit", "").sub("?action=Submit", "")
-      end
-    end
-
-    get '/reload' do
-      logger.info "manual reload triggered"
-      settings.config.trigger_restart
-      "manual reload triggered"
-    end
-
   end # Pencil::App
 end # Pencil

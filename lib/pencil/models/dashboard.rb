@@ -1,124 +1,62 @@
-require "pencil/models/base"
-require "pencil/models/graph"
-require "pencil/models/host"
-require "set"
+require 'pencil/models/base'
+require 'pencil/models/graph'
+require 'pencil/models/host'
+require 'set'
 
-module Pencil
-  module Models
-    class Dashboard < Base
-      attr_accessor :graphs
-      attr_accessor :graph_opts
+module Pencil::Models
+  class Dashboard
+    @@groupings = SortedSet.new
+    @@group_map = {} # group => SortedSet of dashboards
+    def self.groups
+      @@groupings
+    end
+    def self.clear # on reload
+      @@groupings = SortedSet.new
+      @@group_map = {} # group => SortedSet of dashboards
+    end
+    def self.group_entries (group)
+      @@group_map[group]
+    end
 
-      def initialize(name, params={})
-        super
+    attr_reader :title, :graphs, :name, :group
+    attr_accessor :assoc # graph -> wildcard -> hosts
 
-        @graphs = []
-        @graph_opts = {}
-        params["graphs"].each do |n|
-          if n.respond_to?(:keys)
-            key = n.keys.first # should only be one key
-            val = n.values.first
-            g = Graph.find(key)
-            @graph_opts[g] = val||{}
-          else
-            raise "Bad format for graph (must be a hash-y; #{n.class}:#{n.inspect} is not)"
-          end
-
-          @graphs << g if g
+    # fixme warn on duplicate titles
+    def initialize(file, config_directory)
+      path = Pathname.new(file).relative_path_from(Pathname.new(config_directory)).to_s
+      relname = File.dirname(path).split(File::SEPARATOR).last
+      relname = 'default' if relname == '.'
+      yaml = YAML::load_file file
+      @name = File.basename(file, '.yml').chomp('.yaml')
+      @group = yaml['group'] || relname
+      @@groupings << @group
+      @@group_map[@group] ||= SortedSet.new
+      @@group_map[@group] << self
+      @title = yaml['title']
+      # fixme warn about no hosts key
+      global_hosts = {'hosts' => (yaml['hosts'] || '*')}
+      @graphs = yaml['graphs'].map do |a|
+        a.is_a?(String) ? [a, global_hosts] : a.first
+      end
+      @assoc = {}
+      @graphs.each do |g, h|
+        h['hosts'].each do |wildcard|
+          @assoc[g] ||= {}
+          @assoc[g][wildcard] ||= SortedSet.new
         end
-
-        @valid_hosts_table = {} # cache calls to get_valid_hosts
       end
+    end
 
-      def clusters
-        clusters = Set.new
-        @graphs.each { |g| clusters += get_valid_hosts(g)[1] }
-        clusters.sort
-      end
+    def to_s
+      @name
+    end
 
-      def get_all_hosts(cluster=nil)
-        hosts = Set.new
-        clusters = Set.new
-        @graphs.each do |g|
-          h, c = get_valid_hosts(g, cluster)
-          hosts += h
-          clusters += c
-        end
-        return hosts, clusters
-      end
+    def inspect
+      @name
+    end
 
-      def get_valid_hosts(graph, cluster=nil)
-        if @valid_hosts_table[[graph, cluster]]
-          return @valid_hosts_table[[graph, cluster]]
-        end
-
-        clusters = Set.new
-        if cluster
-          hosts = Host.find_by_cluster(cluster)
-        else
-          hosts = Host.all
-        end
-
-        # filter as:
-        #   - the dashboard graph hosts definition
-        #   - the dashboard hosts definition
-        #   - the graph hosts definition
-        # this is new behavior: before the filters were additive
-        filter = graph_opts[graph]["hosts"] || @params["hosts"] || graph["hosts"]
-        if filter
-          hosts = hosts.select { |h| h.multi_match(filter) }
-        end
-
-        hosts.each { |h| clusters << h.cluster }
-
-        @valid_hosts_table[[graph, cluster]] = [hosts, clusters]
-        return hosts, clusters
-      end
-
-      def render_cluster_graph(graph, clusters, opts={})
-        # FIXME: edge case where the dash filter does not filter to a subset of
-        # the hosts filter
-
-        hosts = get_host_wildcards(graph)
-
-        # graphite doesn't support strict matching (as /\d+/), so we need to
-        # enumerate the hosts if a "#" wildcard is found
-        if ! (filter = hosts.select { |h| h =~ /#/ }).empty?
-          hosts_new = hosts - filter
-          hosts2 = Host.all.select { |h| h.multi_match(filter) }
-          hosts = (hosts2.map {|h| h.name } + hosts_new).sort.uniq.join(',')
-        end
-
-        opts[:sum] = :cluster unless opts[:zoom]
-        graph_url = graph.render_url(hosts.to_a, clusters, opts)
-        return graph_url
-      end
-
-      def get_host_wildcards(graph)
-        return graph_opts[graph]["hosts"] || @params["hosts"] || graph["hosts"]
-      end
-
-      def render_global_graph(graph, opts={})
-        hosts = get_host_wildcards(graph)
-        _, clusters = get_valid_hosts(graph)
-
-        type = opts[:zoom] ? :cluster : :global
-        options = opts.merge({:sum => type})
-        graph_url = graph.render_url(hosts, clusters, options)
-        return graph_url
-      end
-
-      def self.find_by_graph(graph)
-        ret = []
-        Dashboard.each do |name, dash|
-
-          if dash["graphs"].map { |x| x.keys.first }.member?(graph.name)
-            ret << dash
-          end
-        end
-
-        return ret
-      end
-    end # Pencil::Models::Dashboard
-  end
+    def <=> (other)
+      @name <=> other.name
+    end
+  end # Pencil::Models::Dashboard
 end # Pencil::Models

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title><%= @title %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/favicon.ico"/>
+
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="/bootstrap/css/datepicker.css" rel="stylesheet">
+    <link href="/bootstrap/css/timepicker.css" rel="stylesheet">
+    <link href="/pencil.css" rel="stylesheet">
+
+    <style type="text/css">
+      .sidebar-nav {
+        padding: 9px 0;
+      }
+    </style>
+    <link href="/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="navbar navbar-inverse">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="/">Pencil</a>
+          <div class="nav-collapse collapse">
+            <p class="navbar-text pull-right">
+              powered by <a href="<%= settings.config[:graphite_url] %>" target="_blank" class="navbar-link">graphite</a>
+            </p>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <%= erb :'partials/sidebar', :layout => false %>
+        <%= yield %>
+      </div><!--/row-->
+      <hr>
+    </div><!--/.fluid-container-->
+
+    <footer>generated <%= @request_time %> by <a href="https://github.com/fetep/pencil" target="_blank">pencil</a> v<%= Pencil::VERSION %></footer>
+
+    <script src="/jquery.js"></script>
+    <script src="/pencil.js"></script>
+    <script src="/spin.js"></script>
+    <script src="/jquery-spin.js"></script>
+    <script src="/jquery-loadnicely.js"></script>
+    <script src="/moment.js"></script>
+    <script src="/detect_timezone.js"></script>
+    <script src="/jquery-cookie.js"></script>
+    <script src="/bootstrap/js/bootstrap.js"></script>
+    <script src="/bootstrap/js/bootstrap-datepicker.js"></script>
+    <script src="/bootstrap/js/bootstrap-timepicker.js"></script>
+    <script type="text/javascript">
+      var timer;
+      var refresh = <%= @refresh_rate %>;
+      initialize();
+    </script>
+  </body>
+</html>

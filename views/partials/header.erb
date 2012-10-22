@@ -1,0 +1,36 @@
+<h3> <!-- todo breadcrumb it -->
+  dashboard ::
+  <% unless @multi %>
+  <%= @cluster %>
+  <% else %>
+  <span class="dropdown">
+    <a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"><%= @cluster %></a>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
+      <%= cluster_switcher.join("\n") %>
+    </ul>
+  </span>
+  <% end %>
+  ::
+  <!--
+     for now, link to group view, which doesn't exist
+     TODO: this dropdown should not be links, it should be a nested dropdown
+     for other graphs
+    -->
+  <span class="dropdown">
+    <a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"><%= @dash.group %></a>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
+      <% (Dashboard.groups - [@dash.group]).each do |g| %>
+      <li><a tabindex="-1" href="/group/<%= @g %>/<%=g %>"><%= g %></a></li>
+      <% end %>
+    </ul>
+  </span>
+  ::
+  <span class="dropdown">
+    <a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"><%= @dash.name %></a>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
+      <% (Dashboard.group_entries(@dash.group).map(&:name) - [@dash.name]).each do |d| %>
+      <li><a tabindex="-1" href="/dash/<%= @cluster%>/<%=d %>"><%= d %></a></li>
+      <% end %>
+    </ul>
+  </span>
+</h3> <!-- todo breadcrumb/cluster switch-->

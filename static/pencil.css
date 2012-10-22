@@ -1,0 +1,22 @@
+body {
+    background-image: none;
+    background-color: #000;
+}
+
+footer {
+    width: 100%;
+    background-color: #222;
+    position: fixed;
+    bottom: 0px;
+    text-align: center;
+    border-top: 1px #333 solid;
+    margin-top: 15px;
+    font-size: 11px;
+    padding: 5px;
+    color: #fff;
+}
+
+div.graph {
+    border: 1px #333 dotted;
+    margin-top: 10px;
+}

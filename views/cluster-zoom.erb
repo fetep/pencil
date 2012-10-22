@@ -1,0 +1,33 @@
+<div class="span10">
+  <%= erb :'partials/header2', :layout => false %>
+  <h4 id="timestamp"><div id="timestamp"></div><p class="button-container pull-right">
+    <a href="/dash/<%= @cluster %>/<%= @dash.name %>"><button class="btn-primary">zoom out (<%= @dash.name %>)</button></a>
+  </p></h4>
+  <div class="navbar">
+    <div class="navbar-inner">
+      <ul class="nav">
+        <% @clusters.map(&:name).each do |c| %>
+        <li><a href="#<%= c %>"><small><%= c %></small></a></li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+
+  <%= @click_url = '#'
+      @zoom_text = ''
+      @graph = @zoom
+      wildcards = @dash.graphs.find {|g, h| g == @zoom.name}.last['hosts']
+      hosts = []
+      wildcards.each {|w| hosts += @dash.assoc[@zoom.name][w].to_a}
+      @graph_title = "#{@zoom.name} / #{@cluster} overview"
+      @src = @zoom.render_cluster_zoom(@cluster.name, wildcards, @overrides)
+      erb :'partials/graph', :layout => false %>
+
+  <% hosts.select {|h| @multi ? h.cluster == @cluster.name : true}.each do |h|
+      @click_url = "/host/#{h.cluster||'global'}/#{h.shortname}"
+      @zoom_text = "<small class=\"pull-right\">(<a href=\"#{@click_url}\">host</a>)</small>"
+      @graph_title = @cluster.psuedo ? "#{@zoom.name} / #{h.shortname}" : "#{@zoom.name} / #{@cluster.name} / #{h.shortname}"
+      @src = @zoom.render_host(@cluster.name, h.shortname, @overrides) %>
+  <%= erb :'partials/graph', :layout => false %>
+  <% end %>
+</div>

@@ -1,0 +1,30 @@
+<div class="span10">
+  <h3>host :: <%= @host.cluster %> :: <%= @host.shortname %></h3>
+ <h4><div id="timestamp"></div><p class="button-container pull-right">
+   <a href="/dash/<%= @cluster %>"><button class="btn-primary">zoom out (<%= @cluster %>)</button></a>
+  </p></h4>
+
+  <div class="navbar">
+    <div class="navbar-inner">
+      <ul class="nav">
+        <% @host.graphs.each do |gname, _| %>
+        <li><a href="#<%= gname %>"><small><%= gname %></small></a></li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+  <% @host.graphs.each do |gname| %>
+  <%= @graph = @graphs[gname]
+      @graph_title = @graph.name
+      @click_url = '#'
+      _d = suggest_dashboards(@host, gname)
+      if _d.size == 0
+        @zoom_text = ''
+      else
+        @zoom_text = _d.map{|m| "<span><a href=\"/dash/#{@host.cluster||'global'}/#{m}/#{@graph.name}\">#{m}</a></span>"}.join(',')
+        @zoom_text = "<small class=\"pull-right\">(#{@zoom_text})</small>"
+      end
+      @src = @graph.render_host(@host.cluster, @host.shortname, @overrides)
+      erb :'partials/graph', :layout => false %>
+  <% end %>
+</div>

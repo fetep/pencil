@@ -1,9 +1,0 @@
-<select onchange="window.open(this.options[this.selectedIndex].value,'_top')">
-  <option value="">-select host-</option>
-  <% @hosts.sort.each do |h|
-     option = "#{h.name}"
-     option << " [#{h.cluster}]" if @print_clusters
-     value = append_query_string("/host/#{h.cluster}/#{h}") %>
-  <option value="<%= value %>" <%= "selected=\"selected\"" if @host == h %>><%= option %></option>
-  <% end %>
-</select>

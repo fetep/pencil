@@ -1,0 +1,41 @@
+<div class="span3">
+  <section id="overview">
+    <div class="page-header">
+      <h1>Dashboards</h1>
+    </div>
+    <div>
+      <% Dashboard.groups.each do |group| %>
+      <h2><a href="/group/<%= group %>"><%= group %></a></h2>
+      <ul><% Dashboard.group_entries(group).each do |d| %>
+        <li><a href="/dash/<%= @cluster %>/<%= d.name %>"><%= d.name %></a></li>
+        <ul><% d.graphs.each do |gname, hosts| %>
+          <li><a href="<%= "/dash/#{@cluster}/#{d.name}/#{gname}"%>"><%= gname %></a></li><% end %>
+        </ul><% end %>
+      </ul><% end %>
+    </div>
+  </section>
+</div>
+
+<% if !@cluster.psuedo %>
+<div class="span4">
+  <div class="page-header"><h1><%= @cluster.name %></h1></div>
+  <h4>Other hosts (not associated with a dashboard)</h4>
+    <% @cluster.noassoc.each do |host| %>
+    <ul>
+      <li><a href="/host/<%= host.path  %>"><%= host.shortname %></a></li>
+    </ul><% end %>
+</div>
+<% else %>
+<% @clusters.each do |c| %>
+<div class="span3">
+  <div class="page-header"><h1><%= c.psuedo ? 'hosts' : c %></h1></div>
+  <div>
+    <% c.hosts.each do |host| %>
+    <ul>
+      <li><a href="/host/<%= host.path  %>"><%= host.shortname %></a></li>
+    </ul><% end %>
+  </div>
+</section>
+</div>
+<% end %>
+<% end %>

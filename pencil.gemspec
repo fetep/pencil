@@ -12,14 +12,15 @@ Gem::Specification.new do |spec|
   spec.version = Pencil::VERSION
   spec.summary = "pencil -- Graphite dashboard system"
   spec.description = "Graphite dashboard frontend"
-  spec.license = "Mozilla Public License (1.1)"
+  spec.license = "Mozilla Public License (2.0)"
 
-  spec.add_dependency("map")
   spec.add_dependency("rack")
   spec.add_dependency("sinatra")
+  spec.add_dependency("sinatra-contrib")
   spec.add_dependency("json")
-  spec.add_dependency("chronic")
+  spec.add_dependency("chronic") #for compatability
   spec.add_dependency("chronic_duration")
+  spec.add_dependency("graphite_graph")
 
   spec.files = files
   spec.bindir = "bin"
