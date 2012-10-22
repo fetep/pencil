@@ -21,8 +21,8 @@
       <li class="nav-header">Timespec</li>
       <div class="tabbable"> <!-- Only required for left/right tabs -->
         <ul class="nav nav-tabs">
-          <li<%= ' class="active"' if @view != :calendar %>><a href="#tab1" data-toggle="tab">Live</a></li>
-          <li<%= ' class="active"' if @view == :calendar %>><a href="#tab2" data-toggle="tab">Window</a></li>
+          <li id="tabhead1"><a href="#tab1" data-toggle="tab">Live</a></li>
+          <li id="tabhead2"><a href="#tab2" data-toggle="tab">Window</a></li>
         </ul>
         <div class="tab-content">
           <div class="tab-pane<%= ' active' if @view != :calendar %>" id="tab1">

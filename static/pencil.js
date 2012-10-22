@@ -231,6 +231,16 @@ function appendQueryStrings() {
     });
 }
 
+function highlightCurrent() {
+    if (liveTest()) {
+        $("#tabhead2").removeClass('active');
+        $("#tabhead1").addClass('active');
+    } else {
+        $("#tabhead1").removeClass('active');
+        $("#tabhead2").addClass('active');
+    }
+}
+
 // we don't actually need the state object because the entirety of the state is
 // controlled in query parameters
 // todo keep old calendar dates when changing to live mode
@@ -260,13 +270,13 @@ function changeState() {
         if ($('img').size() > 0) {
             timer = setInterval(reloadImages, refresh);
         }
-        $('img').each(function() {
-            var url = this.src;
-            url = addParameter(url, 'until', "now");
-            url = addParameter(url, 'from', from);
-            this.src = url;
-            // $(this).spin();
-        });
+        // $('img').each(function() {
+        //     var url = this.src;
+        //     url = addParameter(url, 'until', "now");
+        //     url = addParameter(url, 'from', from);
+        //     this.src = url;
+        //     // $(this).spin();
+        // });
         until = now;
         from = until.clone().subtract('hours', 1);
     } else {
@@ -301,6 +311,7 @@ function changeState() {
     $("#dp2").datepicker({ format: 'yyyy-mm-dd'});
     $('#tp1 input').timepicker({showSeconds: true, defaultTime: from.format('hh:mm:ss A')});
     $('#tp2 input').timepicker({showSeconds: true, defaultTime: until.format('hh:mm:ss A')});
+    highlightCurrent();
     appendQueryStrings();
     makeTimestamp();
 }
