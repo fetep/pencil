@@ -1,7 +1,7 @@
 <div class="span2">
   <div class="well sidebar-nav">
     <ul class="nav nav-list">
-      <li class="nav-header">Global Views</li>
+      <li class="nav-header">Global View</li>
       <li<%= ' class="active"' if @cluster.name == 'global' %>><a href="/dash/global">overview</a></li>
       <% if @multi %>
       <li class="nav-header">Cluster Views</li>
@@ -25,7 +25,7 @@
           <li id="tabhead2"><a href="#tab2" data-toggle="tab">Window</a></li>
         </ul>
         <div class="tab-content">
-          <div class="tab-pane<%= ' active' if @view != :calendar %>" id="tab1">
+          <div class="tab-pane" id="tab1">
             <ul class="nav nav-pills nav-stacked"><% settings.config[:views].each do |a| %>
               <li<%= ' default="true"' if a.is_default %>><a offset="<%= a.offset %>" label="<%= a.label %>" value="<%= a.from %>" onclick="liveSubmit(this);"><%= a.label||'' %></a></li><% end %>
             </ul>
@@ -34,9 +34,9 @@
             <form class="navbar-form pull-left">
                 <span class="label">from</span>
                 <div class="input-append date" id="dp1" data-date-format="dd-mm-yyyy">
-				  <input class="span6" size="16" type="text" value="">
-				  <span class="add-on"><i class="icon-calendar"></i></span>
-			    </div>
+                  <input class="span6" size="16" type="text" value="">
+                  <span class="add-on"><i class="icon-calendar"></i></span>
+                </div>
                 <div class="input-append bootstrap-timepicker-component" id="tp1">
                   <input type="text" class="timepicker-default input-small" value="">
                   <span class="add-on">
@@ -45,9 +45,9 @@
                 </div>
                 <span class="label">to</span>
                 <div class="input-append date" id="dp2" data-date="" data-date-format="dd-mm-yyyy">
-				  <input class="span6" size="16" type="text" value="">
-				  <span class="add-on"><i class="icon-calendar"></i></span>
-			    </div>
+                  <input class="span6" size="16" type="text" value="">
+                  <span class="add-on"><i class="icon-calendar"></i></span>
+                </div>
                 <div class="input-append bootstrap-timepicker-component" id="tp2">
                   <input type="text" class="timepicker-default input-small" value="">
                   <span class="add-on">
