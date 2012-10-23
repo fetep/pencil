@@ -270,13 +270,13 @@ function changeState() {
         if ($('img').size() > 0) {
             timer = setInterval(reloadImages, refresh);
         }
-        // $('img').each(function() {
-        //     var url = this.src;
-        //     url = addParameter(url, 'until', "now");
-        //     url = addParameter(url, 'from', from);
-        //     this.src = url;
-        //     // $(this).spin();
-        // });
+        $('img').each(function() {
+            var url = this.src;
+            url = addParameter(url, 'until', "now");
+            url = addParameter(url, 'from', from);
+            this.src = url;
+            // $(this).spin();
+        });
         until = now;
         from = until.clone().subtract('hours', 1);
     } else {
