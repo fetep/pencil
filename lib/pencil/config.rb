@@ -49,6 +49,28 @@ module Pencil
       @config[key]
     end
 
+    # for views
+    def klass
+      @@klass ||= Struct.new(:from, :offset, :label, :is_default)
+    end
+
+    # fixme handle exceptions in ATTime code
+    def gen_view (h)
+      if h.is_a? String
+        klass.new(h, ATTime.parseTimeOffset(h), nil)
+      elsif h.keys.first.to_s == 'default'
+        if h.values.first.is_a? String
+          klass.new(h.values.first, ATTime.parseTimeOffset(h.values.first), nil, true)
+        else
+          klass.new(h.values.first.keys.first,
+                    ATTime.parseTimeOffset(h.values.first.keys.first),
+                    h.values.first.values.first, true)
+        end
+      else
+        klass.new(h.keys.first, ATTime.parseTimeOffset(h.keys.first), h.values.first)
+      end
+    end
+
     def stage_load
       defaults = {
         :host_sort => 'sensible',
@@ -86,24 +108,8 @@ module Pencil
         abort "templates directory #{@templates_dir} not found or not readable"
       end
 
-      # fixme handle exceptions in ATTime code
-      klass = Struct.new(:from, :offset, :label, :is_default)
-      # views like [[graphite, offset, label=nil, default]]
-      @_config[:views].map! do |h|
-        if h.is_a? String
-          klass.new(h, ATTime.parseTimeOffset(h), nil)
-        elsif h.keys.first.to_s == 'default'
-          if h.values.first.is_a? String
-            klass.new(h.values.first, ATTime.parseTimeOffset(h.values.first), nil, true)
-          else
-            klass.new(h.values.first.keys.first,
-                      ATTime.parseTimeOffset(h.values.first.keys.first),
-                      h.values.first.values.first, true)
-          end
-        else
-          klass.new(h.keys.first, ATTime.parseTimeOffset(h.keys.first), h.values.first)
-        end
-      end
+      @_config[:views].map! {|h| gen_view(h)}
+
       default = @_config[:views].select {|x| x.is_default}
       if default.size > 1
         puts "warning: multiple default timeslices, using first: #{@_config[:views].first.from}"

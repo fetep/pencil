@@ -26,7 +26,10 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 
 * add ability to have an "all-time" view in live views
 
-* dynamically generate entries in the live window when a from= is not supported
+* [DONE] dynamically generate ephemeral entry in the live window when a from= is not in config
+
+  This info could be stored in a session cookie, but a 'clear this view' button
+  would need to be added to the ui to remove old entries.
 
 * [DONE] make arbitrary default one hour between calendar views
 
@@ -34,7 +37,8 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 
 * support for manual hacks (&height= &tz= and so forth)
 
-* move all class=active to js
+* [DONE] move all class=active to js
+  ...except where it's static per-page (nav)
 
 * support for dashboards specific to a particular cluster
 
@@ -78,3 +82,5 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 * colo-specific dashboards again
 
 * thread-safe graph url generation
+
+* group view

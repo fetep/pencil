@@ -30,27 +30,29 @@ module Pencil
     end
 
     before do
-      @refresh_rate = settings.config[:refresh_rate] * 1000 # s -> ms
       @request_time = Time.now
-      if params[:from]
-        if params[:from] =~ /^\d+/
-          @view = :calendar
-        else
-          view = settings.config[:views].find {|x| x.from == params[:from]}
-          @view = view if view
-        end
-      end
-      @view ||= settings.config[:views].find {|x| x.is_default}
+      @refresh_rate = settings.config[:refresh_rate] * 1000 # s -> ms
+      @views = settings.config[:views].dup
+
       @overrides = {:timezone => cookies['tz']}
       @overrides[:width] = cookies['mw'] if cookies['mw']
 
-      if @view == :calendar
+      if params[:from] =~ /^\d+/ && params[:until] =~ /^\d+/
+        # calendar view
         @overrides[:from] = params[:from]
         @overrides[:until] = params[:until]
       else
-        @overrides[:from] = @view.from
+        view = settings.config[:views].find {|x| x.from == params[:from]}
+        if params[:from] && !view
+          # fixme do error checking for this, and report in ui when it fails
+          @views << settings.config.gen_view(params[:from])
+        end
+        view ||= settings.config[:views].find {|x| x.is_default}
+        @overrides[:from] = view.from
         @overrides[:until] = 'now'
       end
+
+
       @dashboards = settings.config.dashboards
       @graphs = settings.config.graphs
       @fakeglobal = Cluster.new(nil, nil, nil, true) #fixme move to config

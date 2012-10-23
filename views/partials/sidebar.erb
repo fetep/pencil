@@ -26,7 +26,7 @@
         </ul>
         <div class="tab-content">
           <div class="tab-pane" id="tab1">
-            <ul class="nav nav-pills nav-stacked"><% settings.config[:views].each do |a| %>
+            <ul class="nav nav-pills nav-stacked"><% @views.each do |a| %>
               <li<%= ' default="true"' if a.is_default %>><a offset="<%= a.offset %>" label="<%= a.label %>" value="<%= a.from %>" onclick="liveSubmit(this);"><%= a.label||'' %></a></li><% end %>
             </ul>
           </div>
