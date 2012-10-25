@@ -77,6 +77,8 @@ module Pencil::Models
 
     # fixme will have to hack a little harder as this isn't thread-safe
     def url_gen (clusters, hosts, prefix, overrides={})
+      clusters = [] if clusters.size == 1 && clusters.first.is_a?(Cluster)
+
       self.class.instance_eval do
         define_method :properties do
           inner_properties.merge(overrides)
@@ -133,7 +135,7 @@ module Pencil::Models
     def render_host (cluster, host, overrides={})
       label = cluster ? "#{host}/#{cluster} " : "#{host} "
       render_url +
-        url_gen([cluster], [host], label,
+        url_gen(cluster ? [cluster]: [], [host], label,
                 {:title => gentitle(name, cluster, host)}.merge(overrides))
     end
   end

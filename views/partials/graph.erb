@@ -1,6 +1,6 @@
 <div class="container-fluid">
   <div class="graph">
-    <h4><a name="<%= @graph.name %>" href="#<%= @graph.name %>"><%= @graph_title || @graph.name %></a>
+    <h4><a name="<%= @name||@graph.name %>" href="#<%= @name||@graph.name %>"><%= @graph_title || @graph.name %></a>
       <span class="tools"><%= @zoom_text %></span>
     </h4>
     <a href="<%= @click_url %>"><img src="<%= @src %>"></a>

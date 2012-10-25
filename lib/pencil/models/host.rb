@@ -47,7 +47,7 @@ module Pencil
       end
 
       def path
-        @cluster ? "#{@cluster}/#{shortname}" : "#{shortname}"
+        @cluster ? "#{@cluster}/#{shortname}" : "/global/#{shortname}"
       end
 
       def match(glob)

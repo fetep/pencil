@@ -23,6 +23,7 @@
       erb :'partials/graph', :layout => false %>
 
   <% @clusters.map(&:name).each do |c|
+     @name  = c
      @graph_title = "#{@dash.name} / #{@zoom.name} / #{c}"
      @click_url = "/dash/#{c}/#{@dash.name}/#{@zoom.name}"
      @zoom_text = "<small class=\"pull-right\">(<a href=\"#{@click_url}\">zoom</a>)</small>"

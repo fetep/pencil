@@ -54,7 +54,9 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 
 * HTML formatting (-%>)
 
-* test single cluster and no cluster modes
+* [DONE] test single cluster 
+
+* [DONE] test no cluster mode
 
 * update examples
 
@@ -84,3 +86,5 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 * thread-safe graph url generation
 
 * group view
+
+* Refresh specific to view (use <unit> for ephemeral views)

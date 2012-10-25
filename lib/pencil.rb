@@ -114,12 +114,8 @@ module Pencil
       @title = "dashboard :: #{cluster} :: #{@dash.title} :: #{params[:zoom]}"
 
       if cluster == 'global'
-        if !@multi
-          erb :'cluster-zoom'
-        else
-          @cluster = @fakeglobal
-          erb :'global-zoom'
-        end
+        @cluster = @fakeglobal
+        erb !@multi ? :'cluster-zoom' : :'global-zoom'
       else
         @cluster = @clusters.find {|x| x.name == cluster}
         erb :'cluster-zoom'
@@ -131,7 +127,7 @@ module Pencil
       @host = @hosts[Host.get_name(params[:host], cluster)]
       raise "Unknown host: #{params[:host]} in #{params[:cluster]}" unless @host
 
-      @cluster = @cluster = @clusters.find {|x| x.name == cluster}
+      @cluster = @cluster = @clusters.find {|x| x.name == cluster} || @fakeglobal
 
       @title = "#{@host.cluster} :: host :: #{@host.name}"
 
