@@ -809,7 +809,7 @@ input[type="color"],
   margin-bottom: 9px;
   font-size: 14px;
   line-height: 20px;
-  color: #999999;
+  color: #000;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
@@ -838,7 +838,7 @@ input[type="search"],
 input[type="tel"],
 input[type="color"],
 .uneditable-input {
-  background-color: #cccccc;
+  background-color: #adafae;
   border: 1px solid #bbbbbb;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
