@@ -22,16 +22,18 @@
       <div class="tabbable"> <!-- Only required for left/right tabs -->
         <ul class="nav nav-tabs">
           <li id="tabhead1"><a href="#tab1" data-toggle="tab">Live</a></li>
-          <li id="tabhead2"><a href="#tab2" data-toggle="tab">Window</a></li>
+          <li id="tabhead2"><a href="#tab2" data-toggle="tab">Calendar</a></li>
         </ul>
         <div class="tab-content">
           <div class="tab-pane" id="tab1">
             <ul class="nav nav-pills nav-stacked"><% @views.each do |a| %>
               <li<%= ' default="true"' if a.is_default %>><a offset="<%= a.offset %>" label="<%= a.label %>" value="<%= a.from %>" onclick="liveSubmit(this);"><%= a.label||'' %></a></li><% end %>
+              <li id="permd" class="divider"></li>
+              <li><a id="perm" class="disabled" el="tooltip" data-placement="bottom" title="convert this live view to absolute time" onclick="permaLink()">Permalink</a></li>
             </ul>
           </div>
           <div class="tab-pane" id="tab2">
-            <form class="navbar-form pull-left">
+            <form class="navbar-form pull-left" onsubmit="calendarSubmit(); return false;">
               <span class="label">from</span>
               <div class="input-append date" id="dp1" data-date-format="dd-mm-yyyy">
                 <input class="input-small" type="text" value="">
@@ -54,7 +56,7 @@
                   <i class="icon-time"></i>
                 </span>
               </div>
-              <button onclick="calendarSubmit(self)" class="btn">Submit</button>
+              <input type="submit" class="btn" value="Submit">
             </form>
           </div>
         </div>

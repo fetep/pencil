@@ -24,39 +24,11 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 
 # TODOS
 
-* add ability to have an "all-time" view in live views
-
-* [DONE] dynamically generate ephemeral entry in the live window when a from= is not in config
-
-  This info could be stored in a session cookie, but a 'clear this view' button
-  would need to be added to the ui to remove old entries.
-
-* [DONE] make arbitrary default one hour between calendar views
-
-* [DONE] update nav urls in addition to location bar
+* group view
 
 * support for manual hacks (&height= &tz= and so forth)
 
-* [DONE] move all class=active to js
-  ...except where it's static per-page (nav)
-
 * support for dashboards specific to a particular cluster
-
-* [DONE] history api / ie hack for window.replace
-
-* permalink
-
-* [DONE] semi-dynamic resizing
-
-* [DONE] append query parameters in js
-
-* [DONE] when default, don't add parameter
-
-* HTML formatting (-%>)
-
-* [DONE] test single cluster 
-
-* [DONE] test no cluster mode
 
 * update examples
 
@@ -85,6 +57,42 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 
 * thread-safe graph url generation
 
-* group view
-
 * Refresh specific to view (use <unit> for ephemeral views)
+
+* add ability to have an "all-time" view in live views
+
+* HTML formatting (-%>)
+
+* configurable format date (using moment.js, not strftime)
+
+* time increments like graphite/possibly adopt graphite's style
+
+* clear focus of form button on submit
+
+## DONE
+
+* [DONE] permalink
+
+* [DONE] dynamically generate ephemeral entry in the live window when a from= is not in config
+
+  This info could be stored in a session cookie, but a 'clear this view' button
+  would need to be added to the ui to remove old entries.
+
+* [DONE] make arbitrary default one hour between calendar views
+
+* [DONE] update nav urls in addition to location bar
+
+* [DONE] semi-dynamic resizing
+
+* [DONE] append query parameters in js
+
+* [DONE] when default, don't add parameter
+
+* [DONE] move all class=active to js
+  ...except where it's static per-page (nav)
+
+* [DONE] history api / ie hack for window.replace
+
+* [DONE] test single cluster 
+
+* [DONE] test no cluster mode

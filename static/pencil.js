@@ -1,3 +1,5 @@
+// fixme when params are the same (multiple clicks to submit) don't push to history
+
 // fixme possibly use this for query manipulation
 // http://archive.plugins.jquery.com/project/query-object
 
@@ -80,8 +82,8 @@ function addParameter(url, parameterName, parameterValue){
     return urlParts[0] + newQueryString + urlhash;
 }
 
-function reloadImg(obj) {
-    obj.src = addParameter(obj.src, '_salt', new Date().getTime().toString());
+function reloadImg(obj, salt) {
+    obj.src = addParameter(obj.src, '_salt', salt);
 }
 
 function calendarStart() {
@@ -103,13 +105,13 @@ function makeTimestamp() {
         var d = Date.now();
         // fixme make flooring optional
         var b = moment(d).add('seconds', parseInt(offset, 10)).seconds(0);
-        var format = b.format("dddd, MMMM Do YYYY, h:mm:ss a"); // "Sunday, February 14th 2010, 3:25:50 pm"
+        var format = b.format("dddd, MMMM Do YYYY , h:mm:ss a Z"); // "Sunday, February 14th 2010, 3:25:50 pm"
         $('#timestamp').text("timeslice: " + label + " (from " + format + ")");
     } else {
         $('#timestamp').text("calendar view: " +
-                             calendarStart().format("dddd, MMMM Do YYYY, h:mm:ss a") +
+                             calendarStart().format("dddd, MMMM Do YYYY, h:mm:ss a Z") +
                              " - " +
-                             calendarEnd().format("dddd, MMMM Do YYYY, h:mm:ss a"));
+                             calendarEnd().format("dddd, MMMM Do YYYY, h:mm:ss a Z"));
     }
 }
 
@@ -117,7 +119,7 @@ function liveTest () {
     return $('#tab1 li[class=active]').size() > 0;
 }
 
-function calendarSubmit(obj) {
+function calendarSubmit() {
     var start = calendarStart().unix();
     var end = calendarEnd().unix();
     var url = window.location.toString();
@@ -129,6 +131,7 @@ function calendarSubmit(obj) {
     } else {
         window.location.replace(url);
     }
+    return false;
 }
 
 function liveSubmit(obj) {
@@ -172,8 +175,9 @@ function updateImagesWithWidth (width) {
 }
 
 function reloadImages() {
+    var salt =  new Date().getTime().toString();
     $('img').each(function() {
-        reloadImg(this);
+        reloadImg(this, salt);
     });
     makeTimestamp();
 }
@@ -265,6 +269,7 @@ function changeState() {
     }
     if (liveTest()) {
         $("#tab1").addClass("active");
+        $("#tab2").removeClass("active");
         // fixme check if active
         clearInterval(timer);
         if ($('img').size() > 0) {
@@ -278,10 +283,13 @@ function changeState() {
             // $(this).spin();
         });
         until = now;
+        $("#permd").show();
+        $("#perm").parent().show();
         from = until.clone().subtract('hours', 1);
     } else {
         from = moment.unix(parseInt(from, 10));
         until = moment.unix(parseInt(until, 10));
+        $("#tab1").removeClass("active");
         $('#tab1 li[class=active]').removeClass("active");
         $("#tab2").addClass("active");
         clearInterval(timer);
@@ -292,6 +300,8 @@ function changeState() {
             this.src = url;
             // $(this).spin();
         });
+        $("#permd").hide();
+        $("#perm").parent().hide();
         // $(document).ready(function() {
         // $("img").loadNicely({
         //     onLoad: function (img) {
@@ -319,6 +329,7 @@ function changeState() {
 function initialize () {
     fixButtonLabels();
     $.cookie.defaults = {expires: 1460, path: '/'};
+    // fixme this can cause three image loads on first use instead of two
     if (!$.cookie('tz')) {
         var timezone = jstz.determine().name();
         $.cookie('tz', timezone);
@@ -342,9 +353,30 @@ function initialize () {
         });
         history.replaceState(getState(), '');
     }
+    $('#perm').tooltip();
     changeState();
 }
 
 function supportsHistoryApi() {
     return !!(window.history && history.pushState);
+}
+
+function permaLink() {
+    if (liveTest()) {
+        var offset = $('#tab1 li[class=active] a')[0].getAttribute("offset");
+        var until = moment();
+        var from = until.clone().add('seconds', parseInt(offset, 10)).seconds(0);
+        var url = window.location.toString();
+        url = addParameter(url, 'from', from.unix());
+        url = addParameter(url, 'until', until.unix());
+        if (supportsHistoryApi()) {
+            history.pushState({from: from.unix(), until: until.unix()}, '', url);
+            changeState();
+        } else {
+            window.location.replace(url);
+        }
+    } else {
+        // calendar view is already essentially a permanent timeslice
+        calendarSubmit();
+    }
 }
