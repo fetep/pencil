@@ -7,7 +7,7 @@ module Pencil::Helpers
     res = (@clusters.map(&:name) - [@cluster.name]).map do |c|
       "<li><a tabindex=\"-1\" href=\"/dash/#{c}/#{@dash.name}\">#{c}</a></li>"
     end
-    if @cluster != 'global'
+    if @cluster.name != 'global'
       res << '<li class="divider"></li>'
       res << "<li><a tabindex=\"-1\" href=\"/dash/global/#{@dash.name}\">global</a></li>"
     end
