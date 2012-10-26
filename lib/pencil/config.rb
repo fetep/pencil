@@ -104,6 +104,8 @@ module Pencil
         @templates_dir = File.expand_path @templates_dir
       end
 
+      @templates_dir = @templates_dir[0..-2] if @templates_dir[-1..-1] == '/'
+
       unless File.readable?(@templates_dir) && File.directory?(@templates_dir)
         abort "templates directory #{@templates_dir} not found or not readable"
       end
