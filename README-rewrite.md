@@ -32,6 +32,8 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 
 * update examples
 
+* arbitrary tooltip for images
+
 * docs
 
 * compatibility layer

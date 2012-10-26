@@ -354,6 +354,7 @@ function initialize () {
         history.replaceState(getState(), '');
     }
     $('#perm').tooltip();
+    $('div[class=graph] a').tooltip();
     changeState();
 }
 
