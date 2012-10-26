@@ -15,7 +15,7 @@
       <li class="divider"></li>
       <li class="nav-header">Host Selector</li>
       <div class="controls">
-        <input type="text" <%= " placeholder=\"#{@host.name}\"" if @host %> class="span6" style="margin: 0 auto;" data-provide="typeahead" data-items="8" data-source='<%= @hosts.map(&:first).inspect %>'>
+        <input type="text" <%= " placeholder=\"#{@host.name}\"" if @host %> class="span12" style="margin: 0 auto;" data-provide="typeahead" data-items="8" data-source='<%= @hosts.map(&:first).inspect %>'>
       </div>
       <li class="divider"></li>
       <li class="nav-header">Timespec</li>
