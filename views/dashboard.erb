@@ -14,7 +14,7 @@
     </div>
   </div>
   <% @dash.graphs.each do |gname, graph| %>
-  <%= @graph = @graphs[gname]
+  <%= @graph = @graphs[gname] # fixme when this is nil have a better error message
       @graph_title = @graph.name
       @click_url = "/dash/#{@cluster}/#{@dash.name}/#{@graph.name}"
       if !@cluster.psuedo || !@multi

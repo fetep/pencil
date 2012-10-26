@@ -24,10 +24,6 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 
 # TODOS
 
-* group view
-
-* support for manual hacks (&height= &tz= and so forth)
-
 * support for dashboards specific to a particular cluster
 
 * update examples
@@ -70,6 +66,10 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 * time increments like graphite/possibly adopt graphite's style
 
 * clear focus of form button on submit
+
+* group view with descriptions
+
+* support for manual hacks (&height= &tz= and so forth)
 
 ## DONE
 
