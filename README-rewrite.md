@@ -36,9 +36,9 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 
 * hosts associated with dashboards on cluster/global view
 
-* arrows for navigation
-
 * robust migration scripts
+
+## features for another version
 
 * automatic configuration reloading
 
@@ -50,8 +50,6 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
   pencil can be a little slow at generating pages because practically everything
   is dynamic. Some of this stuff doesn't need to be, though this is largely
   mitigated by having image reloading/state changes done on the client side
-
-* colo-specific dashboards again
 
 * thread-safe graph url generation
 
