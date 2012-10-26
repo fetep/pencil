@@ -40,6 +40,7 @@ module Pencil::Models
       end
       @assoc = {}
       @graphs.each do |g, h|
+        raise "dashboard #{@name} has no hosts!" unless h['hosts']
         h['hosts'].each do |wildcard|
           @assoc[g] ||= {}
           @assoc[g][wildcard] ||= SortedSet.new
