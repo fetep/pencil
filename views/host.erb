@@ -1,5 +1,5 @@
 <div class="span10">
-  <h3>host<%= @host.cluster ? " ::#{@host.cluster}" : ''%> :: <%= @host.shortname %></h3>
+  <h3>host<%= @host.cluster ? " :: #{@host.cluster}" : ''%> :: <%= @host.shortname %></h3>
  <h4><div id="timestamp"></div><p class="button-container pull-right">
    <a href="/dash/<%= @cluster %>"><button class="btn-primary">zoom out (<%= @cluster %>)</button></a>
   </p></h4>
