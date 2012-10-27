@@ -38,6 +38,10 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 
 * robust migration scripts
 
+* spin images on a submit until they reflect the new timespec
+
+* keep old calendar timespec (requires adding a bunch parameters/hist stuff)
+
 ## features for another version
 
 * automatic configuration reloading

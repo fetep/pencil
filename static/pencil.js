@@ -282,10 +282,10 @@ function changeState() {
             this.src = url;
             // $(this).spin();
         });
-        until = now;
         $("#permd").show();
         $("#perm").parent().show();
-        from = until.clone().subtract('hours', 1);
+        until = now.clone().hours(11).minutes(59).seconds(0);
+        from = now.clone().subtract('days', 1).hours(12).minutes(1).seconds(0);
     } else {
         from = moment.unix(parseInt(from, 10));
         until = moment.unix(parseInt(until, 10));
@@ -315,6 +315,7 @@ function changeState() {
         // });
     }
 
+    // if ($("#dp1 input").val() === "") { }
     $("#dp1 input").val(from.format('YYYY-MM-DD'));
     $("#dp1").datepicker({ format: 'yyyy-mm-dd'});
     $("#dp2 input").val(until.format('YYYY-MM-DD'));
