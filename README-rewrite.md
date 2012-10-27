@@ -24,11 +24,13 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 
 # TODOS
 
+* css styling around graph/title combo
+
 * support for dashboards specific to a particular cluster
 
 * update examples
 
-* arbitrary tooltip for images
+* arbitrary tooltip/popup for images
 
 * docs
 
@@ -37,10 +39,6 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 * hosts associated with dashboards on cluster/global view
 
 * robust migration scripts
-
-* spin images on a submit until they reflect the new timespec
-
-* keep old calendar timespec (requires adding a bunch parameters/hist stuff)
 
 ## features for another version
 
@@ -72,6 +70,10 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 * group view with descriptions
 
 * support for manual hacks (&height= &tz= and so forth)
+
+* spin images on a submit until they reflect the new timespec
+
+* keep old calendar timespec (requires adding a bunch parameters/hist stuff)
 
 ## DONE
 

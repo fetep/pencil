@@ -5,7 +5,7 @@
     </div>
     <div>
       <% Dashboard.groups.each do |group| %>
-      <h2><a href="/group/<%= group %>"><%= group %></a></h2>
+      <h2><%= group %></h2>
       <ul><% Dashboard.group_entries(group).each do |d| %>
         <li><a href="/dash/<%= @cluster %>/<%= d.name %>"><%= d.name %></a></li>
         <ul><% d.graphs.each do |gname, hosts| %>
