@@ -284,8 +284,8 @@ function changeState() {
         });
         $("#permd").show();
         $("#perm").parent().show();
-        until = now.clone().hours(11).minutes(59).seconds(0);
-        from = now.clone().subtract('days', 1).hours(12).minutes(1).seconds(0);
+        until = now.clone().hours(23).minutes(59).seconds(0);
+        from = now.clone().subtract('days', 1).hours(0).minutes(1).seconds(0);
     } else {
         from = moment.unix(parseInt(from, 10));
         until = moment.unix(parseInt(until, 10));
