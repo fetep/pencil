@@ -20,3 +20,8 @@ div.graph {
     border: 1px #333 dotted;
     margin-top: 10px;
 }
+
+div.graph .header{
+    font-size: 18px;
+    background-color: #282828;
+}

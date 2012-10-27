@@ -5,7 +5,7 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 
 ## Some features of the rewrite
 
-* Single cluster and no cluster support, so the %c in metric format will be optional.
+* Single cluster and no cluster support, so the %c in metric format is optional.
 
 * Graph config format uses graphite-dsl. Goodbye messy hack-YAML graph configuration!
 
@@ -15,6 +15,11 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 * Timezone support via [detect_timezone.js](http://www.pageloom.com/automatic-timezone-detection-with-javascript).
 
 * Dashboard groupings
+
+* popover graph descriptions
+
+  If you've ever looked at a graph and thought to yourself "wtfisthis?", you can
+  now annotate each graph with a description.
 
 ## anti-features
 
@@ -33,8 +38,6 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 * hosts associated with dashboards on cluster/global view
 
 * descriptions/tooltips for dashboards
-
-* css styling around graph/title combo
 
 * support for dashboards specific to a particular cluster
 
@@ -90,6 +93,8 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 * make footer responsive?
 
 ## DONE
+
+* [DONE] css styling around graph/title combo
 
 * [DONE] webapp support
 

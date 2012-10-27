@@ -1,8 +1,9 @@
 <div class="container-fluid">
   <div class="graph">
-    <h4><a name="<%= @name||@graph.name %>" href="#<%= @name||@graph.name %>"><%= @graph_title || @graph.name %></a>
+    <div class="header">
+      <a name="<%= @name||@graph.name %>" href="#<%= @name||@graph.name %>"><%= @graph_title || @graph.name %></a>
       <span class="tools"><%= @zoom_text %></span>
-    </h4>
+    </div>
     <a data-placement="bottom" rel="tooltip" title="<%= escape_html(@graph[:description]||'') %>" href="<%= @click_url %>"><img src="<%= @src %>"></a>
   </div>
 </div>
