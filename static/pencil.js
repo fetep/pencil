@@ -105,7 +105,7 @@ function makeTimestamp() {
         var d = Date.now();
         // fixme make flooring optional
         var b = moment(d).add('seconds', parseInt(offset, 10)).seconds(0);
-        var format = b.format("dddd, MMMM Do YYYY , h:mm:ss a Z"); // "Sunday, February 14th 2010, 3:25:50 pm"
+        var format = b.format("dddd, MMMM Do YYYY, h:mm:ss a Z"); // "Sunday, February 14th 2010, 3:25:50 pm"
         $('#timestamp').text("timeslice: " + label + " (from " + format + ")");
     } else {
         $('#timestamp').text("calendar view: " +
@@ -356,6 +356,7 @@ function initialize () {
     }
     $('#perm').tooltip();
     $('div[class=graph] a').tooltip();
+    $('footer a').tooltip();
     changeState();
 }
 
@@ -380,5 +381,17 @@ function permaLink() {
     } else {
         // calendar view is already essentially a permanent timeslice
         calendarSubmit();
+    }
+}
+
+// relative web apps not supported yet, see
+// https://bugzilla.mozilla.org/show_bug.cgi?id=745928
+// fixme make error message more informative/evangelistic
+function installWebApp () {
+    if (navigator.mozApps) {
+        var manifest = window.location.protocol + '//' + window.location.host + '/manifest.webapp';
+        navigator.mozApps.install(manifest);
+    } else {
+        alert("Your browser doesn't support open web apps.");
     }
 }

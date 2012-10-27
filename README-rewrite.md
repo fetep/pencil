@@ -24,6 +24,16 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 
 # TODOS
 
+* selected tab doesn't show up on start in some browsers
+
+* header navigation is broken on mobile firefox and chrome
+
+* move css/js to subdirs
+
+* hosts associated with dashboards on cluster/global view
+
+* descriptions/tooltips for dashboards
+
 * css styling around graph/title combo
 
 * support for dashboards specific to a particular cluster
@@ -36,11 +46,13 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 
 * compatibility layer
 
-* hosts associated with dashboards on cluster/global view
-
 * robust migration scripts
 
 ## features for another version
+
+* higher resolution icon
+
+* reimplement # wildcard
 
 * automatic configuration reloading
 
@@ -75,7 +87,11 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 
 * keep old calendar timespec (requires adding a bunch parameters/hist stuff)
 
+* make footer responsive?
+
 ## DONE
+
+* [DONE] webapp support
 
 * [DONE] permalink
 

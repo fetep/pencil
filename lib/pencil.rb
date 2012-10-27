@@ -6,6 +6,8 @@ require 'pencil/config'
 require 'pencil/helpers'
 require 'pencil/models'
 
+require 'json'
+
 module Pencil
   class App < Sinatra::Base
     helpers Sinatra::Cookies
@@ -132,6 +134,15 @@ module Pencil
       @title = "#{@host.cluster} :: host :: #{@host.name}"
 
       erb :host
+    end
+
+    get '/manifest.webapp' do
+      content_type 'application/x-web-app-manifest+json'
+      if settings.config[:webapp]
+        settings.config[:webapp][:manifest].to_json
+      else
+        {}.to_json
+      end
     end
   end # Pencil::App
 end # Pencil

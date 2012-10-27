@@ -45,7 +45,10 @@
       <hr>
     </div><!--/.fluid-container-->
 
-    <footer>generated <%= @request_time %> by <a href="https://github.com/fetep/pencil" target="_blank">pencil</a> v<%= Pencil::VERSION %></footer>
+    <footer>
+      <% if settings.config[:webapp] %><a onclick="installWebApp();" el="tooltip" data-placement="right" title="install as an open web app" class="pull-left"><i class="icon-pencil"></i></a><% end %>
+      generated <%= @request_time %> by <a href="https://github.com/fetep/pencil" target="_blank">pencil</a> v<%= Pencil::VERSION %>
+    </footer>
 
     <script src="/jquery.js"></script>
     <script src="/pencil.js"></script>

@@ -110,6 +110,26 @@ module Pencil
         abort "templates directory #{@templates_dir} not found or not readable"
       end
 
+      if @_config[:webapp]
+        @_config[:webapp] = {} if @_config[:webapp] == true
+        unless @_config[:webapp][:manifest]
+          puts "no :manifest key for webapp, using default"
+          @_config[:webapp][:manifest] = {
+            "name" => "Pencil",
+            "description" => "Graphite Dashboard Frontend",
+            "launch_path" => "/",
+            "icons" => {
+              "16" => "/favicon.ico"
+            },
+            "developer" => {
+              "name" => "whd@mozilla.com",
+              "url" => "https://github.com/fetep/pencil"
+            },
+            "default_locale" => "en"
+          }
+        end
+      end
+
       @_config[:views].map! {|h| gen_view(h)}
 
       default = @_config[:views].select {|x| x.is_default}
