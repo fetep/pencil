@@ -29,11 +29,11 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 
 # TODOS
 
+* warn when a wildcard doesn't match any hosts
+
 * selected tab doesn't show up on start in some browsers
 
 * header navigation is broken on mobile firefox and chrome
-
-* move css/js to subdirs
 
 * hosts associated with dashboards on cluster/global view
 
