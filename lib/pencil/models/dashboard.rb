@@ -18,7 +18,7 @@ module Pencil::Models
       @@group_map[group]
     end
 
-    attr_reader :title, :graphs, :name, :group
+    attr_reader :title, :graphs, :name, :group, :description
     attr_accessor :assoc # graph -> wildcard -> hosts
 
     # fixme warn on duplicate titles
@@ -33,6 +33,7 @@ module Pencil::Models
       @@group_map[@group] ||= SortedSet.new
       @@group_map[@group] << self
       @title = yaml['title']
+      @description = yaml['description']
       # fixme warn about no hosts key
       global_hosts = {'hosts' => (yaml['hosts'] || '*')}
       @graphs = yaml['graphs'].map do |a|
@@ -40,7 +41,7 @@ module Pencil::Models
       end
       @assoc = {}
       @graphs.each do |g, h|
-        raise "dashboard #{@name} has no hosts!" unless h['hosts']
+        raise "dashboard #{@name} graph #{g} has no hosts!" unless h['hosts']
         h['hosts'].each do |wildcard|
           @assoc[g] ||= {}
           @assoc[g][wildcard] ||= SortedSet.new
@@ -48,6 +49,7 @@ module Pencil::Models
       end
     end
 
+    # fixme make these better
     def to_s
       @name
     end

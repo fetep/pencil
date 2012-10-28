@@ -29,8 +29,6 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 
 # TODOS
 
-* descriptions/tooltips for dashboards
-
 * support for dashboards specific to a particular cluster
 
 * arbitrary tooltip/popup for images
@@ -89,6 +87,8 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 * make footer responsive?
 
 ## DONE
+
+* [DONE] descriptions/tooltips for dashboards
 
 * [DONE] css styling around graph/title combo
 

@@ -369,7 +369,7 @@ function initialize () {
     }
     $('#perm').tooltip();
     $('div[class=graph] a').tooltip();
-    $('footer a').tooltip();
+    $('li[rel=tooltip]').tooltip();
     changeState();
 }
 

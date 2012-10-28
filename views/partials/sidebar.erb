@@ -11,7 +11,7 @@
       <li class="nav-header">Dashboards (<%= @cluster || 'global' %>)</li>
       <% Dashboard.groups.each do |group| %>
       <li><span class="label"><%= group %></span></li><% Dashboard.group_entries(group).each do |d| %>
-      <li<%= ' class="active"' if @dash && @dash == d %>><a href="/dash/<%= @cluster %>/<%= d.name %>"><%= d.title %></a></li><% end %><% end %>
+      <li<%= ' class="active"' if @dash && @dash == d %><%= " rel=\"tooltip\" data-delay=\"300\" data-placement=\"right\" title=\"#{escape_html d.description}\"" if d.description %>><a href="/dash/<%= @cluster %>/<%= d.name %>"><%= d.title %></a></li><% end %><% end %>
       <li class="divider"></li>
       <li class="nav-header">Host Selector</li>
       <div class="controls">
@@ -29,7 +29,7 @@
             <ul class="nav nav-pills nav-stacked"><% @views.each do |a| %>
               <li<%= ' default="true"' if a.is_default %>><a offset="<%= a.offset %>" label="<%= a.label %>" value="<%= a.from %>" onclick="liveSubmit(this);"><%= a.label||'' %></a></li><% end %>
               <li id="permd" class="divider"></li>
-              <li><a id="perm" el="tooltip" data-placement="bottom" title="convert this live view to absolute time" onclick="permaLink()">permalink</a></li>
+              <li><a id="perm" rel="tooltip" data-placement="bottom" title="convert this live view to absolute time" onclick="permaLink()">permalink</a></li>
             </ul>
           </div>
           <div class="tab-pane" id="tab2">
