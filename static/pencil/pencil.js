@@ -82,6 +82,19 @@ function addParameter(url, parameterName, parameterValue){
     return urlParts[0] + newQueryString + urlhash;
 }
 
+function switchToHost(host) {
+    host = host.split(".").reverse();
+    if (host.length == 1) {
+        host.unshift('global');
+    }
+    host = host.join("/");
+    var q = window.location.toString().split('?');
+    q.shift();
+    q.unshift('');
+    q = q.join('?');
+    return window.location = "/host/" + host +q;
+}
+
 function reloadImg(obj, salt) {
     obj.src = addParameter(obj.src, '_salt', salt);
 }

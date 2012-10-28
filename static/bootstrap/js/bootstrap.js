@@ -1675,16 +1675,7 @@
       // there is likely a better way of doing this than modding bootstrap directly
       this.hide();
       var host = this.$element.val();
-      host = host.split(".").reverse();
-      if (host.length == 1) {
-          host.unshift('global');
-      }
-      host = host.join("/")
-      var q = window.location.toString().split('?');
-      q.shift();
-      q.unshift('');
-      q = q.join('?');
-      return window.location = "/host/" + host +q;
+      return switchToHost(host); // defined in pencil.js
     }
 
   , updater: function (item) {

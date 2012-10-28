@@ -7,21 +7,15 @@
       <% Dashboard.groups.each do |group| %>
       <h2><%= group %></h2>
       <ul><% Dashboard.group_entries(group).each do |d| %>
-        <li><a href="/dash/<%= @cluster %>/<%= d.name %>"><%= d.name %></a></li>
+      <% hosts = Set.new
+         d.graphs.each do |gname, _|
+           wildcards = d.graphs.find {|g, h| g == gname}.last['hosts']
+           wildcards.each {|w| hosts += d.assoc[gname][w].to_a}
+         end
+         @select_hosts = hosts.select {|h| @multi ? @cluster.name == 'global' || h.cluster == @cluster.name : true} %>
+        <li><a href="/dash/<%= @cluster %>/<%= d.name %>"><%= d.name %></a><%= erb :'partials/hosts_selector' %> </li>
         <ul><% d.graphs.each do |gname, hosts| %>
-          <% wildcards = d.graphs.find {|g, h| g == gname}.last['hosts']
-             hosts = []
-             wildcards.each {|w| hosts += d.assoc[gname][w].to_a}
-             hosts.select! {|h| @multi ? @cluster.name == 'global' || h.cluster == @cluster.name : true} %>
-          <li><a href="<%= "/dash/#{@cluster}/#{d.name}/#{gname}"%>"><%= gname %></a><% if hosts.size == 0 %> [no hosts]<% else %>
-            <select onchange="window.open(this.options[this.selectedIndex].value,'_top')">
-              <option value="">-select host-</option>
-              <% hosts.each do |h|
-                 option = "#{h.name}"
-                 value = append_query_string("/host/#{h.cluster}/#{h}") %>
-              <option value="<%= value %>"><%= option %></option><% end %>
-            </select>
-          <% end %></li><% end %>
+          <li><a href="<%= "/dash/#{@cluster}/#{d.name}/#{gname}"%>"><%= gname %></a></li><% end %>
         </ul><% end %>
       </ul><% end %>
     </div>
@@ -31,23 +25,25 @@
 <% if !@cluster.psuedo %>
 <div class="span4">
   <div class="page-header"><h1><%= @cluster.name %></h1></div>
-  <h4>Other hosts (not associated with a dashboard)</h4>
-    <% @cluster.noassoc.each do |host| %>
-    <ul>
+  <% if @cluster.noassoc.size > 0 %>
+    <h4>Other hosts (not associated with a dashboard)</h4>
+    <ul><% @cluster.noassoc.each do |host| %>
       <li><a href="/host/<%= host.path  %>"><%= host.shortname %></a></li>
     </ul><% end %>
+  <% end %>
 </div>
 <% else %>
 <% @clusters.each do |c| %>
+<section id="<%= c.name %>">
 <div class="span3">
   <div class="page-header"><h1><%= c.psuedo ? 'hosts' : c %></h1></div>
   <div>
-    <% c.hosts.each do |host| %>
     <ul>
-      <li><a href="/host/<%= host.path %>"><%= host.shortname %></a></li>
-    </ul><% end %>
+    <% c.hosts.each do |host| %>
+      <li><a href="/host/<%= host.path %>"><%= host.shortname %></a></li><% end %>
+    </ul>
   </div>
-</section>
 </div>
+</section>
 <% end %>
 <% end %>
