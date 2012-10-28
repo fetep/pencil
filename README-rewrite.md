@@ -31,8 +31,6 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 
 * support for dashboards specific to a particular cluster
 
-* arbitrary tooltip/popup for images
-
 * docs
 
 * update examples
@@ -42,6 +40,10 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 * cheap reload with /reload route and exec
 
 ## features for another version
+
+* popup title has original anchor href
+
+* forward/backward buttons for mobile/webapp
 
 * better logging
 
@@ -89,6 +91,8 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 * make footer responsive?
 
 ## DONE
+
+* [DONE] arbitrary tooltip/popup for images
 
 * [DONE] compatibility layer for parameters
 

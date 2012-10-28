@@ -374,8 +374,19 @@ function initialize () {
         history.replaceState(getState(), '');
     }
     $('#perm').tooltip();
-    $('div[class=graph] a').tooltip();
     $('li[rel=tooltip]').tooltip();
+
+    $('html').click(function(e) {
+        $('a[rel=popover]').popover('hide');
+    });
+
+    $('a[rel=popover]').popover({
+        trigger: 'manual'
+    }).click(function(e) {
+        $(this).popover('toggle');
+        e.stopPropagation();
+    });
+
     changeState();
 }
 
