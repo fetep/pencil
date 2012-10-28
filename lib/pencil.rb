@@ -6,6 +6,8 @@ require 'pencil/config'
 require 'pencil/helpers'
 require 'pencil/models'
 
+require 'chronic'
+require 'chronic_duration'
 require 'json'
 
 module Pencil
@@ -33,17 +35,31 @@ module Pencil
 
     before do
       @request_time = Time.now
+      @compatibility = true if params[:start]
+
       @refresh_rate = settings.config[:refresh_rate] * 1000 # s -> ms
       @views = settings.config[:views].dup
 
       @overrides = {:timezone => cookies['tz']}
       @overrides[:width] = cookies['mw'] if cookies['mw']
 
-      if params[:from] =~ /^\d+/ && params[:until] =~ /^\d+/
+      if @compatibility
+        from = Chronic.parse(params[:start]) || Time.now
+        from = from.strftime('%s')
+        @overrides[:from] = from
+
+        if params[:duration]
+          duration = ChronicDuration.parse(params[:duration]) || 3600
+          @overrides[:until] = "#{from.to_i + duration}"
+        else
+          @overrides[:until] = Time.now.strftime('%s')
+        end
+      elsif params[:from] =~ /^\d+/ && params[:until] =~ /^\d+/
         # calendar view
         @overrides[:from] = params[:from]
         @overrides[:until] = params[:until]
       else
+        # we'll do it live!
         view = settings.config[:views].find {|x| x.from == params[:from]}
         if params[:from] && !view
           # fixme do error checking for this, and report in ui when it fails

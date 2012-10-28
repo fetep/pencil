@@ -274,12 +274,18 @@ function changeState() {
         $(this).parent().removeClass("active");
     });
 
+    if (typeof compatibility !== 'undefined') {
+        from = compat_from;
+        until = compat_until;
+    }
+
     if (!from) {
         from = $('li[default=true] a')[0].getAttribute('value');
         $('li[default=true]').addClass('active');
     } else {
         $('li a[value=\"'+getParameterByName('from')+'\"]').parent().addClass('active');
     }
+
     if (liveTest()) {
         $("#tab1").addClass("active");
         $("#tab2").removeClass("active");

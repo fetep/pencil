@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency("sinatra")
   spec.add_dependency("sinatra-contrib")
   spec.add_dependency("json")
-  spec.add_dependency("chronic") #for compatability
+  spec.add_dependency("chronic") #for compatibility
   spec.add_dependency("chronic_duration")
   spec.add_dependency("graphite_graph")
 

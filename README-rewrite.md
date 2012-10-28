@@ -33,15 +33,17 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 
 * arbitrary tooltip/popup for images
 
-* compatibility layer
-
 * docs
 
 * update examples
 
 * robust migration scripts
 
+* cheap reload with /reload route and exec
+
 ## features for another version
+
+* better logging
 
 * header navigation appears to be broken on mobile firefox and chrome
 
@@ -87,6 +89,8 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 * make footer responsive?
 
 ## DONE
+
+* [DONE] compatibility layer for parameters
 
 * [DONE] descriptions/tooltips for dashboards
 
