@@ -4283,12 +4283,12 @@ input[type="submit"].btn.btn-mini {
   display: none;
   width: 236px;
   padding: 1px;
-  background-color: #ffffff;
+  background-color: #111;
   -webkit-background-clip: padding-box;
   -moz-background-clip: padding;
   background-clip: padding-box;
-  border: 1px solid #ccc;
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(1, 0, 0, 0.2);
+  border: 1px solid #33b5e5;
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
   border-radius: 6px;
@@ -4314,8 +4314,8 @@ input[type="submit"].btn.btn-mini {
   font-size: 14px;
   font-weight: normal;
   line-height: 18px;
-  background-color: #f7f7f7;
-  border-bottom: 1px solid #ebebeb;
+  background-color: #000;
+  border-bottom: 1px solid #33b5e5;
   -webkit-border-radius: 5px 5px 0 0;
   -moz-border-radius: 5px 5px 0 0;
   border-radius: 5px 5px 0 0;
