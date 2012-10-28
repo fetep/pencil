@@ -29,29 +29,25 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 
 # TODOS
 
-* warn when a wildcard doesn't match any hosts
-
-* selected tab doesn't show up on start in some browsers
-
-* header navigation is broken on mobile firefox and chrome
-
-* hosts associated with dashboards on cluster/global view
-
 * descriptions/tooltips for dashboards
 
 * support for dashboards specific to a particular cluster
 
-* update examples
-
 * arbitrary tooltip/popup for images
+
+* compatibility layer
 
 * docs
 
-* compatibility layer
+* update examples
 
 * robust migration scripts
 
 ## features for another version
+
+* header navigation appears to be broken on mobile firefox and chrome
+
+* warn when a wildcard doesn't match any hosts
 
 * higher resolution icon
 
