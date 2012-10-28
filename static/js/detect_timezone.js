@@ -2,6 +2,7 @@
 /*global console*/
 /*global exports*/
 /*version 2012-05-10*/
+/*license: MIT*/
 
 (function(root) {
   /**
