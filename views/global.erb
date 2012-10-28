@@ -13,7 +13,7 @@
            wildcards.each {|w| hosts += d.assoc[gname][w].to_a}
          end
          @select_hosts = hosts.select {|h| @multi ? @cluster.name == 'global' || h.cluster == @cluster.name : true} %>
-        <li><a href="/dash/<%= @cluster %>/<%= d.name %>"><%= d.name %></a><%= erb :'partials/hosts_selector' %> </li>
+        <li><a href="/dash/<%= @cluster %>/<%= d.name %>"><%= d.name %></a><%= erb :'partials/hosts-selector' %> </li>
         <ul><% d.graphs.each do |gname, hosts| %>
           <li><a href="<%= "/dash/#{@cluster}/#{d.name}/#{gname}"%>"><%= gname %></a></li><% end %>
         </ul><% end %>
