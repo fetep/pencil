@@ -28,8 +28,8 @@
   <% if @cluster.noassoc.size > 0 %>
     <h4>Other hosts (not associated with a dashboard)</h4>
     <ul><% @cluster.noassoc.each do |host| %>
-      <li><a href="/host/<%= host.path  %>"><%= host.shortname %></a></li>
-    </ul><% end %>
+      <li><a href="/host/<%= host.path  %>"><%= host.shortname %></a></li><% end %>
+    </ul>
   <% end %>
 </div>
 <% else %>
