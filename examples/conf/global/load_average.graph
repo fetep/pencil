@@ -1,0 +1,9 @@
+# -*- mode: ruby -*-
+title '1 minute load average'
+# this is HTML
+description 'system.load.1<br><br>You might want to add load.5 and load.15.'
+
+field :system_load_1,
+        :alias => "load",
+        :data => "system.load.1"
+

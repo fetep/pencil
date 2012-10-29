@@ -1,0 +1,8 @@
+# -*- mode: ruby -*-
+title 'mysql innodb transaction time (mean)'
+
+field :stats_timers_mysql_innodb_trx_time_mean,
+        :alias => "seconds",
+        :color => 'green',
+        :data => "averageSeries(stats.timers.mysql.innodb.trx_time.mean)"
+

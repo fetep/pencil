@@ -1,0 +1,8 @@
+# -*- mode: ruby -*-
+title 'mysql innodb transactions active'
+
+field :stats_timers_mysql_innodb_trx_active_mean,
+        :alias => "transactions",
+        :color => 'green',
+        :data => "stats.timers.mysql.innodb.trx_active.mean"
+

@@ -1,0 +1,12 @@
+---
+title: mysql overview
+graphs:
+- mysql_ops
+- load_average
+- cpu_usage
+- network_traffic
+- mysql_pending_file_io
+- mysql_history_length
+hosts:
+- db0*
+- db3*

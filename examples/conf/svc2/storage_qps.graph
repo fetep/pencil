@@ -1,0 +1,29 @@
+# -*- mode: ruby -*-
+title 'storage qps'
+area :stacked
+
+field :storage_request_rate_200,
+        :alias => "200",
+        :color => 'green',
+        :data => "storage.request_rate.200"
+
+field :storage_request_rate_302,
+        :alias => "302",
+        :color => 'blue',
+        :data => "storage.request_rate.302"
+
+field :storage_request_rate_401,
+        :alias => "401",
+        :color => 'brown',
+        :data => "storage.request_rate.401"
+
+field :storage_request_rate_404,
+        :alias => "404",
+        :color => 'purple',
+        :data => "storage.request_rate.404"
+
+field :storage_request_rate_503,
+        :alias => "503",
+        :color => 'red',
+        :data => "storage.request_rate.503"
+

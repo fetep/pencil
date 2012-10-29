@@ -1,0 +1,7 @@
+---
+title: node allocation
+graphs:
+- service_node_alloc
+- service_node_actives
+hosts:
+- adm01

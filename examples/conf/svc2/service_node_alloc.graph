@@ -1,0 +1,14 @@
+# -*- mode: ruby -*-
+title 'node alloc rate'
+area :stacked
+
+field :users_alloc_rate_colo1,
+        :alias => "colo1 alloc/s",
+        :color => 'green',
+        :data => "service.users.alloc_rate.colo1"
+
+field :users_alloc_rate_colo1_2,
+        :alias => "colo2 alloc/s",
+        :color => 'blue',
+        :data => "service.users.alloc_rate.colo1"
+

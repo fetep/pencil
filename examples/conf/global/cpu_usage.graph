@@ -1,0 +1,24 @@
+# -*- mode: ruby -*-
+title 'cpu usage'
+area :stacked
+
+field :system_cpu_system,
+        :alias => "CPU/system",
+        :color => 'yellow',
+        :data => "system.cpu.system"
+
+field :system_cpu_wio,
+        :alias => "CPU/wio",
+        :color => 'red',
+        :data => "system.cpu.wio"
+
+field :system_cpu_nice,
+        :alias => "CPU/nice",
+        :color => 'green',
+        :data => "system.cpu.nice"
+
+field :system_cpu_user,
+        :alias => "CPU/user",
+        :color => 'blue',
+        :data => "system.cpu.user"
+

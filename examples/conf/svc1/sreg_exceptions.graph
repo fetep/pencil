@@ -1,0 +1,8 @@
+# -*- mode: ruby -*-
+title 'sreg exceptions'
+
+field :sreg_log_exception,
+        :alias => "exceptions/s",
+        :color => 'red',
+        :data => "sreg.log.exception"
+

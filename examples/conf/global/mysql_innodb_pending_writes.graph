@@ -1,0 +1,19 @@
+# -*- mode: ruby -*-
+title 'mysql innodb buffer pool pending writes'
+area :stacked
+
+field :stats_timers_mysql_innodb_buf_writes_lru_mean,
+        :alias => "lru",
+        :color => 'green',
+        :data => "stats.timers.mysql.innodb.buf_writes_lru.mean"
+
+field :stats_timers_mysql_innodb_buf_writes_flush_list_mean,
+        :alias => "flush list",
+        :color => 'blue',
+        :data => "stats.timers.mysql.innodb.buf_writes_flush_list.mean"
+
+field :stats_timers_mysql_innodb_buf_writes_single_page_mean,
+        :alias => "single page",
+        :color => 'brown',
+        :data => "stats.timers.mysql.innodb.buf_writes_single_page.mean"
+

@@ -1,0 +1,13 @@
+# -*- mode: ruby -*-
+title 'node actives'
+
+field :service_users_active_colo1,
+        :alias => "colo1 actives",
+        :color => 'green',
+        :data => "service.users.active.colo1"
+
+field :service_users_active_colo1_2,
+        :alias => "colo2 actives",
+        :color => 'blue',
+        :data => "service.users.active.colo1"
+

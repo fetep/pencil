@@ -1,0 +1,8 @@
+# -*- mode: ruby -*-
+title 'mysql transaction history'
+
+field :stats_timers_mysql_innodb_history_length_mean,
+        :alias => "read",
+        :color => 'green',
+        :data => "averageSeries(stats.timers.mysql.innodb.history_length.mean)"
+

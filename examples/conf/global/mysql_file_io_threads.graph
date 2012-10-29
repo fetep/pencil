@@ -1,0 +1,27 @@
+# -*- mode: ruby -*-
+title 'mysql file i/o threads'
+
+field :stats_timers_mysql_innodb_threads_active_read_mean,
+        :alias => "read",
+        :color => 'green',
+        :smoothing => 10,
+        :data => "stats.timers.mysql.innodb.threads_active_read.mean"
+
+field :stats_timers_mysql_innodb_threads_active_write_mean,
+        :alias => "write",
+        :color => 'blue',
+        :smoothing => 10,
+        :data => "stats.timers.mysql.innodb.threads_active_write.mean"
+
+field :stats_timers_mysql_innodb_threads_active_ibuf_mean,
+        :alias => "ibuf",
+        :color => 'brown',
+        :smoothing => 10,
+        :data => "stats.timers.mysql.innodb.threads_active_ibuf.mean"
+
+field :stats_timers_mysql_innodb_threads_active_log_mean,
+        :alias => "log",
+        :color => 'red',
+        :smoothing => 10,
+        :data => "stats.timers.mysql.innodb.threads_active_log.mean"
+

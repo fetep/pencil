@@ -1,0 +1,28 @@
+# -*- mode: ruby -*-
+title 'mysql pending file i/o'
+
+field :stats_timers_mysql_innodb_pending_read_mean,
+        :alias => "read",
+        :color => 'green',
+        :data => "stats.timers.mysql.innodb.pending_read.mean"
+
+field :stats_timers_mysql_innodb_pending_write_mean,
+        :alias => "write",
+        :color => 'blue',
+        :data => "stats.timers.mysql.innodb.pending_write.mean"
+
+field :stats_timers_mysql_innodb_pending_ibuf_mean,
+        :alias => "ibuf",
+        :color => 'brown',
+        :data => "stats.timers.mysql.innodb.pending_ibuf.mean"
+
+field :stats_timers_mysql_innodb_pending_log_mean,
+        :alias => "log",
+        :color => 'red',
+        :data => "stats.timers.mysql.innodb.pending_log.mean"
+
+field :stats_timers_mysql_innodb_pending_sync_mean,
+        :alias => "sync",
+        :color => 'yellow',
+        :data => "stats.timers.mysql.innodb.pending_sync.mean"
+

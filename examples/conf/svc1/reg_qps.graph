@@ -1,0 +1,29 @@
+# -*- mode: ruby -*-
+title 'reg qps'
+area :stacked
+
+field :reg_request_rate_200,
+        :alias => "200",
+        :color => 'green',
+        :data => "reg.request_rate.200"
+
+field :reg_request_rate_302,
+        :alias => "302",
+        :color => 'blue',
+        :data => "reg.request_rate.302"
+
+field :reg_request_rate_401,
+        :alias => "401",
+        :color => 'brown',
+        :data => "reg.request_rate.401"
+
+field :reg_request_rate_404,
+        :alias => "404",
+        :color => 'purple',
+        :data => "reg.request_rate.404"
+
+field :reg_request_rate_503,
+        :alias => "503",
+        :color => 'red',
+        :data => "reg.request_rate.503"
+

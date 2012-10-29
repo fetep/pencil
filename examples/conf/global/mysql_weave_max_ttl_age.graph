@@ -1,0 +1,9 @@
+# -*- mode: ruby -*-
+title 'mysql weave max ttl age'
+
+field :stats_timers_mysql_weave_max_ttl_age_mean,
+        :alias => "max ttl age (days)",
+        :color => 'green',
+        :as_percent => 8640000,
+        :data => "averageSeries(stats.timers.mysql.weave.max_ttl_age.mean)"
+

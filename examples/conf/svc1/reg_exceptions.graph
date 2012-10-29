@@ -1,0 +1,8 @@
+# -*- mode: ruby -*-
+title 'reg exceptions'
+
+field :reg_log_exception,
+        :alias => "exceptions/s",
+        :color => 'red',
+        :data => "reg.log.exception"
+

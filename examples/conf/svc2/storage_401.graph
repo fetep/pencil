@@ -1,0 +1,8 @@
+# -*- mode: ruby -*-
+title 'storage 401s'
+
+field :storage_request_rate_401,
+        :alias => "200",
+        :color => 'brown',
+        :data => "storage.request_rate.401"
+

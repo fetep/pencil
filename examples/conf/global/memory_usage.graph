@@ -1,0 +1,21 @@
+# -*- mode: ruby -*-
+title 'system memory usage'
+
+field :system_memory_total_system_memory_free_system_memory_cached_system_memory_shared_system_memory_buffers,
+        :alias => "used",
+        :color => 'green',
+        :scale => 1024,
+        :data => "diffSeries(system.memory.total, system.memory.free, system.memory.cached, system.memory.shared, system.memory.buffers)"
+
+field :system_memory_total,
+        :alias => "total",
+        :color => 'white',
+        :scale => 1024,
+        :data => "system.memory.total"
+
+field :system_memory_cached,
+        :alias => "cached",
+        :color => 'purple',
+        :scale => 1024,
+        :data => "system.memory.cached"
+

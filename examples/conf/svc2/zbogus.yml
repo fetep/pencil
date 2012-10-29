@@ -1,0 +1,12 @@
+---
+title: bogus
+description: "this dashboard has no hosts associated with it"
+
+graphs:
+- reg_qps
+- reg_exceptions
+- cpu_usage
+- memory_usage
+- network_traffic
+hosts:
+- "foo*"

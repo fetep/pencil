@@ -1,0 +1,26 @@
+# -*- mode: ruby -*-
+title 'mysql operations'
+area :stacked
+
+description "possible description goes here"
+
+field :mysql_ops_delete,
+        :alias => "delete",
+        :color => 'red',
+        :data => "mysql.ops.delete"
+
+field :mysql_ops_insert,
+        :alias => "insert",
+        :color => 'brown',
+        :data => "mysql.ops.insert"
+
+field :mysql_ops_update,
+        :alias => "update",
+        :color => 'purple',
+        :data => "mysql.ops.update"
+
+field :mysql_ops_select,
+        :alias => "select",
+        :color => 'green',
+        :data => "mysql.ops.select"
+

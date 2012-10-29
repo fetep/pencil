@@ -1,0 +1,24 @@
+---
+:config:
+  :graphite_url: http://graphite-global.phx.weave.mozilla.com
+  :default_colors:
+    ["blue", "green", "yellow", "red", "purple", "brown", "aqua", "gold"]
+  :url_opts:
+    :width: 1000
+    :height: 400
+    :fontSize: 15
+    :start: "8 hours ago" # chronic timespec
+    :template: "noc"
+    :yMin: 0
+    :margin: 5
+    :thickness: 2
+
+  :refresh_rate: 60
+  :host_sort: "sensible"
+  :quantum: 30 # map requests to 30 second intervals
+  :date_format: "%X %x" # strftime
+  :metric_format: "%m.%c.%h" #%m metric, %c cluster, %h host
+  :now_threshold: 300 # Time.at(Time.now - now_threshold) considered Time.now
+
+  # set this if you have a new graphite that supports color(series, "color")
+  # :use_color: true

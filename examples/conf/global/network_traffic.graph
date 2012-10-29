@@ -1,0 +1,15 @@
+# -*- mode: ruby -*-
+title 'network traffic'
+
+field :system_network_in,
+        :alias => "bits in",
+        :color => 'green',
+        :scale => 8,
+        :data => "system.network.in"
+
+field :system_network_out,
+        :alias => "bits out",
+        :color => 'blue',
+        :scale => 8,
+        :data => "system.network.out"
+

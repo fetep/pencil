@@ -1,0 +1,9 @@
+# -*- mode: ruby -*-
+title 'mysql innodb checkpoint age (% of target)'
+
+field :stats_timers_mysql_innodb_log_checkpoint_age_mean_stats_timers_mysql_innodb_log_checkpoint_age_target_mean,
+        :alias => "",
+        :color => 'green',
+        :as_percent => 1.0,
+        :data => "divideSeries(stats.timers.mysql.innodb.log_checkpoint_age.mean, stats.timers.mysql.innodb.log_checkpoint_age_target.mean)"
+

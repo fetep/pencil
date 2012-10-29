@@ -1,0 +1,3 @@
+These graphs are used by multiple services, so I stuck them here for
+convention. It really doesn't matter where graphs and dashboards are defined
+under $templates_dir.

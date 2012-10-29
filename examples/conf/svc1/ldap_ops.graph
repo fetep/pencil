@@ -1,0 +1,25 @@
+# -*- mode: ruby -*-
+title 'ldap operations'
+description "this graph is empty because my test data is empty ;)"
+area :stacked
+
+field :slapd_ops_add,
+        :alias => "add",
+        :color => 'red',
+        :data => "slapd.ops.add"
+
+field :slapd_ops_bind,
+        :alias => "bind",
+        :color => 'brown',
+        :data => "slapd.ops.bind"
+
+field :slapd_ops_modify,
+        :alias => "modify",
+        :color => 'purple',
+        :data => "slapd.ops.modify"
+
+field :slapd_ops_search,
+        :alias => "search",
+        :color => 'green',
+        :data => "slapd.ops.search"
+

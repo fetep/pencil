@@ -1,0 +1,8 @@
+# -*- mode: ruby -*-
+title 'storage exceptions'
+
+field :storage_log_exception,
+        :alias => "exceptions/s",
+        :color => 'red',
+        :data => "storage.log.exception"
+
