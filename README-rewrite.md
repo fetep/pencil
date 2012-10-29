@@ -90,6 +90,9 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 
 * make footer responsive?
 
+* allow for static (not instrumented) metrics via some option
+  (e.g. for carbon metadata graphs)
+
 ## DONE
 
 * [DONE] arbitrary tooltip/popup for images
