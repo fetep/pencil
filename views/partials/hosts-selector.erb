@@ -1,6 +1,6 @@
 <% if @select_hosts.size == 0 %> <span class="label label-warning">no hosts!</span><% else %>
 <select onchange="switchToHost(this.options[this.selectedIndex].value)">
-  <option value="">-select host-</option><% @select_hosts.each do |h|
+  <option value="">-select host-</option><% @select_hosts.sort.each do |h|
                  option = "#{h.name}"
                  value = "#{h.name}" %>
   <option value="<%= value %>"><%= option %></option><% end %>
