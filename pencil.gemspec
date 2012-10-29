@@ -3,7 +3,7 @@ require File.expand_path('../lib/pencil/version', __FILE__)
 
 Gem::Specification.new do |spec|
   files = []
-  dirs = %w(lib docs examples)
+  dirs = %w(lib docs examples views static)
   dirs.each do |dir|
     files += Dir["#{dir}/**/*"]
   end
