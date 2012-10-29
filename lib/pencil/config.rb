@@ -26,7 +26,7 @@ module Pencil
     attr_reader :argv
 
     def initialize
-      @port = 9292
+      @port = nil
       @config_file = File.expand_path './pencil.yml'
       @recursive = false
       @logger = Logger.new(STDOUT) # fixme use the sinatra logger
@@ -52,6 +52,7 @@ module Pencil
 
       optparse.parse(@argv)
       stage_load
+      @port ||= 9292
       reload!
     end
 
@@ -123,6 +124,8 @@ module Pencil
       unless File.readable?(@templates_dir) && File.directory?(@templates_dir)
         abort "templates directory #{@templates_dir} not found or not readable"
       end
+
+      @port ||= @_config[:port] if @_config[:port]
 
       if @_config[:webapp]
         @_config[:webapp] = {} if @_config[:webapp] == true
