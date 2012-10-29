@@ -15,10 +15,10 @@
   <% end %>
   <span class="divider">::</span>
   <span class="dropdown">
-    <a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"><%= @dash.name %></a>
+    <a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"><%= @dash.title||@dash.name %></a>
     <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
-      <% (Dashboard.group_entries(@dash.group).map(&:name) - [@dash.name]).each do |d| %>
-      <li><a tabindex="-1" href="/dash/<%= @cluster%>/<%=d %>"><%= d %></a></li>
+      <% (Dashboard.group_entries(@dash.group) - [@dash]).each do |d| %>
+      <li><a tabindex="-1" href="/dash/<%= @cluster %>/<%= d.name %>"><%= d.title||d %></a></li>
       <% end %>
     </ul>
   </span>

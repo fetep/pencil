@@ -15,19 +15,19 @@
   <% end %>
   <span class="divider">::</span>
   <span class="dropdown">
-    <a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"><%= @dash.name %></a>
+    <a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"><%= @dash.title %></a>
     <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
-      <% (Dashboard.group_entries(@dash.group).map(&:name) - [@dash.name]).each do |d| %>
-      <li><a tabindex="-1" href="/dash/<%= @cluster%>/<%=d %>"><%= d %></a></li>
+      <% (Dashboard.group_entries(@dash.group) - [@dash]).each do |d| %>
+      <li><a tabindex="-1" href="/dash/<%= @cluster%>/<%= d.name %>"><%= d.title||d %></a></li>
       <% end %>
     </ul>
   </span>
   <span class="divider">::</span>
   <span class="dropdown">
-    <a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"><%= @zoom.name %></a>
+    <a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"><%= @zoom[:title]||@zoom.name %></a>
     <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
-      <% (@dash.graphs.map(&:first) -  [@zoom.name]).each do |g| %>
-      <li><a tabindex="-1" href="/dash/<%= @cluster%>/<%= @dash.name %>/<%= g %>"><%= g %></a></li>
+      <% (@dash.graphs.map {|x| @graphs[x.first]} -  [@zoom]).each do |g| %>
+      <li><a tabindex="-1" href="/dash/<%= @cluster%>/<%= @dash.name %>/<%= g.name %>"><%= g[:title]||g %></a></li>
       <% end %>
     </ul>
   </span>

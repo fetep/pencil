@@ -53,7 +53,7 @@ module Pencil::Models
       self.class.groupings << @group
       self.class.group_map[@group] ||= SortedSet.new
       self.class.group_map[@group] << self
-      @title = yaml['title']
+      @title = yaml['title'] || @name
       @description = yaml['description']
       # fixme warn about no hosts key
       global_hosts = {'hosts' => (yaml['hosts'] || '*')}
