@@ -33,6 +33,10 @@ module Pencil
       @argv = ARGV.clone
 
       optparse = OptionParser.new do |o|
+        o.on('-d', '--config-dir DIR',
+             'deprecated: specify a config file instead with -f') do |arg|
+          abort '-d deprecated: specify a config file instead with -f'
+        end
         o.on('-f', '--config-file FILE',
              'location of the config file (default ./pencil.yml)') do |arg|
           @config_file = File.expand_path arg
