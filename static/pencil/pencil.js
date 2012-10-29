@@ -374,7 +374,7 @@ function initialize () {
         history.replaceState(getState(), '');
     }
     $('#perm').tooltip();
-    $('li[rel=tooltip]').tooltip();
+    $('[rel=tooltip]').tooltip();
 
     $('html').click(function(e) {
         $('a[rel=popover]').popover('hide');
