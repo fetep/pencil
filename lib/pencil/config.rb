@@ -116,7 +116,7 @@ module Pencil
       @templates_dir = yaml[:templates_dir]
 
       if Pathname.new(@templates_dir).relative?
-        @templates_dir = File.expand_path @templates_dir
+        @templates_dir = File.expand_path(@templates_dir, File.dirname(@config_file))
       end
 
       @templates_dir = @templates_dir[0..-2] if @templates_dir[-1..-1] == '/'
