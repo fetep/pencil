@@ -21,7 +21,8 @@ module Pencil
     set :erb, :trim => '-'
     use Rack::Logger
     set :logging, true
-    set :cache, {}
+    set :config_lock, Mutex.new
+    set :numthreads, 0
 
     include Pencil::Models
     helpers Pencil::Helpers
@@ -35,6 +36,10 @@ module Pencil
 
     before do
       @request_time = Time.now
+      settings.config_lock.lock
+      settings.numthreads += 1
+      settings.config_lock.unlock
+
       @compatibility = true if params[:start]
 
       @refresh_rate = settings.config[:refresh_rate] * 1000 # s -> ms
@@ -77,6 +82,12 @@ module Pencil
       @clusters = settings.config.clusters
       @multi = @clusters.size > 1
       @hosts = settings.config.hosts
+    end
+
+    after do
+      settings.config_lock.lock
+      settings.numthreads -= 1
+      settings.config_lock.unlock
     end
 
     # FIXME the redirecting when there is a single or no cluster is shoddy
@@ -159,6 +170,21 @@ module Pencil
       else
         {}.to_json
       end
+    end
+
+    get '/reload' do
+      settings.config_lock.lock
+      if settings.numthreads == 1
+        # block other threads until reload is done, for now
+        settings.config.load_verify_stage
+        settings.config_lock.unlock
+        new_route = '/'
+      else
+        settings.config_lock.unlock
+        new_route = '/reload'
+        sleep 5
+      end
+      redirect new_route
     end
   end # Pencil::App
 end # Pencil

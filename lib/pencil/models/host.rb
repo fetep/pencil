@@ -4,16 +4,31 @@ require 'pencil/models/graph'
 module Pencil
   module Models
     class Host < Base
-      @@sort_method = 'sensible'
-      def self.sort_method= (val)
-        @@sort_method = val
+      class << self
+        ATTRS = [:sort_method]
+        attr_accessor(*ATTRS)
+        # fixme modulify
+        def save
+          ATTRS.each do |a|
+            val = instance_variable_get("@#{a}")
+            instance_variable_set("@_#{a}", val)
+          end
+        end
+        def restore
+          ATTRS.each do |a|
+            val = instance_variable_get("@_#{a}")
+            instance_variable_set("@#{a}", val)
+          end
+        end
       end
+
       attr_accessor :graphs, :noassoc # set by Config after initialization
       attr_reader :shortname, :cluster
 
       def self.get_name (name, cluster)
         cluster ? "#{name}.#{cluster}" : name
       end
+
       def initialize(name, cluster)
         @name = self.class.get_name(name, cluster)
         @shortname = name
@@ -24,9 +39,10 @@ module Pencil
       end
 
       def <=>(other)
-        if @@sort_method == 'builtin'
+        self.class.sort_method ||= 'sensible'
+        if self.class.sort_method == 'builtin'
           return key <=> other.key
-        elsif @@sort_method == 'numeric'
+        elsif self.class.sort_method == 'numeric'
           regex = /\d+/
           match = @name.match(regex)
           match2 = other.name.match(regex)

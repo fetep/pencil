@@ -5,17 +5,35 @@ require 'set'
 
 module Pencil::Models
   class Dashboard
-    @@groupings = SortedSet.new
-    @@group_map = {} # group => SortedSet of dashboards
+    class << self
+      ATTRS = [:groupings, :group_map]
+      attr_accessor(*ATTRS)
+      # fixme modulify
+      def save
+        ATTRS.each do |a|
+          val = instance_variable_get("@#{a}")
+          instance_variable_set("@_#{a}", val)
+        end
+      end
+      def restore
+        ATTRS.each do |a|
+          val = instance_variable_get("@_#{a}")
+          instance_variable_set("@#{a}", val)
+        end
+      end
+    end
+
     def self.groups
-      @@groupings
+      @groupings
     end
+
     def self.clear # on reload
-      @@groupings = SortedSet.new
-      @@group_map = {} # group => SortedSet of dashboards
+      @groupings = SortedSet.new
+      @group_map = {} # group => SortedSet of dashboards
     end
+
     def self.group_entries (group)
-      @@group_map[group]
+      @group_map[group]
     end
 
     attr_reader :title, :graphs, :name, :group, :description
@@ -29,9 +47,12 @@ module Pencil::Models
       yaml = YAML::load_file file
       @name = File.basename(file, '.yml').chomp('.yaml')
       @group = yaml['group'] || relname
-      @@groupings << @group
-      @@group_map[@group] ||= SortedSet.new
-      @@group_map[@group] << self
+      self.class.groupings ||= SortedSet.new
+      self.class.group_map ||= {}
+      self.class.groupings << @group
+      self.class.groupings << @group
+      self.class.group_map[@group] ||= SortedSet.new
+      self.class.group_map[@group] << self
       @title = yaml['title']
       @description = yaml['description']
       # fixme warn about no hosts key

@@ -23,12 +23,14 @@ module Pencil
     attr_reader :config_file
     attr_reader :version
     attr_reader :port
+    attr_reader :argv
 
     def initialize
       @port = 9292
       @config_file = File.expand_path './pencil.yml'
       @recursive = false
       @logger = Logger.new(STDOUT) # fixme use the sinatra logger
+      @argv = ARGV.clone
 
       optparse = OptionParser.new do |o|
         o.on('-f', '--config-file FILE',
@@ -40,7 +42,7 @@ module Pencil
         end
       end
 
-      optparse.parse!
+      optparse.parse(@argv)
       stage_load
       reload!
     end
@@ -50,8 +52,11 @@ module Pencil
     end
 
     # for views
+    class << self
+      attr_accessor :klass
+    end
     def klass
-      @@klass ||= Struct.new(:from, :offset, :label, :is_default)
+      self.class.klass ||= Struct.new(:from, :offset, :label, :is_default)
     end
 
     # fixme handle exceptions in ATTime code
@@ -71,6 +76,7 @@ module Pencil
       end
     end
 
+    # fixme re-implement all the config reload stuff
     def stage_load
       defaults = {
         :host_sort => 'sensible',
@@ -113,7 +119,7 @@ module Pencil
       if @_config[:webapp]
         @_config[:webapp] = {} if @_config[:webapp] == true
         unless @_config[:webapp][:manifest]
-          puts "no :manifest key for webapp, using default"
+          @logger.info "no :manifest key for webapp, using default"
           @_config[:webapp][:manifest] = {
             "name" => "Pencil",
             "description" => "Graphite Dashboard Frontend",
@@ -134,10 +140,10 @@ module Pencil
 
       default = @_config[:views].select {|x| x.is_default}
       if default.size > 1
-        puts "warning: multiple default timeslices, using first: #{@_config[:views].first.from}"
+        @logger.warn "multiple default timeslices, using first: #{@_config[:views].first.from}"
         default[1..-1].each {|x| x.is_default = false}
       elsif default.size == 0
-        puts "warning: no default timeslice, using first: #{@_config[:views].first.from}"
+        @logger.warn "no default timeslice, using first: #{@_config[:views].first.from}"
         @_config[:views].first.is_default = true
       end
 
@@ -193,7 +199,7 @@ module Pencil
           end
         end
         unless assoc
-          puts "#{h.name} not associated with a dashboard"
+          @logger.info "#{h.name} not associated with a dashboard"
           noassoc[h.cluster||:global] ||= SortedSet.new
           noassoc[h.cluster||:global] << h
         end
@@ -213,11 +219,15 @@ module Pencil
 
     def load_verify_stage
       begin
+        # save class variables
         @logger.info 'staging load'
+        [PencilGraph, Dashboard, Host].each(&:save)
+        [PencilGraph, Dashboard].each(&:clear)
         stage_load
-        @logger.info 'staging load succeeded'
-        @logger.info "the next request will load configuration #{@version}"
+        @logger.info 'staging load succeeded, reloading'
+        reload!
       rescue Exception => err
+        [PencilGraph, Dashboard, Host].map(&:restore)
         @logger.error "error reloading configuration:\n#{err}"
         @logger.warn "staging load failed, using old configuration #{@version}"
         return false
