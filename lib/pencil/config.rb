@@ -44,6 +44,10 @@ module Pencil
         o.on('-p', '--port PORT', 'port to bind to (default 9292)') do |arg|
           @port = arg.to_i
         end
+        o.on('-V', '--version', 'print version string and exit') do
+          puts Pencil::VERSION
+          exit 0
+        end
       end
 
       optparse.parse(@argv)
