@@ -166,6 +166,7 @@ module Pencil
         g = PencilGraph.new(f, yaml[:default_url_opts])
         @_graphs[g.name] = g
       end
+      # fixme special case ignore @config_file matches
       Dir.glob("#{@templates_dir}/**/*.y{a,}ml").map do |f|
         d = Dashboard.new(f, @templates_dir)
         @_dashboards[d.name] = d
