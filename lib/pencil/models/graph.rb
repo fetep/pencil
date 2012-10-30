@@ -1,5 +1,6 @@
 require 'pencil/models/base'
 require 'graphite_graph'
+require 'thread'
 
 module Pencil::Models
   class PencilGraph < GraphiteGraph
@@ -46,6 +47,7 @@ module Pencil::Models
       super(file, overrides, info)
       @name = File.basename(@file.chomp('.graph'))
       @aggregator ||= 'sumSeries'
+      @lock = Mutex.new
       @metrics = []
       targets.each do  |t, b|
         d = b[:data].gsub(' ', '').scan(METRIC_REGEXP)
@@ -64,7 +66,7 @@ module Pencil::Models
       # queries
       @metrics.map {|m| compose_metric(m, '*', '*')}.each do |u|
         query = "#{expand_url}#{u}"
-        results = JSON.parse(open(query).read)['results'].map{|x| x.split('.')}
+        results = JSON::parse(open(query).read)['results'].map{|x| x.split('.')}
         f = self.class.metric_format.dup.split('%m')
         first = f.first.split('.')
         last = f.last.split('.')
@@ -96,8 +98,15 @@ module Pencil::Models
 
     alias inner_properties properties
 
-    # fixme will have to hack a little harder as this isn't thread-safe
+    # The graphite DSL supports parameterization, but only at
+    # instantiation. Since we want to parameterize at the call to url()
+    # (depending on the view), this hack exists. Probably the correct way with
+    # the API to handle this is to generate as many graphs as views,
+    # but that is impractical since there are hundreds of them.
+    # Each graph must be kept exclusive while the properties method is
+    # redefined (when url_gen() is called).
     def url_gen (clusters, hosts, prefix, overrides={})
+      @lock.lock
       clusters = [] if clusters.size == 1 && clusters.first.is_a?(Cluster)
 
       self.class.instance_eval do
@@ -121,6 +130,7 @@ module Pencil::Models
         target[:alias] = target[:alias][prefix.size..-1]
         replace.each {|m, m2| target[:data].gsub!(m2, m)}
       end
+      @lock.unlock
       return ret
     end
 
