@@ -2,9 +2,9 @@
   <div class="graph">
     <div class="header">
       <% if @graph[:description] %>
-      <a name="<%= @name||@graph.name %>" title="<%= @graph[:title]%>" class="btn btn-info" data-placement="right" rel="popover" data-content="<%= escape_html(@graph[:description]||'') %>"><%= @graph_title || @graph.name %> &raquo;</a>
+      <a name="<%= @name||@graph.name %>" title="<%= @graph[:title]%>" class="btn btn-info" data-placement="right" rel="popover" data-content="<%= escape_html(@graph[:description]) %>"><%= @graph_title || @graph.name %> &raquo;</a>
       <% else %>
-      <a name="<%= @name||@graph.name %>" href="#<%= @name||@graph.name %>" class="btn btn-info"><%= @graph_title || @graph.name %></a>
+      <a name="<%= @name||@graph.name %>" title="<%= @graph[:title]%>" class="btn btn-info" data-placement="right" rel="popover" data-content="<%= escape_html @src.split('&').select{|x|x=~/^target=/}.map{|x| require 'cgi'; CGI::unescape x}.join('<br><br>') %>"><%= @graph_title || @graph.name %> &raquo;</a>
       <% end %>
       <span class="tools"><%= @zoom_text %></span>
     </div>
