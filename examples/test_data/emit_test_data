@@ -1,0 +1,92 @@
+#!/usr/bin/env ruby
+# A script for generating the data used in the example configuration provided
+# with pencil. It loops on 8 hours of fake data I scraped and obfuscated from
+# my local site. Eventually this will be run on a publicly facing instance
+# somewhere so people can check out pencil without resorting to running this.
+
+# This was written a while ago and may be fairly obscure. It works with the
+# dataset provided. I don't recommend attempting to adapt it to any other
+# data.
+
+require 'csv'
+require 'socket'
+require 'optparse'
+
+TOKEN = "TOKEN"
+metrics = {}
+samples = nil
+
+OptionParser.new do |o|
+  o.on('-d', '--data-dir DIR',
+       'data directory (default ./rawdata)') do |arg|
+    $datadir = arg
+  end
+  o.on('-s', '--server HOST[:PORT]',
+       'carbon server host (default localhost:2003)') do |arg|
+    s = arg.split(':')
+    if s.size > 1
+      $carbon_server = s[0]
+      $carbon_port = s[1]
+    end
+    $config_file = File.expand_path arg
+  end
+end.parse!
+
+$datadir ||= './rawdata'
+$carbon_server ||= '127.0.0.1'
+$carbon_port ||= 2003
+$datadir = $datadir[0..-2] if $datadir[-1..-1] == '/'
+
+Dir.glob("#{$datadir}/*").each do |f|
+  name =  f.split('/')[-1]
+  cluster, host = name.split('.')
+  csv = CSV.parse(File.read(f).gsub("|", ",#{TOKEN},"))
+  csv.each do |row|
+    token = row.index {|i| i == TOKEN}
+    next unless token
+
+    metric = row[0..(token-4)].join(",")
+    data = row[(token+1)..-1].map {|x| x.to_f}
+    samples = data.size
+
+    if metric !~ /\(/
+      metric = metric.split(".")[0..-3].join(".")
+      metrics[cluster] ||= {}
+      metrics[cluster][host] ||= {}
+      metrics[cluster][host][metric] = data
+    elsif metric =~ /^scale/
+      m = metric.match(/^scale\(([^(]+),([0-9\.]+)\)/)
+      metric = m[1].split(".")[0..-3].join(".")
+      scale = m[2].to_f
+      metrics[cluster] ||= {}
+      metrics[cluster][host] ||= {}
+      metrics[cluster][host][metric] = data.map {|i| i / scale }
+    end
+  end
+
+end
+
+begin
+  sock = TCPSocket.new($carbon_server, $carbon_port)
+rescue
+  abort "Couldn't connect to #{$carbon_server} on port #{$carbon_port}," +
+    " is carbon-agent.py running?"
+end
+
+while true
+  samples.times do |i|
+    metrics.each do |cluster,v|
+      lines = []
+      t = Time.now.to_i
+      v.each do |host,v2|
+        v2.each do |metric,values|
+          lines << "#{metric}.#{cluster}.#{host} #{values[i]} #{t}"
+        end
+      end
+      message = "\n#{lines.join("\n")}\n" #all lines must end in a newline
+      puts Time.at(t)
+      sock.puts(message)
+    end
+    sleep 60
+  end
+end
