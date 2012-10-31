@@ -2,7 +2,8 @@
   <div class="well sidebar-nav">
     <ul class="nav nav-list">
       <li class="nav-header">Global View</li>
-      <li<%= ' class="active"' if @cluster.name == 'global' %>><a href="/dash/global">overview</a></li>
+      <% toplevel = @multi && @clusters.size == 1 ? @clusters.first.name : 'global' %>
+      <li<%= ' class="active"' if @cluster.name == 'global' %>><a href="/dash/<%= toplevel %>">overview</a></li>
       <% if @multi %>
       <li class="nav-header">Cluster Views</li>
       <% @clusters.map(&:name).each do |c| %>
