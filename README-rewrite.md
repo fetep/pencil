@@ -52,15 +52,13 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 * automatic configuration reloading
 
   I implemented this imperfectly right before starting the rewrite. It's been
-  gutted and needs to be redone.
+  mostly gutted and needs to be redone, though the task should be much easier.
 
 * Be less dynamic 
 
   pencil can be a little slow at generating pages because practically everything
   is dynamic. Some of this stuff doesn't need to be, though this is largely
   mitigated by having image reloading/state changes done on the client side
-
-* thread-safe graph url generation
 
 * Refresh specific to view (use <unit> for ephemeral views)
 
@@ -69,10 +67,6 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 * HTML formatting (-%>)
 
 * configurable format date (using moment.js, not strftime)
-
-* time increments like graphite/possibly adopt graphite's style
-
-* clear focus of form button on submit
 
 * group view with descriptions
 
@@ -86,6 +80,8 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 
 * allow for static (not instrumented) metrics via some option
   (e.g. for carbon metadata graphs)
+
+* arbitrary sub-dashboard click-through
 
 ## DONE
 * [DONE] support for dashboards specific to a particular cluster
