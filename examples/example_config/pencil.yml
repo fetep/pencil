@@ -17,7 +17,7 @@
   :thickness: 2
 
 :webapp: true
-:views:
+:default_views:
   - default:
       -1h: "past hour"
   - -8h

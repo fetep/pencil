@@ -50,7 +50,7 @@ module Pencil
       @compatibility = true if params[:start]
 
       @refresh_rate = settings.config[:refresh_rate] * 1000 # s -> ms
-      @views = settings.config[:views].dup
+      @views = settings.config[:default_views].dup
 
       @overrides = {:timezone => cookies['tz']}
       @overrides[:width] = cookies['mw'] if cookies['mw']
@@ -72,12 +72,12 @@ module Pencil
         @overrides[:until] = params[:until]
       else
         # we'll do it live!
-        view = settings.config[:views].find {|x| x.from == params[:from]}
+        view = @views.find {|x| x.from == params[:from]}
         if params[:from] && !view
           # fixme do error checking for this, and report in ui when it fails
           @views << settings.config.gen_view(params[:from])
         end
-        view ||= settings.config[:views].find {|x| x.is_default}
+        view ||= @views.find {|x| x.is_default}
         @overrides[:from] = view.from
         @overrides[:until] = 'now'
       end

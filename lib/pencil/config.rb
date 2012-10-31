@@ -91,7 +91,7 @@ module Pencil
         :host_sort => 'sensible',
         :metric_format => '%m.%c.%h',
         :refresh_rate => 60,
-        :views =>
+        :default_views =>
         [{'-1h' => 'one hour view'},
          {'default' => {'-8h' => 'eight hour view'}},
          {'-1day' => 'one day view'}]
@@ -147,15 +147,15 @@ module Pencil
         end
       end
 
-      @_config[:views].map! {|h| gen_view(h)}
+      @_config[:default_views].map! {|h| gen_view(h)}
 
-      default = @_config[:views].select {|x| x.is_default}
+      default = @_config[:default_views].select {|x| x.is_default}
       if default.size > 1
-        @logger.warn "multiple default timeslices, using first: #{@_config[:views].first.from}"
+        @logger.warn "multiple default timeslices, using first: #{@_config[:default_views].first.from}"
         default[1..-1].each {|x| x.is_default = false}
       elsif default.size == 0
-        @logger.warn "no default timeslice, using first: #{@_config[:views].first.from}"
-        @_config[:views].first.is_default = true
+        @logger.warn "no default timeslice, using first: #{@_config[:default_views].first.from}"
+        @_config[:default_views].first.is_default = true
       end
 
       # fixme warn on duplicate names, error checking
