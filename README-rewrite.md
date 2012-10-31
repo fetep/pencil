@@ -33,8 +33,6 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 
 * docs
 
-* ?reload parameter
-
 ## features for another version
 
 * popup title has original anchor href
