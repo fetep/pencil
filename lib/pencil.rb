@@ -39,6 +39,13 @@ module Pencil
       settings.config_lock.lock
       settings.numthreads += 1
       settings.config_lock.unlock
+      if params.include? 'reload'
+        params.delete('reload')
+        qs = '?' + params.to_a.map {|x,y| "#{x}=#{y}"}.join('&')
+        qs = '' if qs.size == 1
+        redirect '/reload?' + request.path + qs
+      end
+      break if request.path == '/reload'
 
       @compatibility = true if params[:start]
 
@@ -178,13 +185,13 @@ module Pencil
         # block other threads until reload is done, for now
         settings.config.load_verify_stage
         settings.config_lock.unlock
-        new_route = '/'
+        redirect request.query_string.size > 0 ? request.query_string : '/'
       else
         settings.config_lock.unlock
-        new_route = '/reload'
         sleep 5
+        qs = request.query_string.size > 0 ? '?' + request.query_string : ''
+        redirect '/reload' + qs
       end
-      redirect new_route
     end
   end # Pencil::App
 end # Pencil
