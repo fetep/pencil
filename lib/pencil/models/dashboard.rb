@@ -38,6 +38,7 @@ module Pencil::Models
 
     attr_reader :title, :graphs, :name, :group, :description
     attr_accessor :assoc # graph -> wildcard -> hosts
+    attr_accessor :clusters
 
     # fixme warn on duplicate titles
     def initialize(file, config_directory)
@@ -46,6 +47,7 @@ module Pencil::Models
       relname = 'default' if relname == '.'
       yaml = YAML::load_file file
       @name = File.basename(file, '.yml').chomp('.yaml')
+      @clusters = Set.new
       @group = yaml['group'] || relname
       self.class.groupings ||= SortedSet.new
       self.class.group_map ||= {}

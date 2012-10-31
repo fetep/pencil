@@ -204,6 +204,7 @@ module Pencil
           d.graphs.each do |g, hash|
             hash['hosts'].each do |w|
               if h.match(w)
+                d.clusters << h.cluster if h.cluster
                 d.assoc[g][w] << h
                 assoc = true
               end

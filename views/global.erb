@@ -8,6 +8,7 @@
       <h2><%= group %></h2>
       <ul><% Dashboard.group_entries(group).each do |d| %>
       <% hosts = Set.new
+         next if @multi && !@cluster.psuedo && @cluster.name && !d.clusters.include?(@cluster.name)
          d.graphs.each do |gname, _|
            wildcards = d.graphs.find {|g, h| g == gname}.last['hosts']
            wildcards.each {|w| hosts += d.assoc[gname][w].to_a}

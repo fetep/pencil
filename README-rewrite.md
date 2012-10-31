@@ -29,15 +29,11 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
 
 # TODOS
 
-* support for dashboards specific to a particular cluster
+* robust migration scripts
 
 * docs
 
-* update examples
-
-* robust migration scripts
-
-* cheap reload with /reload route and exec
+* ?reload parameter
 
 ## features for another version
 
@@ -94,6 +90,7 @@ requests and to leverage the excellent [graphite-dsl](https://github.com/ripiena
   (e.g. for carbon metadata graphs)
 
 ## DONE
+* [DONE] support for dashboards specific to a particular cluster
 
 * [DONE] arbitrary tooltip/popup for images
 
