@@ -11,8 +11,7 @@
       <% end %>
       <li class="nav-header">Dashboards (<%= @cluster || 'global' %>)</li>
       <% Dashboard.groups.each do |group| %>
-      <li><span class="label"><%= group %></span></li><% Dashboard.group_entries(group).each do |d|
-      next if @multi && !@cluster.psuedo && @cluster.name && !d.clusters.include?(@cluster.name)
+      <li><span class="label"><%= group %></span></li><% current(Dashboard.group_entries(group)).each do |d|
       # special case when a dash applies to a single cluster, link directly to it
       c = @multi && @cluster.psuedo && d.clusters.size == 1 ? d.clusters.first : @cluster.name %>
       <li<%= ' class="active"' if @dash && @dash == d %><%= " rel=\"tooltip\" data-delay=\"300\" data-placement=\"right\" title=\"#{escape_html d.description}\"" if d.description %>><a href="/dash/<%= c %>/<%= d.name %>"><%= d.title %></a></li><% end %><% end %>

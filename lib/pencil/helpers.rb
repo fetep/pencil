@@ -33,4 +33,10 @@ module Pencil::Helpers
 
     return ret
   end
+
+  def current (d)
+    d.select do |g|
+      !(@multi && !@cluster.psuedo && @cluster.name && !g.clusters.include?(@cluster.name))
+    end
+  end
 end
