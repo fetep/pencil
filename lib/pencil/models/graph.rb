@@ -134,9 +134,12 @@ module Pencil::Models
       return ret
     end
 
-
     def gentitle (*args)
       args.select {|x| x}.join(' / ')
+    end
+
+    def title_name
+      self[:title]||name
     end
 
     def render_global (clusters, hosts, overrides={})
@@ -147,7 +150,7 @@ module Pencil::Models
     def render_global_zoom (cluster, hosts, dash, overrides={})
       render_url +
         url_gen([cluster], hosts, "#{cluster} ",
-                {:title => gentitle(dash, name, cluster)}.merge(overrides))
+                {:title => gentitle(dash, title_name, cluster)}.merge(overrides))
     end
 
     def render_cluster (clusters, hosts, overrides={})
@@ -155,7 +158,7 @@ module Pencil::Models
       cluster = clusters.first.to_s
       render_url +
         url_gen([cluster], hosts, "#{cluster} ",
-                {:title => gentitle(name, cluster)}.merge(overrides))
+                {:title => gentitle(title_name, cluster)}.merge(overrides))
     end
 
     def render_cluster_zoom (cluster, hosts, overrides={})
@@ -167,7 +170,7 @@ module Pencil::Models
       label = cluster ? "#{host}/#{cluster} " : "#{host} "
       render_url +
         url_gen(cluster ? [cluster]: [], [host], label,
-                {:title => gentitle(name, cluster, host)}.merge(overrides))
+                {:title => gentitle(title_name, cluster, host)}.merge(overrides))
     end
   end
 end # Pencil::Models
