@@ -18,13 +18,13 @@
       @graph = @zoom
       hosts = @dash.graphs.find {|g, h| g == @zoom.name}.last['hosts']
 
-      @graph_title = "#{@zoom.name} overview"
+      @graph_title = "#{@zoom.title_name} overview"
       @src = @zoom.render_global(@clusters.map(&:name), hosts, @overrides)
       erb :'partials/graph', :layout => false %>
 
   <% @clusters.map(&:name).each do |c|
      @name  = c
-     @graph_title = "#{@dash.name} / #{@zoom.name} / #{c}"
+     @graph_title = "#{@dash.name} / #{@zoom.title_name} / #{c}"
      @click_url = "/dash/#{c}/#{@dash.name}/#{@zoom.name}"
      @zoom_text = "<small class=\"pull-right\">(<a href=\"#{@click_url}\">zoom</a>)</small>"
      @src = @zoom.render_global_zoom(c, hosts, @dash.name, @overrides) %>

@@ -8,14 +8,14 @@
     <div class="navbar-inner">
       <ul class="nav">
         <% @dash.graphs.each do |gname, _| %>
-        <li><a href="#<%= gname %>"><small><%= gname %></small></a></li>
+        <li><a href="#<%= gname %>"><small><%= @graphs[gname][:title]||gname %></small></a></li>
         <% end %>
       </ul>
     </div>
   </div>
   <% @dash.graphs.each do |gname, graph| %>
   <%= @graph = @graphs[gname] # fixme when this is nil have a better error message
-      @graph_title = @graph.name
+      @graph_title = @graph.title_name
       @click_url = "/dash/#{@cluster}/#{@dash.name}/#{@graph.name}"
       if !@cluster.psuedo || !@multi
       @zoom_text = "<small class=\"pull-right\">(<a href=\"#{@click_url}\">zoom</a>)</small>"

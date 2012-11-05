@@ -8,14 +8,14 @@
     <div class="navbar-inner">
       <ul class="nav">
         <% @host.graphs.each do |gname, _| %>
-        <li><a href="#<%= gname %>"><small><%= gname %></small></a></li>
+        <li><a href="#<%= gname %>"><small><%= @graphs[gname].title_name %></small></a></li>
         <% end %>
       </ul>
     </div>
   </div>
   <% @host.graphs.each do |gname| %>
   <%= @graph = @graphs[gname]
-      @graph_title = @graph.name
+      @graph_title = @graph.title_name
       @click_url = '#'
       _d = suggest_dashboards(@host, gname)
       if _d.size == 0
