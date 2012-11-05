@@ -3,16 +3,7 @@
   <span class="divider">::</span>
   <span><%= @dash.group %></span>
   <span class="divider">::</span>
-  <% unless @multi %>
-  <%= @cluster %>
-  <% else %>
-  <span class="dropdown">
-    <a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"><%= @cluster %></a>
-    <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
-      <%= cluster_switcher.join("\n") %>
-    </ul>
-  </span>
-  <% end %>
+  <%= cluster_switcher %>
   <span class="divider">::</span>
   <span class="dropdown">
     <a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"><%= @dash.title||@dash.name %></a>

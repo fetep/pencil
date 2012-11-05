@@ -4,14 +4,26 @@ module Pencil::Helpers
 
   # todo not suck
   def cluster_switcher
-    res = (@clusters.map(&:name) - [@cluster.name]).map do |c|
+    return @cluster unless @multi
+    target = @dash.clusters - [@cluster.name]
+    return [@cluster.name] if target.size == 0
+
+    res = target.map do |c|
       "<li><a tabindex=\"-1\" href=\"/dash/#{c}/#{@dash.name}\">#{c}</a></li>"
     end
     if @cluster.name != 'global'
       res << '<li class="divider"></li>'
       res << "<li><a tabindex=\"-1\" href=\"/dash/global/#{@dash.name}\">global</a></li>"
     end
-    res
+
+    <<EOF
+  <span class="dropdown">
+    <a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">#{@cluster}</a>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
+      #{res.join("\n")}
+    </ul>
+  </span>
+EOF
   end
 
   def append_query_string(str)
