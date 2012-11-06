@@ -20,7 +20,7 @@
   <%= @click_url = '#'
       @zoom_text = ''
       @graph = @zoom
-      @graph_title = "#{@zoom.name} / #{@cluster} overview"
+      @graph_title = "#{@zoom.title_name} / #{@cluster} overview"
       @src = @zoom.render_cluster_zoom(@cluster.name, wildcards, @overrides)
       erb :'partials/graph', :layout => false %>
 
@@ -28,7 +28,7 @@
       @name = h.shortname
       @click_url = "/host/#{h.cluster||'global'}/#{h.shortname}"
       @zoom_text = "<small class=\"pull-right\">(<a href=\"#{@click_url}\">host</a>)</small>"
-      @graph_title = @cluster.psuedo ? "#{@zoom.name} / #{h.shortname}" : "#{@zoom.name} / #{@cluster.name} / #{h.shortname}"
+      @graph_title = @cluster.psuedo ? "#{@zoom.name} / #{h.shortname}" : "#{@cluster.name} / #{h.shortname}"
       @src = @zoom.render_host(@cluster.name, h.shortname, @overrides) %>
   <%= erb :'partials/graph', :layout => false %>
   <% end %>
