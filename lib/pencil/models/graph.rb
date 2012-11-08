@@ -43,16 +43,18 @@ module Pencil::Models
         "#{URI.join(self.class.graphite_url, '/metrics/expand/?leavesOnly=1&query=')}"
     end
 
+    def get_metrics (str)
+      str.gsub(' ', '').scan(METRIC_REGEXP).select{|m| m =~ /\./}
+    end
+
     def initialize(file, overrides={}, info={})
       super(file, overrides, info)
       @name = File.basename(@file.chomp('.graph'))
       @aggregator ||= 'sumSeries'
       @lock = Mutex.new
       @metrics = []
-      targets.each do  |t, b|
-        d = b[:data].gsub(' ', '').scan(METRIC_REGEXP)
-        d.each {|metric| @metrics << metric if metric =~ /\./}
-      end
+      targets.each {|t, b| @metrics += get_metrics(b[:data])}
+      @metrics.sort!.uniq!
     end
 
     def compose_metric (metric, clusters, hosts)
@@ -115,13 +117,23 @@ module Pencil::Models
         end
       end
       prefix = prefix + ' ' unless prefix =~ / $/
-      replace = @metrics.map do |m|
-        [m, "#{@aggregator}(#{compose_metric(m, w(clusters), w(hosts))})"]
-      end.uniq
+      replace = {}
+      @metrics.each do |m|
+        replace[m] =
+          "#{@aggregator}(#{compose_metric(m, w(clusters), w(hosts))})"
+      end
+
       target_order.each do |t|
+        index = 0
         target = targets[t]
         target[:alias] = prefix + target[:alias]
-        replace.each {|m, m2| target[:data].gsub!(m, m2)}
+        r = get_metrics(target[:data])
+        r.each do |match|
+          s = target[:data]
+          i = s.index(match, index)
+          s[i..i+match.size-1] = replace[match]
+          index += replace[match].size
+        end
       end
       ret = url
       alias properties inner_properties
