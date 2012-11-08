@@ -4,9 +4,9 @@ module Pencil::Helpers
 
   # todo not suck
   def cluster_switcher
-    return @cluster unless @multi
+    return @cluster.name unless @multi
     target = @dash.clusters - [@cluster.name]
-    return [@cluster.name] if target.size == 0
+    return @cluster.name if target.size == 0
 
     res = target.map do |c|
       "<li><a tabindex=\"-1\" href=\"/dash/#{c}/#{@dash.name}\">#{c}</a></li>"
