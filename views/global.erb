@@ -16,7 +16,7 @@
         <li><a href="/dash/<%= @cluster %>/<%= d.name %>"><%= d.name %></a><%= erb :'partials/hosts-selector' %> </li>
         <%= d.description %>
         <ul><% d.graphs.each do |gname, hosts| %>
-          <li><a rel="tooltip" data-placement="right" data-delay="500" title="<%= @graphs[gname][:description] %>" href="<%= "/dash/#{@cluster}/#{d.name}/#{gname}"%>"><%= @graphs[gname].title_name %></a></li><% end %>
+          <li><a rel="tooltip" data-placement="right" data-delay="500" title="<%= escape_html(@graphs[gname][:description]) %>" href="<%= "/dash/#{@cluster}/#{d.name}/#{gname}"%>"><%= @graphs[gname].title_name %></a></li><% end %>
         </ul><% end %>
       </ul><% end %>
     </div>
