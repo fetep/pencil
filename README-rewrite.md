@@ -1,32 +1,5 @@
 # Pencil rewrite
 
-I (whd) am in the process of rewriting Pencil, due a few outstanding feature
-requests and to leverage the excellent [graphite-dsl](https://github.com/ripienaar/graphite-graph-dsl/).
-
-## Some features of the rewrite
-
-* Single cluster and no cluster support, so the %c in metric format is optional.
-
-* Graph config format uses graphite-dsl. Goodbye messy hack-YAML graph configuration!
-
-* Snazzy new twitter bootstrap UI and post-90s HTML/JS, including client-side
-  state using the HTML5 history API (when present) and responsive UI.
-
-* Timezone support via [detect_timezone.js](http://www.pageloom.com/automatic-timezone-detection-with-javascript).
-
-* Dashboard groupings
-
-* popover graph descriptions
-
-  If you've ever looked at a graph and thought to yourself "wtfisthis?", you can
-  now annotate each graph with a description.
-
-## anti-features
-
-* config file formats are incompatible, though migration scripts will be provided
-
-* some features (quantum etc.) have been removed
-
 # TODOS
 
 * robust migration scripts

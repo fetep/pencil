@@ -1,39 +1,34 @@
 # Pencil Options
-Pencil configuration files are written in YAML. When pencil starts up, it
-searches for these files and loads them. See the main README.md for how
-these files should look.
 
 ## General Configuration
 
-These are options that go under the :config key in pencil configuration files.
+These are options for the main configuration file: pencil.yml.
 
-* :graphite_url [String, required, no default]
+* :graphite_url [no default]
 
   The url of your graphite instance.
 
-* :url_opts [Hash, required, no default]
+* :default_url_opts [optional, no default]
 
-  A map of default graph options.
+  A map of default graph options, like width and height. See the
+  [DSL](https://github.com/ripienaar/graphite-graph-dsl/wiki) for specific
+  options. A sample configuration might would look like:
 
-  In addition to <a href="#gopts">graph-level options</a>, an important default option
-  you should set under :url_opts is
+    :default_url_opts:
+      :width: 1400
+      :height: 400
+      :fontsize: 15
 
-    :start: TIMESPEC
+* :refresh_rate [default 60]
 
-  TIMESPEC should be a
-  [chronic](http://chronic.rubyforge.org/)-parsable time, and to be useful
-  should be relative to the current time (e.g. "8 hours ago")
+  How often to refresh graph images, in seconds.
 
-* :refresh_rate [Fixnum, optional, default 60]
+  In the future this option will be overridden under the :default_views: key
+  per view, this value being the default.
 
-  How often to refresh a changing view, in seconds.
+* :host_sort [default "sensible"]
 
-  This doesn't apply to timeslices that aren't varying (i.e not current, see
-  <a href="#threshold">:now_threshold</a>).
-
-  Set this to false to disable automatic refreshing.
-
-* :host_sort [["builtin", "numeric", "sensible"], optional, default "sensible"]
+  One of "builtin", "numeric", or "sensible".
 
   Set to "builtin" to sort using ruby's builtin String sort.
 
@@ -44,168 +39,77 @@ These are options that go under the :config key in pencil configuration files.
 
   http://www.bofh.org.uk/2007/12/16/comprehensible-sorting-in-ruby
 
-* :quantum [Fixnum, optional, no default value]
+* :metric_format [default "%m.%c.%h"]
 
-  Map requests to NUM second intervals. Pencil floors request times to the
-  minute, and does some modular arithmetic to do this mapping. This is
-  especially useful for implementing a caching layer, so that many requests
-  coming in near-simultaneously won't require graphite to generate different
-  images for each request.
-
-  Adding &noq=1 to a pencil url will disable this in case you need
-  super-granularity for some reason, but you didn't hear it from me.
-
-* :date_format [String, optional, default "%X %x"]
-
-  strftime format for displaying dates.
-
-* :metric_format [String, optional, default "%m.%c.%h"]
-
-  The format your graphite metrics are stored in. For pencil to work your
-  metrics need to be composed of three distinct pieces, concatenated in some
-  regular fashion. The format strings are
+  The format your graphite metrics are stored in. Pencil needs metrics to be
+  composed of two or three distinct pieces, concatenated in some regular
+  fashion. The format strings are:
 
   * %m metric
   * %c cluster
   * %h host
 
-  If you want a literal %[mch] in your metric format string you likely have
-  bigger problems than not being able to do so.
+  The cluster "%c" portion is optional.
 
-* <a name="threshold"/> :now\_threshold: [Fixnum, optional, default 300]
+  Currently supported metric types are those that are qualified by at most a
+  cluster and a short hostname, such as
 
-  How many seconds before Time.now an end time is considered to still be 'now',
-  for the purposes of adding meta-refresh and displaying time intervals.
+  [METRIC].colo1.db1 # corresponding to db1.colo1.[rest of FQDN]
+  
+  or, with no cluster:
 
-* :use_color: [Boolean, optional, default false]
+  [METRIC].db1 # corresponding to db1.[rest of FQDN]
 
-  In graphite 0.9.8 and earlier coloring of targets sucks. Coloring is not done
-  on a per-target basis, but rather by an additional parameter
-  "colorList". Pencil handles colors by appending a target's color parameter
-  (or a suitable default) onto this list. Targets are processed in order and
-  consume the first color available in colorList.
+  Example metric and corresponding formats:
 
-  This sucks because nonexistent targets occasionally produced by pencil don't
-  consume their associated color, which screws up the coloring of every
-  subsequent metric.
+  system.load.hostname                          # %m.%h
+  system.load.dc.hostname                       # %m.%c.%h
+  dc.hostname.system.load                       # %c.%h.%m
+  hostname.dc.system.load                       # %h.%c.%m
+  prefix_for_all_metrics.system.load.hostname   # prefix_for_all_metrics.%m.%h
 
-  The latest Graphite trunk supports color as a property of a target, set with
-  color(target, "COLOR"). If you are using a new graphite and want to take
-  advantage of this more accurate coloring technique set :use_color to true,
-  and bask in the glory of color correctness.
+  Pencil will recognize all these graphite metrics as "system.load" for the
+  host "hostname", and, where applicable, cluster "dc".
 
-## <a name="gopts"/> Graph-level Options
-This is a list of the supported graph-level options for pencil, which
-correspond to request(image)-level options for graphite. These options are
-key-value pairs, and are passed directly to graphite. Here is the list, with
-minor annotations:
+* :port [default 9292]
 
-* vtitle: String (y-axis label)
-* yMin: Fixnum
-* yMax: Fixnum
-* lineWidth: Fixnum (line thickness in pixels)
-* areaMode: \[first, all, stacked\] (see graphite documentation)
-* template: \[noc, alphas\] (alphas inverts colors)
-* lineMode: staircase
-* bgcolor: String
-* graphOnly: bool (hide legend, axes, grid)
-* hideAxes: bool
-* hideGrid: bool
-* hideLegend: bool
-* fgcolor: String
-* fontSize: Fixnum
-* fontName: String (see your graphite instance for available fonts)
-* fontItalic: bool
-* fontBold: bool
+   Port to bind to.
 
-## Target-level Options
-This is a list of the supported target-level options for pencil. These are
-mostly a list of transformations graphite supports, including summation and
-scaling of metrics. You can apply them to individual metrics, or lists of
-metrics. See the example configs for how this works. Also see the graphite
-composer for the effects of these options, many of which are untested.
+* :templates_dir [no default]
 
-A note on the divideSeries case: for aggregate graphs, pencil takes the ratio
-of the sums, as opposed to the sums of the ratios, for ease of implementation
-and because it makes some sense. If you're not a fan of 80k URLs then you will
-agree. divideSeries should only ever be used with two targets, like this:
+   Directory where graph and dashboard configuration is stored. Resolved
+   relative to the location of the config file.
 
-    ? - stats.timers.mysql.innodb.threads_active_read.mean:
-      - stats.timers.mysql.innodb.threads_total_read.mean:
-    :
-      !omap
-      - :divideSeries:
+* :webapp [default false]
 
-(Notice the omap, as opposed to a hash, to impose an order in which options are
-applied)
+   Enable Open Web App support. See [here](./webapp.md) for details.
 
-### Combinations
-These functions take an arbitrary number of targets (usually simple metrics)
-for arguments.
+* :default_views:
 
-* sumSeries
-* averageSeries
-* minSeries
-* maxSeries
-* group
+  Pencil has two modes: live views and calendar views. For live monitoring of
+  graphite data live views are used. This key species the default views
+  available (though manually specifying "from=RELATIVE" in the URL works too).
 
-### Transformations
-Some of these options take a single argument.
+  Default value:
 
-* scale
-* offset
-* derivative
-* integral
-* nonNegativeDerivative
-* log BASE
-* timeShift
-* summarize
-* hitcount
+    :default_views:
+      - -1h: "one hour view"
+      - default:
+         -8h: "eight hour view"
+      - -1day: "One day view"
 
-### Calculations
-These functions take an arbitrary number of targets (usually simple metrics)
-for arguments.
+ Each entry in this list should look like one of the following:
 
-* movingAverage
-* stdev
-* asPercent
-* diffSeries
-* divideSeries (NOTE: takes exactly 1 series as divisor)
+ TIMESPEC
+ TIMESPEC: LABEL
+ default: TIMESPEC
+ default: TIMESPEC: LABEL
 
-### Filters
-Most of these options take a single argument.
+ TIMESPEC is a graphite at-style relative time from
+ "now". [See the documentation](https://graphite.readthedocs.org/en/latest/render_api.html#from-until)
+ for details.
 
-* highestCurrent
-* lowestCurrent
-* nPercentile
-* currentAbove
-* currentBelow
-* highestAverage
-* lowestAverage
-* averageAbove
-* averageBelow
-* maximumAbove
-* maximumBelow
-* sortByMaxima
-* minimalist
-* limit
-* exclude
-
-### Special Operations
-* alias
-* key (alias for alias)
-* cumulative
-* drawAsInfinite
-* lineWidth
-* dashed
-* keepLastValue
-* substr
-* threshold
-* color
-
-Note: key and color are applied after all other options are applied.
-
-key is interpreted differently from the other options, which are more
-simply translated.
-
-color's interpretation depends on whether :use_color is set.
+ *NOTE* acceptable values for this key will expand in a later release to
+ include arbitrary graphite-supported timespecs (not just references), an
+ additional supported "until" value, and a "refresh" value as well. It will
+ remain backwards compatible.
