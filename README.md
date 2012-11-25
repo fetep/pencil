@@ -1,6 +1,6 @@
 # Pencil
 
-Pencil is a monitoring frontend for graphite. It runs a web server that dishes
+Pencil is a monitoring frontend for Graphite. It runs a web server that dishes
 out pretty [Graphite](http://graphite.wikidot.com/) URLs in hopefully
 interesting and intuitive fashion.
 
@@ -15,23 +15,22 @@ Some features are:
 
 * Easy configuration
 
-  Pretty much anything you'd want to do with the graphite can be done using the
+  Pretty much anything you'd want to do with the Graphite can be done using the
   [Graphite DSL](https://github.com/ripienaar/graphite-graph-dsl/) and a bit of
   YAML.
 
 * Implicit collection of host and cluster data
 
-  Pencil picks these up from graphite without you having to explicitly define
+  Pencil picks these up from Graphite without you having to explicitly define
   them, and gives you the ability to look at all the graphs for a particular
   host or cluster. You need only supply the metrics in your graph definitions;
   see <a href="#setup"/> for configuration details.
 
 * Live and Calendar views with relative and absolute timespecs
 
-  Timeslices are measured in terms of a (possibly relative) starting time and a
-  duration. You can also use Pencil in "tail-mode" (i.e. constant refresh,
-  looking at last couple hours of data) or to view a particular timeslice in
-  the past with calendar views.
+  You can use Pencil in "tail-mode" (i.e. constant refresh, looking at last
+  couple hours of data) or to view a particular timeslice in the past with
+  calendar views.
 
 * permalinks
 
@@ -42,7 +41,7 @@ Some features are:
 
   If you've ever looked at a graph and thought to yourself "what is this?", you can
   now annotate each graph with a description, or by default the target data
-  that's being sent to graphite.
+  that's being sent to Graphite.
 
 * Client-side state using the [HTML5 History API](https://developer.mozilla.org/en-US/docs/DOM/Manipulating_the_browser_history) (when present)
 
@@ -67,10 +66,10 @@ too.
 
 ## <a name="setup"/>SETUP
 
-You should have a working graphite installation. Your metrics need to be
+You should have a working Graphite installation. Your metrics need to be
 composed of two or three pieces:
 
-* "%m", _METRIC_ (the common part of each graphite path)
+* "%m", _METRIC_ (the common part of each Graphite path)
 * "%c", _CLUSTER_ (cluster name, varies with query, must not contain periods)
 * "%h", _HOST_ (host name, varies with query, must not contain periods)
 
@@ -86,7 +85,7 @@ dc.hostname.system.load                       # %c.%h.%m
 hostname.dc.system.load                       # %h.%c.%m
 prefix_for_all_metrics.system.load.hostname   # prefix_for_all_metrics.%m.%h
 
-Pencil will recognize all these graphite metrics as "system.load" for the
+Pencil will recognize all these Graphite metrics as "system.load" for the
 host "hostname", and, where applicable, cluster "dc".
 
 ### pencil.yml, the configuration file
@@ -96,7 +95,7 @@ searches the current directory (or, with -f FILE, FILE) for a file to load.
 
 The most important keys are:
 
-:graphite_url: (URL of your graphite instance)
+:graphite_url: (URL of your Graphite instance)
 :metric_format: (see above)
 :templates_dir: where your graph and dashboard definitions reside
 
@@ -125,8 +124,7 @@ For a full description of all these options see docs/pencil_options.md.
 With all this in place you should begin to populate your configuration directory
 with dashboards and graphs.
 
-Template Directory Layout?
---------------------------
+### Template Directory Layout
 
 The directory layout is such that you can have many groupings of dashboards
 each with many dashboards underneath it, an example layout of your templates
@@ -151,8 +149,7 @@ with. My convention is to do as mentioned, but graphs such as load average that
 are reported by all hosts are put in the "global" subdirectory of the templates
 directory. See the example for details.
 
-What exactly goes inside graph and dashboard files?
----------------------------------------------------
+### Dashboard files
 
 Here is an example dashboard definition:
 
@@ -177,8 +174,7 @@ Hosts are the hosts that this dashboard applies to. Simple wildcards are
 supported. This can be overridden per-graph as seen above for the cpu_usage
 graph.
 
-And graph files?
-----------------
+### Graph files
 
 An example cpu_usage.graph:
 
@@ -233,7 +229,7 @@ Accessing
 localhost:9292/reload
 
 Or adding the &reload parameter to a URL cause pencil to manually reload its
-configuration file and all graphite data. In the future reloading on changes
+configuration file and all Graphite data. In the future reloading on changes
 in the configuration directory will be supported. After a change is detected a
 reload is scheduled, staged, and verified before being loaded into the running
 pencil instance. See
