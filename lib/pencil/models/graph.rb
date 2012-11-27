@@ -79,8 +79,8 @@ module Pencil::Models
         end
         unless ci && hi
           last.reverse.each_with_index do |v, i|
-            ci = (-1) -i if v.match('%c')
-            hi = (-1) -i if v.match('%h')
+            ci ||= (-1) -i if v.match('%c')
+            hi ||= (-1) -i if v.match('%h')
           end
         end
         results.each do |m|
