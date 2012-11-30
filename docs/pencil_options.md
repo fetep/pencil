@@ -1,8 +1,9 @@
 # Pencil Options
+The pencil configuration files is written in YAML. When pencil starts up, it
+searches pencil.yml and loads it (use -f to specify a particular file). See the
+main README.md for more details.
 
 ## General Configuration
-
-These are options for the main configuration file: pencil.yml.
 
 * :graphite_url [no default]
 
