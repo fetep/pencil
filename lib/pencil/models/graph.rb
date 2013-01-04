@@ -126,7 +126,7 @@ module Pencil::Models
       target_order.each do |t|
         index = 0
         target = targets[t]
-        target[:alias] = prefix + target[:alias]
+        target[:alias] = prefix + target[:alias] if target[:alias]
         r = get_metrics(target[:data])
         r.each do |match|
           s = target[:data]
@@ -139,7 +139,7 @@ module Pencil::Models
       alias properties inner_properties
       target_order.each do |t|
         target = targets[t]
-        target[:alias] = target[:alias][prefix.size..-1]
+        target[:alias] = target[:alias][prefix.size..-1] if target[:alias]
         replace.each {|m, m2| target[:data].gsub!(m2, m)}
       end
       @lock.unlock
