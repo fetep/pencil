@@ -22,10 +22,12 @@ module Pencil
     attr_reader :clustermap
     attr_reader :config_file
     attr_reader :version
+    attr_reader :bind
     attr_reader :port
     attr_reader :argv
 
     def initialize
+      @bind = nil
       @port = nil
       @config_file = File.expand_path './pencil.yml'
       @recursive = false
@@ -41,6 +43,9 @@ module Pencil
              'location of the config file (default ./pencil.yml)') do |arg|
           @config_file = File.expand_path arg
         end
+        o.on('-b', '--bind BIND', 'IP to bind to (default 0.0.0.0)') do |arg|
+          @bind = arg.to_s
+        end
         o.on('-p', '--port PORT', 'port to bind to (default 9292)') do |arg|
           @port = arg.to_i
         end
@@ -52,6 +57,7 @@ module Pencil
 
       optparse.parse(@argv)
       stage_load
+      @bind ||= '0.0.0.0'
       @port ||= 9292
       reload!
     end
@@ -125,6 +131,7 @@ module Pencil
         abort "templates directory #{@templates_dir} not found or not readable"
       end
 
+      @bind ||= @_config[:bind] if @_config[:bind]
       @port ||= @_config[:port] if @_config[:port]
 
       if @_config[:webapp]
