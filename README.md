@@ -1,8 +1,10 @@
 # Pencil
 
-Pencil is a monitoring frontend for Graphite. It runs a web server that dishes
-out pretty [Graphite](http://graphite.wikidot.com/) URLs in hopefully
-interesting and intuitive fashion.
+*NOTE* If you are checking out pencil for the first time you should check out the
+rewrite branch (in beta) which has lots of nice updates.
+
+pencil is a monitoring frontend for graphite. It runs a webserver that dishes
+out pretty graphite urls in hopefully interesting and intuitive layouts.
 
 Some features are:
 
