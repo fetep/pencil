@@ -18,6 +18,7 @@ module Pencil
 
     set :config, Pencil::Config.new
     set :port, settings.config.port
+    set :bind, settings.config.bind
     set :erb, :trim => '-'
     use Rack::Logger
     set :logging, true
